@@ -2,7 +2,31 @@
 
 include('protect.php'); /*inclui a função de proteção ao acesso da página */
 
+    try {
+        $sql = "INSERT INTO cadastro_pedidos
+        (Pessoa, Nome, Contato, Cod_produto, Quantidade, Descricao, Med_Personalizada, Valor, Data_Prevista, Status_Pag, Valor_Total, Arquivo_Art)
+        VALUES (:f_p, :f_n, :f_c, :f_pro, :f_q, :f_d, :f_mp, :f_v, :f_dp, :f_sp, :f_vt, :f_aa)";
+        $stmt = $conexao->prepare($sql);
+        $stmt->bindValue(':f_p', $_POST['Pessoa']);
+        $stmt->bindValue(':f_n', $_POST['Nome']);
+        $stmt->bindValue(':f_c', $_POST['Contato']);
+        $stmt->bindValue(':f_pro', $_POST['Cod_produto']);
+        $stmt->bindValue(':f_q', $_POST['Quantidade']);
+        $stmt->bindValue(':f_d', $_POST['Descricao']);
+        $stmt->bindValue(':f_mp', $_POST['Med_Personalizada']);
+        $stmt->bindValue(':f_v', $_POST['Valor']);
+        $stmt->bindValue(':f_dp', $_POST['Data_Prevista']);
+        $stmt->bindValue(':f_sp', $_POST['Status_Pag']);
+        $stmt->bindValue(':f_vt', $_POST['Valor_Total']);
+        $stmt->bindValue(':f_aa', $_POST['Arquivo_Art']);
+        $stmt->execute(); //executa a sql
+        echo "Registro Cadastro com sucesso";
+    } catch (PDOException $e) {
+        echo "Erro ao inserir registro" . $e->getMessage();
+    }
+
 ?>
+
 <!DOCTYPE html>
 <html lang="pt-br">
 

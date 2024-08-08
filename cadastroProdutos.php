@@ -2,6 +2,22 @@
 
 include('protect.php'); /*inclui a função de proteção ao acesso da página */
 
+try {
+    $sql = "INSERT INTO cadastro_produtos
+    (Nome, Medida, Descricao, Valor)
+    VALUES (:f_n, :f_m, :f_d, :f_v)";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':f_n', $_POST['Nome']);
+    $stmt->bindValue(':f_m', $_POST['Medida']);
+    $stmt->bindValue(':f_d', $_POST['Descricao']);
+    $stmt->bindValue(':f_v', $_POST['Valor']);
+    $stmt->execute(); //executa a sql
+    echo "Registro Cadastro com sucesso";
+} catch (PDOException $e) {
+    echo "Erro ao inserir registro" . $e->getMessage();
+}
+
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
