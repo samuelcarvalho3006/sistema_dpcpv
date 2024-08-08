@@ -1,0 +1,74 @@
+/* CABECALHO */
+
+.cor_fonte {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+.cabecalho img {
+    height: 120px;
+}
+
+.listas a:hover {
+    color: rgb(30, 98, 224);
+}
+
+#navbarDropdownMenuLink {
+
+    background-color: #ffffff;
+
+}
+
+nav {
+
+    border-bottom: 1px solid rgb(210, 211, 211);
+}
+
+/* Estilizando o link do dropdown */
+.nav-item.dropdown .nav-link {
+    color: black
+        /* Cor do texto */
+}
+
+/* Estilizando o link do dropdown quando o mouse passa por cima */
+.nav-item.dropdown .nav-link:hover {
+    color: rgb(30, 98, 224);
+    /* Cor do texto quando passa o mouse */
+}
+
+/* Estilizando o link do dropdown quando está aberto */
+.nav-item.dropdown .nav-link:focus,
+.nav-item.dropdown .nav-link:active {
+    color: rgb(30, 98, 224);
+    /* Cor do texto quando está aberto */
+}
+
+/* Estilizando o fundo do dropdown */
+.nav-item.dropdown .dropdown-menu {
+    background-color: white;
+    /* Cor de fundo do dropdown */
+}
+
+/* Estilizando os itens do dropdown */
+.nav-item.dropdown .dropdown-item {
+    color: black;
+    /* Cor do texto dos itens do dropdown */
+}
+
+/* Estilizando os itens do dropdown quando o mouse passa por cima */
+.nav-item.dropdown .dropdown-item:hover {
+    background-color: #F1F5F2;
+    /* Cor de fundo dos itens do dropdown quando passa o mouse */
+    color: rgb(30, 98, 224);
+    /* Cor do texto dos itens do dropdown quando passa o mouse */
+}
+
+
+/*-----------------------------------------------------------------------------------------*/
+/* PÁGINA LOGIN */
+
+.login .btn{
+    color: white;
+}
