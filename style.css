@@ -72,3 +72,72 @@ nav {
 .login .btn{
     color: white;
 }
+
+/*--------------------------------------------------------------------------------------*/
+/* POP UP CADASTRO */
+
+.mod {
+
+    width: 265px;
+    border-radius: 5px;
+
+}
+
+.formu {
+
+    justify-content: center;
+    text-align: center; 
+
+}
+
+.titu {
+
+    text-align: justify;
+    font-size: 18px;
+    margin-left: 100px;
+
+}
+
+.cor {
+
+color: #ffffff;
+background: linear-gradient(#17a0f0, #25cdfc, #17a0f0) ;
+border-radius: 15px;
+
+}
+
+.corbi:hover {
+
+background: #ffffff;
+color: #000000;
+
+} 
+
+.corbc {
+
+    background: #ffffff;
+    color: #000000;
+
+}
+
+.corbc:hover {
+
+background: #01751e;
+color: #ffffff;
+
+}
+
+.corbf {
+
+background: #ffffff;
+color: #000000;
+
+}
+
+.corbf:hover {
+
+background: #ff0d0d;
+
+}
+
+/*--------------------------------------------------------------------------------------*/
