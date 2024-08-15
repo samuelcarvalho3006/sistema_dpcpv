@@ -90,6 +90,11 @@ nav {
 
 }
 
+.modal input{
+    border: 1px solid;
+    padding: 5px;
+}
+
 .titu {
 
     text-align: justify;
@@ -101,7 +106,7 @@ nav {
 .cor {
 
 color: #ffffff;
-background: linear-gradient(#17a0f0, #25cdfc, #17a0f0) ;
+background: #25cdfc;
 border-radius: 15px;
 
 }
@@ -140,4 +145,4 @@ background: #ff0d0d;
 
 }
 
-/*--------------------------------------------------------------------------------------*/
+/*-----------------------------------------------------------------------------------------*/
