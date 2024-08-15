@@ -26,41 +26,112 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
     }
 
 ?>
-
 <!DOCTYPE html>
 <html lang="pt-br">
 
 <head>
-    <meta charset="UTF-8">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <link rel="stylesheet" href="style.css">
-    <title>Página Inicial</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+  <title>Cadastro Pedidos</title>
 </head>
-
-
 
 <body>
 
-    <div class="container-fluid cabecalho"> <!-- CABECALHO -->
-        <nav class="navbar fixed-top navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="admInicial.php">
-                <img src="./img/logoPreta.png">
-            </a>
+  <div class="container">
+    <form action="" method="post">
+
+      <div class="forms">
+        <div class="row text-center justify-content-center mb-5">
+          <div class="col-xl-2 col-sm-12">
+            <span>Data do Pedido</span><br>
+            <input type="date" name="dataPed" id="dataPed">
+          </div>
+          <div class="col-xl-2 col-sm-12">
+            <span>Data Prevista</span><br>
+            <input type="date" name="dataPre" id="dataPre">
+          </div>
+        </div>
+        <div class="row text-center justify-content-center mb-5">
+          <div class="col-xl-12">
+            <span>Nome do Cliente</span><br>
+            <input type="text" name="nomeCli" id="nomeCli" placeholder="Digite o nome do cliente">
+          </div>
+        </div>
 
 
+        <div class="popUp justify-content-center text-center mb-5">
 
-            <button class="navbar-toggler hamburguer" data-toggle="collapse" data-target="#navegacao">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+          <button type="button" class="btn btn-primary corbi" data-toggle="modal" data-target="#exampleModal"
+            data-whatever="@getbootstrap">Inserir Itens</button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navegacao">
+          <div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+            aria-hidden="true">
+
+            <div class="modal-dialog" role="document">
+              <div class="modal-content">
+
+                <div class="modal-header">
+
+                  <h5 class="modal-title" id="exampleModalLabel">INSERIR ITENS</h5>
+
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+
+                </div>
+                <div class="row text-center justify-content-center">
+                  <span>Nº de Pedidos</span><br>
+                  <input type="number" name="quant" id="quant">
+                </div>
+
+                <div class="modal-body">
+
+                <span>Código</span>
+                <input class="mod" type="text" size="auto" placeholder="Digite o nome" required name="Pro_nome">
+
+
+                <span>Medida:</span>
+                <input class="mod" type="text" placeholder="Digite a medida" required name="Medida">
+
+
+                <span>Descrição:</span>
+                <input class="mod" type="text" placeholder="Digite a descrição" required name="Descricao">
+
+
+                <span>Valor Unitário:</span>
+                <input class="mod" type="text" placeholder="Digite o valor" required name="Valor">
+
+              </div>
+
+              <div class="modal-footer text-center justify-content-center">
+              <button class="corbc btn btn-secondary m-2" type="submit">Cadastrar</button>
+              </div>
 
             </div>
-        </nav> <!-- FECHA CABECALHO -->
-    </div> <!-- FECHA CONTAINER DO CABECALHO -->
+          </div>
+        </div>
+      </div>
+
+
+      <div class="row text-center justify-content-center mb-5">
+        <div class="col-12">
+          <span>Entrada</span><br>
+          <input type="checkbox" name="entrada" id="entrada"><label class="m-1">Sim</label>
+          <input type="checkbox" name="entrada" id="entrada"><label class="m-1">Não</label>
+        </div>
+      </div>
+
+
+      <div class="forms2">
+
+      </div>
+    </form>
+  </div>
+  <!-- Scripts do Bootstrap (jQuery deve ser incluído antes do Bootstrap.js) -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="js/bootstrap.bundle.min.js"></script>
 
 </body>
 
