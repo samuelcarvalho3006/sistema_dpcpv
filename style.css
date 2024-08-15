@@ -1,3 +1,17 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* A altura deve ser 100% da viewport */
+    margin: 0;
+  }
+
+/*---------------------------------------------------------------------------*/
 /* CABECALHO */
 
 .cor_fonte {
@@ -69,80 +83,57 @@ nav {
 /*-----------------------------------------------------------------------------------------*/
 /* PÁGINA LOGIN */
 
-.login .btn{
+.login .btn {
     color: white;
 }
+
+
+/*---------------------------------------------------------------------------------------*/
+/* PÁGINA CADASTROS */
+
+.forms {}
 
 /*--------------------------------------------------------------------------------------*/
 /* POP UP CADASTRO */
 
-.mod {
-
-    width: 265px;
+#quant {
+    text-align: center;
+    align-items: center;
+    width: 50px;
+    height: 30px;
     border-radius: 5px;
-
 }
 
-.formu {
-
-    justify-content: center;
-    text-align: center; 
-
+.mod {
+    border-radius: 5px;
 }
 
-.modal input{
+.modal input {
     border: 1px solid;
     padding: 5px;
 }
 
-.titu {
-
-    text-align: justify;
-    font-size: 18px;
-    margin-left: 100px;
-
-}
-
-.cor {
-
-color: #ffffff;
-background: #25cdfc;
-border-radius: 15px;
-
+.modal-content {
+    color: #ffffff;
+    background: #25cdfc;
+    border-radius: 15px;
+    width: 1080px;
+    display: flex;
 }
 
 .corbi:hover {
-
-background: #ffffff;
-color: #000000;
-
-} 
-
-.corbc {
-
     background: #ffffff;
     color: #000000;
+}
 
+.corbc {
+    background: #ffffff;
+    color: #000000;
 }
 
 .corbc:hover {
-
-background: #01751e;
-color: #ffffff;
-
-}
-
-.corbf {
-
-background: #ffffff;
-color: #000000;
-
-}
-
-.corbf:hover {
-
-background: #ff0d0d;
-
+    background: #01751e;
+    color: #ffffff;
 }
 
 /*-----------------------------------------------------------------------------------------*/
