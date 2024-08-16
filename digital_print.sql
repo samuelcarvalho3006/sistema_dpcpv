@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 08/08/2024 às 15:43
+-- Tempo de geração: 16/08/2024 às 02:36
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -39,8 +39,7 @@ CREATE TABLE `cadastros_pedidos` (
   `Valor` decimal(10,0) NOT NULL,
   `Data_Prevista` date NOT NULL,
   `Status_Pag` varchar(50) NOT NULL,
-  `Valor_Total` decimal(10,0) NOT NULL,
-  `Arquivo_Art` int(100) NOT NULL
+  `Valor_Total` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -56,6 +55,25 @@ CREATE TABLE `cadastros_produtos` (
   `Descricao` text NOT NULL,
   `Valor` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `dp_login`
+--
+
+CREATE TABLE `dp_login` (
+  `log_id` int(5) NOT NULL,
+  `log_email` varchar(50) NOT NULL,
+  `log_senha` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `dp_login`
+--
+
+INSERT INTO `dp_login` (`log_id`, `log_email`, `log_senha`) VALUES
+(1, 'teste', 'teste');
 
 --
 -- Índices para tabelas despejadas
@@ -74,6 +92,12 @@ ALTER TABLE `cadastros_produtos`
   ADD PRIMARY KEY (`Cod_produto`);
 
 --
+-- Índices de tabela `dp_login`
+--
+ALTER TABLE `dp_login`
+  ADD PRIMARY KEY (`log_id`);
+
+--
 -- AUTO_INCREMENT para tabelas despejadas
 --
 
@@ -88,6 +112,12 @@ ALTER TABLE `cadastros_pedidos`
 --
 ALTER TABLE `cadastros_produtos`
   MODIFY `Cod_produto` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `dp_login`
+--
+ALTER TABLE `dp_login`
+  MODIFY `log_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
