@@ -1,50 +1,48 @@
 <?php
-include ('conexao.php'); /* inclui a conexão com o banco de dados */
+require_once('conexao.php');
+$conexao = novaConexao(); // Inclui a conexão com o banco de dados
 
-$error = false; /* cria variável $error inicialmente definida para falsa */
-if (isset($_POST['email']) || isset($_POST['senha'])) {
+session_start(); // Inicia a sessão no início do script
 
-    if (strlen($_POST['email']) == 0) {
+$error = false; // Cria a variável $error inicialmente definida como falsa
+
+if (isset($_POST['email']) && isset($_POST['senha'])) {
+
+    if (empty($_POST['email'])) {
         echo "Preencha seu e-mail";
-        /* faz a leitura do campo email e caso esteja vazio informa o user */
-    } else if (strlen($_POST['senha']) == 0) {
+    } else if (empty($_POST['senha'])) {
         echo "Preencha sua senha";
-        /* faz a leitura do campo senha e caso esteja vazio informa o user */
-    } else { /* caso os campos estejam preenchidos, inicia a verificação com o BD */
+    } else {
+        // Preparar a consulta SQL com placeholders
+        $sql_code = "SELECT * FROM dp_login WHERE log_email = :email AND log_senha = :senha";
 
-        $email = $mysqli->real_escape_string($_POST['email']);
-        /* comunica o BD sobre o que foi inserido no campo email */
-        $senha = $mysqli->real_escape_string($_POST['senha']);
-        /* comunica o BD sobre o que foi inserido no campo senha */
+        $stmt = $conexao->prepare($sql_code);
 
-        $sql_code = "SELECT * FROM dp_login WHERE log_email = '$email' AND log_senha = '$senha'";
-        /* seleciona os campos de email e senha no BD dentro da table dp_login */
-        $sql_query = $mysqli->query($sql_code) or die("Falha na execução do código SQL: " . $mysqli->error);
-        /* se houver erro com a seleção, será informado o erro ocorrido */
-        $quantidade = $sql_query->num_rows;
-        /* faz a leitura se houver informações compativeis com alguma linha no BD */
+        // Associar os valores aos placeholders
+        $stmt->bindParam(':email', $_POST['email']);
+        $stmt->bindParam(':senha', $_POST['senha']);
 
-        if ($quantidade == 1) {
-            /* se for encontrada uma linha com informações compatíveis, o usuário será logado
-            no sistema */
-            $usuario = $sql_query->fetch_assoc();
+        // Executar a consulta
+        $stmt->execute();
 
-            if (!isset($_SESSION)) {
-                session_start();
-                /* inicia a sessão do usuário no sistema */
-            }
+        // Verificar se foi encontrado algum registro
+        if ($stmt->rowCount() == 1) {
+            // Se encontrado, obter os dados do usuário
+            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
             $_SESSION['log_id'] = $usuario['log_id'];
 
             header("Location: admInicial.php");
-            /* recebe o ID de login do usuário e redireciona para a página inicial do sistema */
-
-        } else { /* caso não for encontrada uma linha com dados coerentes, variável $error
-      será definida como verdadeira */
+            exit; // Sempre use exit após header para evitar que o script continue rodando
+        } else {
+            // Se não encontrado, define $error como verdadeiro
             $error = true;
         }
-
     }
+}
+
+if ($error) {
+    echo "E-mail ou senha incorretos!";
 }
 ?>
 <!DOCTYPE html>

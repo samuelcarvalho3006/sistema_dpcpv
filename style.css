@@ -1,4 +1,4 @@
-*{
+* {
     margin: 0px;
     padding: 0px;
 }
@@ -7,12 +7,14 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* A altura deve ser 100% da viewport */
+    height: 100vh;
+    /* A altura deve ser 100% da viewport */
     margin: 0;
-  }
+}
 
 /*---------------------------------------------------------------------------*/
 /* CABECALHO */
+
 
 .cor_fonte {
     color: black;
@@ -36,7 +38,6 @@ body {
 }
 
 nav {
-
     border-bottom: 1px solid rgb(210, 211, 211);
 }
 
@@ -91,10 +92,40 @@ nav {
 /*---------------------------------------------------------------------------------------*/
 /* PÁGINA CADASTROS */
 
-.forms {}
+.forms input,
+.forms2 input {
+    border-radius: 5px;
+    border: 1px #1AA7E7 solid;
+    padding: 3px;
+}
+
+.cad {
+    width: min(1000px, 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.forms {
+    border-top-left-radius: 20px;
+    border-bottom-left-radius: 20px;
+    border: 2px solid #1AA7E7;
+    padding: 3%;
+    width: 100%;
+    height: 350px;
+}
+
+.forms2 {
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border: 2px solid #1AA7E7;
+    padding: 3%;
+    width: 100%;
+    height: 350px;
+}
 
 /*--------------------------------------------------------------------------------------*/
-/* POP UP CADASTRO */
+/* POP UP */
 
 #quant {
     text-align: center;
