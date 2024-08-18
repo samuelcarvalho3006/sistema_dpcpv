@@ -9,9 +9,9 @@ $error = false; // Cria a variável $error inicialmente definida como falsa
 if (isset($_POST['email']) && isset($_POST['senha'])) {
 
     if (empty($_POST['email'])) {
-        echo "Preencha seu e-mail";
+        $error = true;
     } else if (empty($_POST['senha'])) {
-        echo "Preencha sua senha";
+        $error = true;
     } else {
         // Preparar a consulta SQL com placeholders
         $sql_code = "SELECT * FROM dp_login WHERE log_email = :email AND log_senha = :senha";
@@ -41,9 +41,6 @@ if (isset($_POST['email']) && isset($_POST['senha'])) {
     }
 }
 
-if ($error) {
-    echo "E-mail ou senha incorretos!";
-}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -107,11 +104,12 @@ if ($error) {
                     </button>
                 </div>
                 <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    Email ou senha incorretos. Por favor, tente novamente.
+                    Não foi possível se conectar.<br>
+                    Por favor, tente novamente.
                 </div>
                 <div class="modal-footer">
                     <!-- parte de baixo do popup, cria botão fechar -->
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
                     <!-- data-dismiss: faz o botão fecha o popup -->
                 </div>
             </div>

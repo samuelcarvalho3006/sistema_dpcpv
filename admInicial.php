@@ -43,8 +43,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadastroPedidos.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="consultaPedidos.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="cadastro_Pedidos/cadPed.php">Cadastro de Pedidos</a>
+                            <a class="dropdown-item" href="cadastro_Pedidos/consPed.php">Consulta de Pedidos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -54,8 +54,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Orçamentos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadastroOrcamentos.php">Cadastro de Orçamentos</a>
-                            <a class="dropdown-item" href="consultaOrcamentos.php">Consulta de Orçamentos</a>
+                            <a class="dropdown-item" href="cadOrca.php">Cadastro de Orçamentos</a>
+                            <a class="dropdown-item" href="cadOrca.php">Consulta de Orçamentos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -65,8 +65,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadastroProdutos.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="edicaoProdutos.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="cadPro.php">Cadastro de Produtos</a>
+                            <a class="dropdown-item" href="editPro.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 

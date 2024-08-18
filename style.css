@@ -1,22 +1,8 @@
-* {
-    margin: 0px;
-    padding: 0px;
-}
-
-body {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    /* A altura deve ser 100% da viewport */
-    margin: 0;
-}
-
 /*---------------------------------------------------------------------------*/
 /* CABECALHO */
 
-.cabecalho{
-    margin-bottom: 200px;
+.cabecalho {
+    margin-bottom: 130px;
 }
 
 .cor_fonte {
@@ -83,95 +69,77 @@ nav {
     /* Cor do texto dos itens do dropdown quando passa o mouse */
 }
 
-
 /*-----------------------------------------------------------------------------------------*/
-/* PÁGINA LOGIN */
 
-.login .btn {
-    color: white;
-}
-
-
-/*---------------------------------------------------------------------------------------*/
-/* PÁGINA CADASTROS */
-
-.forms input,
-.forms2 input {
-    border-radius: 5px;
-    border: 1px #1AA7E7 solid;
-    padding: 3px;
-}
-
-.cad {
-    margin-top: 200px;
-    max-width: 1000px; /* Altere min para max */
-    width: 100%; 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-left: auto;
-    margin-right: auto; /* Certifique-se de que está centralizado */
-}
-
-.forms {
-    border-top-left-radius: 20px;
-    border-bottom-left-radius: 20px;
-    border: 2px solid #1AA7E7;
-    padding: 3%;
-    width: 100%;
-    height: 350px;
-}
-
-.forms2 {
-    border-top-right-radius: 20px;
-    border-bottom-right-radius: 20px;
-    border: 2px solid #1AA7E7;
-    padding: 3%;
-    width: 100%;
-    height: 350px;
-}
-
-/*--------------------------------------------------------------------------------------*/
-/* POP UP */
-
-#quant {
+.input-personalizado {
+    border-radius: 20px;
+    border: 2px solid #00BFFF;
+    padding: 10px;
     text-align: center;
-    align-items: center;
-    width: 50px;
-    height: 30px;
-    border-radius: 5px;
+    font-size: 16px;
 }
 
-.mod {
-    border-radius: 5px;
-}
-
-.modal input {
-    border: 1px solid;
-    padding: 5px;
+.btn-personalizado {
+    width: 200px;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 16px;
 }
 
 .modal-content {
-    color: #ffffff;
-    background: #25cdfc;
-    border-radius: 15px;
-    width: 1080px;
+    background-color: #ffffff;
+    color: black;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+.modal-header,
+.modal-footer {
+    border: none;
+}
+
+.form-label {
+    font-size: 16px;
+    font-weight: bold;
+}
+
+h2 {
+    font-weight: bold;
+}
+
+.container-custom {
+    max-width: 800px;
+    margin: auto;
+    border: 1px solid #1AA7E7;
+    padding: 20px;
+    border-radius: 10px;
+}
+
+.row-custom {
     display: flex;
+    justify-content: space-between;
 }
 
-.corbi:hover {
-    background: #ffffff;
-    color: #000000;
+.col-custom {
+    flex: 1;
+    margin-right: 10px;
 }
 
-.corbc {
-    background: #ffffff;
-    color: #000000;
+.col-custom2 {
+    flex: 1;
+    margin-right: 10px;
+    border-left: 1px solid #1AA7E7;
 }
 
-.corbc:hover {
-    background: #01751e;
-    color: #ffffff;
+.col-custom:last-child {
+    margin-right: 0;
 }
 
-/*-----------------------------------------------------------------------------------------*/
+.btn-group-custom {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-group-custom button {
+    margin: 0 10px;
+}
