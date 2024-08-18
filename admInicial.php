@@ -43,19 +43,19 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadastro_Pedidos/cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="cadastro_Pedidos/consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="pedidos/cadPed.php">Cadastro de Pedidos</a>
+                            <a class="dropdown-item" href="pedidos/consPed.php">Consulta de Pedidos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Orçamentos
+                            Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadOrca.php">Cadastro de Orçamentos</a>
-                            <a class="dropdown-item" href="cadOrca.php">Consulta de Orçamentos</a>
+                            <a class="dropdown-item" href="agenda/insAge.php">Inserir na agenda</a>
+                            <a class="dropdown-item" href="agenda/consAge.php">Consultar agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
