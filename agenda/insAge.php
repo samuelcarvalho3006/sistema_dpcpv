@@ -64,15 +64,18 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Agenda</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
-        <nav class="navbar fixed-top navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="../admInicial.php">
+        <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
+            <a class="navbar-brand m-2" href="..//admInicial.php">
                 <img src="../img/logoPreta.png">
             </a>
 
@@ -91,8 +94,8 @@ try {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro de Pedidos</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta de Pedidos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -113,8 +116,8 @@ try {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadPro.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="editPro.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadPro.php">Cadastro de Produtos</a>
+                            <a class="dropdown-item" href="../produto/editPro.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -142,89 +145,35 @@ try {
 
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Data do pedido:</label>
-                        <input type="date" class="form-control" name="data_pedido">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control" name="data_prevista">
-                    </div>
-
-                    <div class="form-group mb-3">
                         <label class="form-label">Nome do cliente:</label>
                         <input type="text" class="form-control" name="nome_cliente" placeholder="Nome do cliente">
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Tipo de pessoa</label>
-                        <div>
-                            <input type="radio" id="pessoaFis" name="tipoPessoa" class="form-check-input">
-                            <label class="form-check-label" for="pessoaFis">Física</label>
-
-                            <input type="radio" id="pessoaJur" name="tipoPessoa" class="form-check-input ms-3">
-                            <label class="form-check-label" for="pessoaJur">Jurídica</label>
-                        </div>
+                        <label class="form-label">Data de registro:</label>
+                        <input type="date" class="form-control" name="data_pedido">
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Contato:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Número, E-mail, etc.">
+                        <label class="form-label">Data Prevista:</label>
+                        <input type="date" class="form-control" name="data_prevista">
                     </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Informações:</label>
+                        <input type="text" class="form-control" name="nome_cliente" placeholder="Informações">
+                    </div>
+
                 </div>
 
-                <!-- Segunda Coluna -->
-                <div class="col-custom2">
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Observações:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Informações extras">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Forma de entrega:</label>
-                        <div>
-
-                            <input type="radio" id="retirada" name="entrega" value="retirada" class="form-check-input">
-                            <label class="form-check-label" for="retirada">Retirada</label>
-
-                            <input type="radio" id="entrega" name="entrega" value="entrega"
-                                class="form-check-input ms-3">
-                            <label class="form-check-label" for="entrega">Entrega</label>
-
-                        </div>
-
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Valor Total:</label>
-                        <input type="text" class="form-control" name="valor_total" placeholder="R$ 0,00">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Entrada:</label>
-
-                        <div>
-
-                            <input type="radio" id="entradaNao" name="entrada" value="nao" class="form-check-input">
-                            <label class="form-check-label" for="entradaNao">Não</label>
-
-                            <input type="radio" id="entradaSim" name="entrada" value="sim"
-                                class="form-check-input ms-3">
-                            <label class="form-check-label" for="entradaSim">Sim</label>
-
-                        </div>
-
-                    </div>
+                <!-- Botões centralizados abaixo das colunas -->
+                <div class="row mt-4 btn-group-custom">
+                    <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
+                    <button type="submit" class="btn btn-success btn-personalizado">Confirmar</button>
                 </div>
             </div>
     </div>
 
-    <!-- Botões centralizados abaixo das colunas -->
-    <div class="row mt-4 btn-group-custom">
-        <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-        <button type="submit" class="btn btn-success btn-personalizado">Cadastrar pedido</button>
-    </div>
     </form>
     </div>
 

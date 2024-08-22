@@ -17,7 +17,6 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
 </head>
 
 
-
 <body>
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
@@ -25,8 +24,6 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
             <a class="navbar-brand m-2" href="#">
                 <img src="./img/logoPreta.png">
             </a>
-
-
 
             <button class="navbar-toggler hamburguer" data-toggle="collapse" data-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
@@ -65,8 +62,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadPro.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="editPro.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href=".//produto/cadPro.php">Cadastro de Produtos</a>
+                            <a class="dropdown-item" href=".//produto/editPro.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 

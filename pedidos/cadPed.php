@@ -80,7 +80,10 @@ if ($entrega === 'entrega') {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="../style.css">
 </head>
 
@@ -88,12 +91,10 @@ if ($entrega === 'entrega') {
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar fixed-top navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="../admInicial.php">
+            <a class="navbar-brand m-2" href="..//admInicial.php">
                 <img src="../img/logoPreta.png">
             </a>
-
-
-
+            
             <button class="navbar-toggler hamburguer" data-toggle="collapse" data-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
             </button>
@@ -109,19 +110,19 @@ if ($entrega === 'entrega') {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="#">Cadastro de Pedidos</a>
+                            <a class="dropdown-item" href="pedidos/consPed.php">Consulta de Pedidos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Orçamentos
+                            Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadOrca.php">Cadastro de Orçamentos</a>
-                            <a class="dropdown-item" href="cadOrca.php">Consulta de Orçamentos</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir na agenda</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -131,13 +132,13 @@ if ($entrega === 'entrega') {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadPro.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="editPro.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadPro.php">Cadastro de Produtos</a>
+                            <a class="dropdown-item" href="../produto/editPro.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li>
-                        <a href="../logout.php" class="nav-link" style="color: red;">
+                        <a href="logout.php" class="nav-link" style="color: red;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                                 class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
