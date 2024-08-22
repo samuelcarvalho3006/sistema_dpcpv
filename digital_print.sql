@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 16/08/2024 às 02:36
+-- Tempo de geração: 22/08/2024 às 18:33
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -49,11 +49,11 @@ CREATE TABLE `cadastros_pedidos` (
 --
 
 CREATE TABLE `cadastros_produtos` (
-  `Cod_produto` int(5) NOT NULL,
-  `Pro_nome` varchar(50) NOT NULL,
-  `Medida` varchar(50) NOT NULL,
-  `Descricao` text NOT NULL,
-  `Valor` decimal(10,0) NOT NULL
+  `codPro` int(5) NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `medida` varchar(50) NOT NULL,
+  `descricao` text NOT NULL,
+  `valor` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -89,7 +89,7 @@ ALTER TABLE `cadastros_pedidos`
 -- Índices de tabela `cadastros_produtos`
 --
 ALTER TABLE `cadastros_produtos`
-  ADD PRIMARY KEY (`Cod_produto`);
+  ADD PRIMARY KEY (`codPro`);
 
 --
 -- Índices de tabela `dp_login`
@@ -111,7 +111,7 @@ ALTER TABLE `cadastros_pedidos`
 -- AUTO_INCREMENT de tabela `cadastros_produtos`
 --
 ALTER TABLE `cadastros_produtos`
-  MODIFY `Cod_produto` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
