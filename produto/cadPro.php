@@ -5,7 +5,7 @@ $conexao = novaConexao();
 
 $sucesso = false;
 $error = false;
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
 try {
     // Verificar se todos os campos obrigatórios estão preenchidos
     if (
@@ -15,10 +15,10 @@ try {
         $_POST['descricao'],
         $_POST['valor'],
     )
-    ) {
+     ) {
         // Preparar a SQL
         $sql = "INSERT INTO cadastros_produtos
-          (nome, medida,  descricao, valor)
+          (nome, medida, descricao, valor)
 
           VALUES (:p_n, :p_m, :p_d, :p_v)";
 
@@ -37,9 +37,9 @@ try {
     } else {
         $error = true;
     }
-
 } catch (PDOException $e) {
-    echo "Erro ao inserir registro: " . $e->getMessage();
+    $error = true; // Configura erro se houver uma exceção
+}
 }
 
 ?>
@@ -52,6 +52,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
@@ -92,8 +93,8 @@ try {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="..//agenda/insAge.php">Inserir na agenda</a>
-                            <a class="dropdown-item" href="..//agenda/consAge.php">Consultar agenda</a>
+                            <a class="dropdown-item" href="..//agenda/insAge.php">Inserir na Agenda</a>
+                            <a class="dropdown-item" href="..//agenda/consAge.php">Consultar Agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -104,12 +105,12 @@ try {
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="#">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href=".//produto/editPro.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="./produto/editPro.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li>
-                        <a href="logout.php" class="nav-link" style="color: red;">
+                        <a href="../logout.php" class="nav-link" style="color: red;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                                 class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
@@ -133,22 +134,22 @@ try {
                 <div class="col-custom"> <!-- Primeira Coluna -->
                 <div class="form-group mb-3">
                         <label class="form-label">Nome do Produto:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Nome do produto">
+                        <input type="text" class="form-control" name="nome" placeholder="Nome do produto" required>
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Medidas:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Informações da medida">
+                        <input type="text" class="form-control" name="medida" placeholder="Informações da medida" required>
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Descrição:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Informações extras">
+                        <input type="text" class="form-control" name="descricao" placeholder="Informações extras" required>
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Valor Total:</label>
-                        <input type="text" class="form-control" name="valor_total" placeholder="R$ 0,00">
+                        <label class="form-label">Valor:</label>
+                        <input type="text" class="form-control" name="valor" placeholder="R$ 0,00" required>
                     </div>
                 </div>
 
@@ -162,27 +163,81 @@ try {
         </form>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+     <!-- PopUp de sucesso -->
+     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog"> <!-- chama classe JS de popup success -->
+            <div class="modal-content"> <!-- cria estrutura do pop up -->
+                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+                    <h5 class="modal-title" id="successModalLabel">sucesso</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!-- cria botão de fechar em forma de "x" 
+                            data-dismiss: faz o botão fecha o popup
+                        -->
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                    O produto foi cadastrado com sucesso!
+                </div>
+                <div class="modal-footer">
+                    <!-- parte de baixo do popup, cria botão fechar -->
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+                    <!-- data-dismiss: faz o botão fecha o popup -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fim do popup de sucesso -->
+
+     <!-- PopUp de Erro -->
+     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog"> <!-- chama classe JS de popup error -->
+            <div class="modal-content"> <!-- cria estrutura do pop up -->
+                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+                    <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <!-- cria botão de fechar em forma de "x" 
+                            data-dismiss: faz o botão fecha o popup
+                        -->
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                    Não foi possível se conectar.<br>
+                    Por favor, tente novamente.
+                </div>
+                <div class="modal-footer">
+                    <!-- parte de baixo do popup, cria botão fechar -->
+                    <button type="button" class="btn btn-primary" data-dismiss="modal">Fechar</button>
+                    <!-- data-dismiss: faz o botão fecha o popup -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fim do popup de erro -->
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script>
-
-        function toggleEntrada(show) {
-            const valorEntradaDiv = document.getElementById('valorEntradaDiv');
-            if (show) {
-                valorEntradaDiv.classList.remove('d-none');
-            } else {
-                valorEntradaDiv.classList.add('d-none');
-            }
-        }
-
-        function toggleEntrega(show) {
-            const enderecoDiv = document.getElementById('enderecoDiv');
-            if (show) {
-                enderecoDiv.classList.remove('d-none');
-            } else {
-                enderecoDiv.classList.add('d-none');
-            }
-        }
+        <?php if ($sucesso): ?>
+            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
+            realiza a ação de chamar o popup Modal e exibe o erro */
+            $(document).ready(function () {
+                $('#successModal').modal('show');
+                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
+            });
+        <?php endif; ?>
+         <?php if ($error): ?>
+            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
+            realiza a ação de chamar o popup Modal e exibe o erro */
+            $(document).ready(function () {
+                $('#errorModal').modal('show');
+                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
+            });
+        <?php endif; ?>
     </script>
 </body>
 

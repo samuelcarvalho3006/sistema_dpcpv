@@ -121,8 +121,8 @@ if ($entrega === 'entrega') {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir na agenda</a>
-                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar agenda</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir na Agenda</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar Agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -138,7 +138,7 @@ if ($entrega === 'entrega') {
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li>
-                        <a href="logout.php" class="nav-link" style="color: red;">
+                        <a href="../logout.php" class="nav-link" style="color: red;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                                 class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"

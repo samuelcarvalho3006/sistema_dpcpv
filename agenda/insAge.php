@@ -102,11 +102,11 @@ try {
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Orçamentos
+                            Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadOrca.php">Cadastro de Orçamentos</a>
-                            <a class="dropdown-item" href="cadOrca.php">Consulta de Orçamentos</a>
+                            <a class="dropdown-item" href="cadOrca.php">Inserir na Agende</a>
+                            <a class="dropdown-item" href="cadOrca.php">Consultar Agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 

@@ -51,8 +51,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="agenda/insAge.php">Inserir na agenda</a>
-                            <a class="dropdown-item" href="agenda/consAge.php">Consultar agenda</a>
+                            <a class="dropdown-item" href="agenda/insAge.php">Inserir na Agenda</a>
+                            <a class="dropdown-item" href="agenda/consAge.php">Consultar Agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
