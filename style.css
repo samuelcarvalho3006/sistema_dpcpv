@@ -80,11 +80,18 @@ nav {
     font-size: 16px;
 }
 
+.modal-dialog {
+    display: flex;
+    justify-content: center;
+}
+
 .modal-content {
     background-color: #ffffff;
     color: black;
     border-radius: 20px;
     padding: 20px;
+    width: 100%;
+    max-width: 1080px;
 }
 
 .modal-header,
@@ -98,16 +105,40 @@ nav {
 }
 
 .custom-modal-lg {
-    max-width: 100% !important; /* Ajuste conforme necessário */
+    max-width: 100%;
 }
 
 .custom-modal-height {
-    height: 100%; /* Ajuste conforme necessário */
-    overflow-y: auto; /* Adiciona rolagem se o conteúdo for muito grande */
+    height: 100%;
+    overflow-y: auto;
 }
 
-.numItens{
-    width: 60px;
+.numItens {
+    width: 100px;
+}
+
+.selec {
+    width: 100px;
+}
+
+.form-modal {
+    margin-bottom: 15px;
+}
+
+.form-modal label {
+    display: block;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.form-modal input,
+.form-modal select {
+    width: 100%;
+}
+
+.row {
+    margin-bottom: 20px;
 }
 
 /*----------------------------------------------------------------*/

@@ -36,13 +36,13 @@ try {
                 <img src="../img/logoPreta.png">
             </a>
 
-            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-target="#navegacao">
+            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-bs-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse justify-content-end" id="navegacao">
 
-                <ul class="nav nav-pills justify-content-end listas"> <!-- LISTAS DO MENU CABECALHO-->
+                <ul class="nav nav-pills justify-content-center listas"> <!-- LISTAS DO MENU CABECALHO-->
 
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->

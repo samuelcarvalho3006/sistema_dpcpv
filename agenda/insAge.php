@@ -6,43 +6,43 @@ $conexao = novaConexao();
 $sucesso = false;
 $error = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
-try {
-    // Verificar se todos os campos obrigatórios estão preenchidos
-    if (
-        isset(
-        $_POST['titulo'],
-        $_POST['dataRegistro'],
-        $_POST['dataPrazo'],
-        $_POST['informacao']
-    )
-    ) {
+    try {
+        // Verificar se todos os campos obrigatórios estão preenchidos
+        if (
+            isset(
+            $_POST['titulo'],
+            $_POST['dataRegistro'],
+            $_POST['dataPrazo'],
+            $_POST['informacao']
+        )
+        ) {
 
-        // Converter datas para o formato YYYY-MM-DD
-        $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
-        $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
+            // Converter datas para o formato YYYY-MM-DD
+            $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
+            $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
 
 
-        // Preparar a SQL
-        $sql = "INSERT INTO agenda (titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_t, :a_dR, :a_dP, :a_I)";
-        $stmt = $conexao->prepare($sql);
+            // Preparar a SQL
+            $sql = "INSERT INTO agenda (titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_t, :a_dR, :a_dP, :a_I)";
+            $stmt = $conexao->prepare($sql);
 
-        // Associar os valores aos placeholders
-        $stmt->bindValue('a_t', $_POST['titulo']);
-        $stmt->bindValue('a_dR', $_POST['dataRegistro']);
-        $stmt->bindValue('a_dP', $_POST['dataPrazo']);
-        $stmt->bindValue('a_I', $_POST['informacao']);
+            // Associar os valores aos placeholders
+            $stmt->bindValue('a_t', $_POST['titulo']);
+            $stmt->bindValue('a_dR', $_POST['dataRegistro']);
+            $stmt->bindValue('a_dP', $_POST['dataPrazo']);
+            $stmt->bindValue('a_I', $_POST['informacao']);
 
-        // Executar a SQL
-        $stmt->execute();
+            // Executar a SQL
+            $stmt->execute();
 
-        $sucesso = true;
-    } else {
-        $error = true;
+            $sucesso = true;
+        } else {
+            $error = true;
+        }
+    } catch (PDOException $e) {
+        $error = true; // Configura erro se houver uma exceção
+        echo "Erro: " . $e->getMessage();
     }
-} catch (PDOException $e) {
-    $error = true; // Configura erro se houver uma exceção
-    echo "Erro: " . $e->getMessage();
-}
 }
 
 ?>
@@ -54,10 +54,7 @@ try {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inserir na Agenda</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../style.css">
 </head>
 
@@ -69,13 +66,13 @@ try {
                 <img src="../img/logoPreta.png">
             </a>
 
-            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-target="#navegacao">
+            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-bs-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse justify-content-end" id="navegacao">
 
-                <ul class="nav nav-pills justify-content-end listas"> <!-- LISTAS DO MENU CABECALHO-->
+                <ul class="nav nav-pills justify-content-center listas"> <!-- LISTAS DO MENU CABECALHO-->
 
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
@@ -163,7 +160,7 @@ try {
                 </div>
             </div>
     </div>
-    
+
     <!-- PopUp de sucesso -->
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
         <div class="modal-dialog"> <!-- chama classe JS de popup success -->

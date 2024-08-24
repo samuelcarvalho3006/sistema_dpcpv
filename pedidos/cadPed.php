@@ -34,29 +34,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrevista']));
             // Preparar a SQL
             $sql = "INSERT INTO pedidos
-          (pessoa, nome, contato, codPro, quantid, desc, medida, valorUnit, dataPed, dataPrev, entrega, logradouro, numero, bairro, entrada, valorEnt, valorTotal)
-          VALUES (p_pess, p_nome, p_cont, p_codPro, p_quan, p_desc, p_med, p_vUnit, p_datPed, p_datPrev, p_log, p_num, p_bairr, p_end, p_entr, p_vEnt, p_vTot)";
+            (pessoa, nome, contato, codPro, quantid, desc, medida, valorUnit, dataPed, dataPrev, entrega, logradouro, numero, bairro, entrada, valorEnt, valorTotal, quantidadeItens, valorUnit)
+            VALUES (:p_pess, :p_nome, :p_cont, :p_codPro, :p_quan, :p_desc, :p_med, :p_vUnit, :p_datPed, :p_datPrev, :p_ent, :p_log, :p_num, :p_bairr, :p_entr, :p_vEnt, :p_vTot, :p_quanIt)";
 
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
-            $stmt->bindValue('p_pess', $_POST['pessoa']);
-            $stmt->bindValue('p_nome', $_POST['nome']);
-            $stmt->bindValue('p_cont', $_POST['contato']);
-            $stmt->bindValue('p_codPro', $_POST['codProduto']);
-            $stmt->bindValue('p_quan', $_POST['quantidade']);
-            $stmt->bindValue('p_desc', $_POST['descricao']);
-            $stmt->bindValue('p_med', $_POST['medida']);
-            $stmt->bindValue('p_vUnit', $_POST['valorUnitario']);
-            $stmt->bindValue('p_datPed', $_POST['dataPedido']);
-            $stmt->bindValue('p_datPrev', $_POST['dataPrevista']);
-            $stmt->bindValue('p_ent', $_POST['entrega']);
-            $stmt->bindValue('p_log', $_POST['logradouro']);
-            $stmt->bindValue('p_num', $_POST['numero']);
-            $stmt->bindValue('p_bairr', $_POST['bairro']);
-            $stmt->bindValue('p_entr', $_POST['entrada']);
-            $stmt->bindValue('p_vEnt', $_POST['valorEntrada']);
-            $stmt->bindValue('p_vTot', $_POST['valorTotal']);
+            $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
+            $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
+            $stmt->bindValue(':p_cont', $_POST['contato']); //contato
+            $stmt->bindValue(':p_codPro', $_POST['codPro']); //codigo do produto
+            $stmt->bindValue(':p_quan', $_POST['quantid']); //quantidade de itens do pedido
+            $stmt->bindValue(':p_desc', $_POST['desc']); //observações sobre o pedido
+            $stmt->bindValue(':p_med', $_POST['medida']); //medida do item
+            $stmt->bindValue(':p_vUnit', $_POST['valorUnit']); //valor unitário
+            $stmt->bindValue(':p_datPed', $_POST['datPedido']); //data do pedido
+            $stmt->bindValue(':p_datPrev', $_POST['datPrev']); //data estipulada
+            $stmt->bindValue(':p_ent', $_POST['entrega']); //forma d entrega
+            $stmt->bindValue(':p_log', $_POST['logradouro']);
+            $stmt->bindValue(':p_num', $_POST['numero']);
+            $stmt->bindValue(':p_bairr', $_POST['bairro']);
+            $stmt->bindValue(':p_entr', $_POST['entrada']);//entrada sim/nao
+            $stmt->bindValue(':p_vEnt', $_POST['valorEnt']);//valor da entrada
+            $stmt->bindValue(':p_vTot', $_POST['valorTotal']);//valor total
+            $stmt->bindValue(':p_quanIt', $_POST['quantIt']);//quantidade do produto
 
             // Executar a SQL
             $stmt->execute();
@@ -67,7 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
 
     } catch (PDOException $e) {
-        echo "Erro ao inserir registro: " . $e->getMessage();
+        $error . $e->getMessage();
     }
 }
 
@@ -91,7 +92,13 @@ if ($entrega === 'entrega') {
     $showEndereco = true;
 }
 
+$query = "SELECT codPro, nome, valor FROM produtos";
+$result = $conexao->query($query);
 
+$produtos = [];
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    $produtos[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -106,20 +113,19 @@ if ($entrega === 'entrega') {
 </head>
 
 <body>
-
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
             <a class="navbar-brand m-2" href="..//admInicial.php">
                 <img src="../img/logoPreta.png">
             </a>
 
-            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-target="#navegacao">
+            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-bs-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
             <div class="collapse navbar-collapse justify-content-end" id="navegacao">
 
-                <ul class="nav nav-pills justify-content-end listas"> <!-- LISTAS DO MENU CABECALHO-->
+                <ul class="nav nav-pills justify-content-center listas"> <!-- LISTAS DO MENU CABECALHO-->
 
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
@@ -129,7 +135,7 @@ if ($entrega === 'entrega') {
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="#">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="pedidos/consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="./consPed.php">Consulta de Pedidos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -171,7 +177,6 @@ if ($entrega === 'entrega') {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-
     <div class="container container-custom">
         <h3 class="text-center mb-4">Cadastro de Pedidos</h3>
         <form method="POST">
@@ -180,26 +185,26 @@ if ($entrega === 'entrega') {
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
                         <label class="form-label">Data do pedido:</label>
-                        <input type="date" class="form-control" name="dataPedido" required>
+                        <input type="date" class="form-control" name="datPedido" >
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control" name="dataPrevista" required>
+                        <input type="date" class="form-control" name="dataPrev" >
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Nome do cliente:</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente" required>
+                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente" >
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Tipo de pessoa</label>
                         <div>
-                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input" required>
+                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input" >
                             <label class="form-check-label" for="pessoaFis">Física</label>
 
-                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3" required>
+                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3" >
                             <label class="form-check-label" for="pessoaJur">Jurídica</label>
                         </div>
                     </div>
@@ -215,7 +220,7 @@ if ($entrega === 'entrega') {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Observações:</label>
-                        <input type="text" class="form-control" name="descricao" placeholder="Informações extras">
+                        <input type="text" class="form-control" name="desc" placeholder="Informações extras">
                     </div>
 
                     <div class="form-group mb-3">
@@ -259,7 +264,7 @@ if ($entrega === 'entrega') {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total:</label>
-                        <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00" required>
+                        <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00" >
                     </div>
 
                     <div class="form-group mb-3">
@@ -267,7 +272,7 @@ if ($entrega === 'entrega') {
 
                         <div>
 
-                            <input type="radio" id="entradaNao" name="entrada" value="nao" class="form-check-input"
+                            <input type="radio" id="entradaNao" name="entrad" value="nao" class="form-check-input"
                                 <?= !$showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(false)">
                             <label class="form-check-label" for="entradaNao">Não</label>
 
@@ -278,7 +283,7 @@ if ($entrega === 'entrega') {
                         </div>
 
                         <div class="mt-2 <?= $showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
-                            <label class="form-label" for="valorEntrada">R$</label>
+                            <label class="form-label" for="valorEnt">R$</label>
                             <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEntrada"
                                 style="width: 100px;" value="0,00">
 
@@ -298,57 +303,67 @@ if ($entrega === 'entrega') {
                         </div>
                         <div class="modal-body">
                             <div class="container">
-                                <div class="row justify-content-center text-center mb-4">
-                                    <label class="form-label">nº de itens</label>
-                                    <input type="number" class="form-control numItens" name="numItens">
+                                <div class="row mb-4">
+                                    <div class="col-12">
+                                        <div class="form-group form-modal form-modal">
+                                            <label class="form-label" for="numItens">nº de itens</label>
+                                            <input type="number" class="form-control numItens" id="numItens"
+                                                name="quantid">
+                                        </div>
+                                    </div>
                                 </div>
-                                <div class="row justify-content-center text-center">
-                                    <div class="col-2">
-                                        <label class="form-label">Produto</label>
-                                        <select class="form-select numItens">
-                                            <option>Banner</option>
-                                            <option>Cartão</option>
-                                            <option>Fachada</option>
-                                        </select>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-modal">
+                                            <label class="form-label" for="prodSelec">Produto</label>
+                                            <select class="form-select numItens" id="prodSelec" name="codPro"
+                                                onchange="atualizarValor()">
+                                                <option selected disabled>Selecione um produto</option>
+                                                <?php foreach ($produtos as $produto): ?>
+                                                    <option value="<?php echo htmlspecialchars($produto['codPro']); ?>">
+                                                        <?php echo htmlspecialchars($produto['nome']); ?>
+                                                    </option>
+                                                <?php endforeach; ?>
+                                            </select>
+                                        </div>
                                     </div>
-                                    <div class="col-3">
-                                        <label class="form-label">Medida</label>
-                                        <input class="form-control">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-modal">
+                                            <label class="form-label">Medida</label>
+                                            <input class="form-control" name="medida">
+                                        </div>
                                     </div>
-                                    <div class="col-3">
-                                        <label class="form-label">Descrição</label>
-                                        <input type="text" class="form-control">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-modal">
+                                            <label class="form-label">Quantidade</label>
+                                            <input type="number" class="form-control numItens" name="quantIt">
+                                        </div>
                                     </div>
-                                    <div class="col-2">
-                                        <label class="form-label">Unidade</label>
-                                        <input type="number" class="form-control numItens">
-                                    </div>
-                                    <div class="col-2">
-                                        <label class="form-label">V.U.</label>
-                                        <input type="text" class="form-control">
+                                    <div class="col-md-6">
+                                        <div class="form-group form-modal">
+                                            <label class="form-label">V.U.</label>
+                                            <input type="text" class="form-control" id="vUnit" readonly
+                                                name="valorUnit">
+                                        </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-danger btn-personalizado"
-                                data-bs-dismiss="modal">Cancelar</button>
-                            <button type="button" class="btn btn-primary btn-personalizado">Confirmar</button>
+                            <button type="reset" class="btn btn-outline-danger btn-personalizado">Limpar</button>
+                            <button type="button" class="btn btn-primary btn-personalizado" data-bs-dismiss="modal"
+                                onclick="confirmar()">Confirmar</button>
                         </div>
                     </div>
-
                 </div>
-
             </div>
-    </div>
-    </div>
 
-    <!-- Botões centralizados abaixo das colunas -->
-    <div class="row mt-4 btn-group-custom">
-        <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-        <button type="submit" class="btn btn-success btn-personalizado">Cadastrar pedido</button>
-    </div>
-    </form>
+            <!-- Botões centralizados abaixo das colunas -->
+            <div class="row mt-4 btn-group-custom">
+                <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Cadastrar pedido</button>
+            </div>
+        </form>
     </div>
 
     <!-- PopUp de sucesso -->
@@ -444,6 +459,56 @@ if ($entrega === 'entrega') {
                 com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
             });
         <?php endif; ?>
+
+        function atualizarValor() {
+
+            const selectProduto = document.getElementById('prodSelec');
+            const valorUnitario = document.getElementById('vUnit');
+
+            const produtos = <?php echo json_encode($produtos); ?>;
+            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
+
+            if (produtoSelecionado) {
+                valorUnitario.value = produtoSelecionado.valor;
+            } else {
+                valorUnitario.value = '';
+            }
+        }
+
+        function confirmar() {
+            // Lógica para salvar os dados
+            const numItens = document.getElementById('numItens').value;
+            const prodSelec = document.getElementById('prodSelec').value;
+            const medida = document.querySelector('input[name="medida"]').value;
+            const descricao = document.querySelector('input[name="descricao"]').value;
+            const unidade = document.querySelector('input[name="unidade"]').value;
+            const vUnit = document.getElementById('vUnit').value;
+
+            // Exemplo de como você pode enviar os dados para o servidor
+            fetch('url_do_seu_servidor', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    numItens,
+                    prodSelec,
+                    medida,
+                    descricao,
+                    unidade,
+                    vUnit,
+                }),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Success:', data);
+                    // Fechar o modal após o sucesso
+                    $('#modalItens').modal('hide');
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
     </script>
 </body>
 
