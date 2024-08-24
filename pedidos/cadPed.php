@@ -116,14 +116,14 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
             <a class="navbar-brand m-2" href="..//admInicial.php">
-                <img src="../img/logoPreta.png">
+                <img src="../img/back.png">
             </a>
 
             <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-bs-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
-            <div class="collapse navbar-collapse justify-content-end" id="navegacao">
+            <div class="collapse navbar-collapse justify-content-center" id="navegacao">
 
                 <ul class="nav nav-pills justify-content-center listas"> <!-- LISTAS DO MENU CABECALHO-->
 
@@ -160,20 +160,17 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                             <a class="dropdown-item" href="../produto/editProd.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
-                    <li>
-                        <a href="../logout.php" class="nav-link" style="color: red;">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
-                                class="bi bi-box-arrow-right" viewBox="0 0 16 16">
-                                <path fill-rule="evenodd"
-                                    d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
-                                <path fill-rule="evenodd"
-                                    d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
-                            </svg>
-                        </a>
-                    </li>
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
+            <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
+                    class="bi bi-box-arrow-right" viewBox="0 0 16 16">
+                    <path fill-rule="evenodd"
+                        d="M10 12.5a.5.5 0 0 1-.5.5h-8a.5.5 0 0 1-.5-.5v-9a.5.5 0 0 1 .5-.5h8a.5.5 0 0 1 .5.5v2a.5.5 0 0 0 1 0v-2A1.5 1.5 0 0 0 9.5 2h-8A1.5 1.5 0 0 0 0 3.5v9A1.5 1.5 0 0 0 1.5 14h8a1.5 1.5 0 0 0 1.5-1.5v-2a.5.5 0 0 0-1 0z" />
+                    <path fill-rule="evenodd"
+                        d="M15.854 8.354a.5.5 0 0 0 0-.708l-3-3a.5.5 0 0 0-.708.708L14.293 7.5H5.5a.5.5 0 0 0 0 1h8.793l-2.147 2.146a.5.5 0 0 0 .708.708z" />
+                </svg>
+            </a>
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
@@ -185,26 +182,26 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
                         <label class="form-label">Data do pedido:</label>
-                        <input type="date" class="form-control" name="datPedido" >
+                        <input type="date" class="form-control" name="datPedido">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control" name="dataPrev" >
+                        <input type="date" class="form-control" name="dataPrev">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Nome do cliente:</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente" >
+                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Tipo de pessoa</label>
                         <div>
-                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input" >
+                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input">
                             <label class="form-check-label" for="pessoaFis">Física</label>
 
-                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3" >
+                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3">
                             <label class="form-check-label" for="pessoaJur">Jurídica</label>
                         </div>
                     </div>
@@ -264,7 +261,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total:</label>
-                        <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00" >
+                        <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00">
                     </div>
 
                     <div class="form-group mb-3">
