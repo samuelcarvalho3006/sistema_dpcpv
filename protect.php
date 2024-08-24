@@ -1,12 +1,23 @@
 <?php
-/* caso seja realizada uma tentativa de login sem uma sessão permitida iniciada, o acesso à
-página inicial ADM será bloqueado e exibirá uma mensagem de erro */
 if(!isset($_SESSION)) {
     session_start();
 }
 
-if(!isset($_SESSION['log_id'])) {
-    die("Você não pode acessar esta página porque não está logado.<p><a href=\"login.php\">Entrar</a></p>");
+// Verifica se a sessão está iniciada
+if (!isset($_SESSION['log_id'])) {
+    // Verifica se o arquivo login.php existe na pasta atual
+    if (file_exists('login.php')) {
+        header("Location: login.php");
+    } 
+    // Caso contrário, verifica se existe em ../login.php
+    elseif (file_exists('../login.php')) {
+        header("Location: ../login.php");
+    } 
+    // Caso nenhum dos arquivos seja encontrado, exibe uma mensagem de erro
+    else {
+        echo "Página de login não encontrada.";
+        exit;
+    }
+    exit;
 }
-
 ?>

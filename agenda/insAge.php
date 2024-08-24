@@ -5,43 +5,32 @@ $conexao = novaConexao();
 
 $sucesso = false;
 $error = false;
-
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
 try {
     // Verificar se todos os campos obrigatórios estão preenchidos
     if (
         isset(
-        $_POST[''],
-        $_POST[''],
-        $_POST[''],
-        $_POST[''],
-        $_POST[''],
-        $_POST[''],
-        $_POST[''],
-        $_POST['r'],
-        $_POST[''],
-        $_POST[''],
-        $_POST['']
+        $_POST['titulo'],
+        $_POST['dataRegistro'],
+        $_POST['dataPrazo'],
+        $_POST['informacao']
     )
     ) {
-        // Preparar a SQL
-        $sql = "INSERT INTO 
-          ()
-          VALUES ()";
 
+        // Converter datas para o formato YYYY-MM-DD
+        $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
+        $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
+
+
+        // Preparar a SQL
+        $sql = "INSERT INTO agenda (titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_t, :a_dR, :a_dP, :a_I)";
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
-        $stmt->bindValue('', $_POST['']);
+        $stmt->bindValue('a_t', $_POST['titulo']);
+        $stmt->bindValue('a_dR', $_POST['dataRegistro']);
+        $stmt->bindValue('a_dP', $_POST['dataPrazo']);
+        $stmt->bindValue('a_I', $_POST['informacao']);
 
         // Executar a SQL
         $stmt->execute();
@@ -50,9 +39,10 @@ try {
     } else {
         $error = true;
     }
-
 } catch (PDOException $e) {
-    echo "Erro ao inserir registro: " . $e->getMessage();
+    $error = true; // Configura erro se houver uma exceção
+    echo "Erro: " . $e->getMessage();
+}
 }
 
 ?>
@@ -63,7 +53,7 @@ try {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Agenda</title>
+    <title>Inserir na Agenda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js"></script>
@@ -79,7 +69,7 @@ try {
                 <img src="../img/logoPreta.png">
             </a>
 
-            <button class="navbar-toggler hamburguer" data-toggle="collapse" data-target="#navegacao">
+            <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
             </button>
 
@@ -90,7 +80,7 @@ try {
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
@@ -101,23 +91,23 @@ try {
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadOrca.php">Inserir na Agende</a>
-                            <a class="dropdown-item" href="cadOrca.php">Consultar Agenda</a>
+                            <a class="dropdown-item" href="#">Inserir na Agenda</a>
+                            <a class="dropdown-item" href="consAge.php">Consultar Agenda</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
-                            data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../produto/cadPro.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="../produto/editPro.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro de Produtos</a>
+                            <a class="dropdown-item" href="../produto/editProd.php">Edição de Produtos</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -145,23 +135,23 @@ try {
 
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Nome do cliente:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Nome do cliente">
+                        <label class="form-label">Título da Agenda:</label>
+                        <input type="text" class="form-control" name="titulo" placeholder="Título da Agenda">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data de registro:</label>
-                        <input type="date" class="form-control" name="data_pedido">
+                        <input type="date" class="form-control" name="dataRegistro">
                     </div>
 
                     <div class="form-group mb-3">
-                        <label class="form-label">Data Prevista:</label>
-                        <input type="date" class="form-control" name="data_prevista">
+                        <label class="form-label">Data de Prazo:</label>
+                        <input type="date" class="form-control" name="dataPrazo">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Informações:</label>
-                        <input type="text" class="form-control" name="nome_cliente" placeholder="Informações">
+                        <input type="text" class="form-control" name="informacao" placeholder="Informações">
                     </div>
 
                 </div>
@@ -173,12 +163,83 @@ try {
                 </div>
             </div>
     </div>
-
-    </form>
+    
+    <!-- PopUp de sucesso -->
+    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
+        <div class="modal-dialog"> <!-- chama classe JS de popup success -->
+            <div class="modal-content"> <!-- cria estrutura do pop up -->
+                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+                    <h5 class="modal-title" id="successModalLabel">sucesso</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <!-- cria botão de fechar em forma de "x" 
+                            data-dismiss: faz o botão fecha o popup
+                        -->
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                    O produto foi cadastrado com sucesso!
+                </div>
+                <div class="modal-footer">
+                    <!-- parte de baixo do popup, cria botão fechar -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+                    <!-- data-dismiss: faz o botão fecha o popup -->
+                </div>
+            </div>
+        </div>
     </div>
+    <!-- fim do popup de sucesso -->
 
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <!-- PopUp de Erro -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog"> <!-- chama classe JS de popup error -->
+            <div class="modal-content"> <!-- cria estrutura do pop up -->
+                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+                    <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <!-- cria botão de fechar em forma de "x" 
+                            data-dismiss: faz o botão fecha o popup
+                        -->
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                    Não foi possível inserir o registro.<br>
+                    Por favor, tente novamente.
+                </div>
+                <div class="modal-footer">
+                    <!-- parte de baixo do popup, cria botão fechar -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+                    <!-- data-dismiss: faz o botão fecha o popup -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- fim do popup de erro -->
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script>
+        <?php if ($sucesso): ?>
+            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
+            realiza a ação de chamar o popup Modal e exibe o erro */
+            $(document).ready(function () {
+                $('#successModal').modal('show');
+                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
+            });
+        <?php endif; ?>
+        <?php if ($error): ?>
+            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
+            realiza a ação de chamar o popup Modal e exibe o erro */
+            $(document).ready(function () {
+                $('#errorModal').modal('show');
+                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
+            });
+        <?php endif; ?>
+    </script>
 </body>
 
 </html>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 22/08/2024 às 18:33
+-- Tempo de geração: 24/08/2024 às 07:03
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -24,36 +24,15 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
--- Estrutura para tabela `cadastros_pedidos`
+-- Estrutura para tabela `agenda`
 --
 
-CREATE TABLE `cadastros_pedidos` (
-  `Cod_Pedidos` int(5) NOT NULL,
-  `Pessoa` varchar(50) NOT NULL,
-  `Nome` varchar(50) NOT NULL,
-  `Contato` varchar(50) NOT NULL,
-  `Cod_produto` varchar(50) NOT NULL,
-  `Quantidade` int(5) NOT NULL,
-  `Descricao` text NOT NULL,
-  `Med_Personalizada` varchar(50) NOT NULL,
-  `Valor` decimal(10,0) NOT NULL,
-  `Data_Prevista` date NOT NULL,
-  `Status_Pag` varchar(50) NOT NULL,
-  `Valor_Total` decimal(10,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `cadastros_produtos`
---
-
-CREATE TABLE `cadastros_produtos` (
-  `codPro` int(5) NOT NULL,
-  `nome` varchar(50) NOT NULL,
-  `medida` varchar(50) NOT NULL,
-  `descricao` text NOT NULL,
-  `valor` decimal(10,0) NOT NULL
+CREATE TABLE `agenda` (
+  `codAgend` int(5) NOT NULL,
+  `titulo` varchar(50) NOT NULL,
+  `dataRegistro` date NOT NULL,
+  `dataPrazo` date NOT NULL,
+  `informacao` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -75,21 +54,54 @@ CREATE TABLE `dp_login` (
 INSERT INTO `dp_login` (`log_id`, `log_email`, `log_senha`) VALUES
 (1, 'teste', 'teste');
 
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `pedidos`
+--
+
+CREATE TABLE `pedidos` (
+  `codPed` int(5) NOT NULL,
+  `pessoa` varchar(50) NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `contato` varchar(50) NOT NULL,
+  `codPro` varchar(50) NOT NULL,
+  `quantid` int(5) NOT NULL,
+  `desc` text NOT NULL,
+  `medida` varchar(50) NOT NULL,
+  `valorUnit` decimal(10,0) NOT NULL,
+  `dataPed` date NOT NULL,
+  `dataPrev` date NOT NULL,
+  `entrega` varchar(50) NOT NULL,
+  `logradouro` varchar(50) NOT NULL,
+  `numero` int(5) NOT NULL,
+  `bairro` varchar(50) NOT NULL,
+  `entrada` varchar(50) NOT NULL,
+  `valorEnt` int(11) NOT NULL,
+  `valorTotal` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `produtos`
+--
+
+CREATE TABLE `produtos` (
+  `codPro` int(5) NOT NULL,
+  `nome` varchar(50) NOT NULL,
+  `valor` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
 --
 -- Índices para tabelas despejadas
 --
 
 --
--- Índices de tabela `cadastros_pedidos`
+-- Índices de tabela `agenda`
 --
-ALTER TABLE `cadastros_pedidos`
-  ADD PRIMARY KEY (`Cod_Pedidos`);
-
---
--- Índices de tabela `cadastros_produtos`
---
-ALTER TABLE `cadastros_produtos`
-  ADD PRIMARY KEY (`codPro`);
+ALTER TABLE `agenda`
+  ADD PRIMARY KEY (`codAgend`);
 
 --
 -- Índices de tabela `dp_login`
@@ -98,26 +110,44 @@ ALTER TABLE `dp_login`
   ADD PRIMARY KEY (`log_id`);
 
 --
+-- Índices de tabela `pedidos`
+--
+ALTER TABLE `pedidos`
+  ADD PRIMARY KEY (`codPed`);
+
+--
+-- Índices de tabela `produtos`
+--
+ALTER TABLE `produtos`
+  ADD PRIMARY KEY (`codPro`);
+
+--
 -- AUTO_INCREMENT para tabelas despejadas
 --
 
 --
--- AUTO_INCREMENT de tabela `cadastros_pedidos`
+-- AUTO_INCREMENT de tabela `agenda`
 --
-ALTER TABLE `cadastros_pedidos`
-  MODIFY `Cod_Pedidos` int(5) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de tabela `cadastros_produtos`
---
-ALTER TABLE `cadastros_produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `agenda`
+  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
 --
 ALTER TABLE `dp_login`
   MODIFY `log_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `pedidos`
+--
+ALTER TABLE `pedidos`
+  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de tabela `produtos`
+--
+ALTER TABLE `produtos`
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

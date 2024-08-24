@@ -2,7 +2,7 @@
 /* CABECALHO */
 
 .cabecalho {
-    margin-bottom: 130px;
+    margin-bottom: 2%;
 }
 
 .cor_fonte {
@@ -70,19 +70,13 @@ nav {
 }
 
 /*-----------------------------------------------------------------------------------------*/
+/* modal de itens */
 
 .input-personalizado {
     border-radius: 20px;
     border: 2px solid #00BFFF;
     padding: 10px;
     text-align: center;
-    font-size: 16px;
-}
-
-.btn-personalizado {
-    width: 200px;
-    border-radius: 20px;
-    padding: 10px;
     font-size: 16px;
 }
 
@@ -103,6 +97,21 @@ nav {
     font-weight: bold;
 }
 
+.custom-modal-lg {
+    max-width: 100% !important; /* Ajuste conforme necessário */
+}
+
+.custom-modal-height {
+    height: 100%; /* Ajuste conforme necessário */
+    overflow-y: auto; /* Adiciona rolagem se o conteúdo for muito grande */
+}
+
+.numItens{
+    width: 60px;
+}
+
+/*----------------------------------------------------------------*/
+/* formularios */
 h2 {
     font-weight: bold;
 }
@@ -131,9 +140,6 @@ h2 {
     border-left: 1px solid #1AA7E7;
 }
 
-.col-custom:last-child {
-    margin-right: 0;
-}
 
 .btn-group-custom {
     display: flex;
@@ -142,4 +148,11 @@ h2 {
 
 .btn-group-custom button {
     margin: 0 10px;
+}
+
+.btn-personalizado {
+    width: 200px;
+    border-radius: 20px;
+    padding: 10px;
+    font-size: 16px;
 }
