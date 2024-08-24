@@ -6,8 +6,8 @@ if(!isset($_SESSION)) {
 // Verifica se a sessão está iniciada
 if (!isset($_SESSION['log_id'])) {
     // Verifica se o arquivo login.php existe na pasta atual
-    if (file_exists('login.php')) {
-        header("Location: login.php");
+    if (file_exists('./login.php')) {
+        header("Location: ./login.php");
     } 
     // Caso contrário, verifica se existe em ../login.php
     elseif (file_exists('../login.php')) {

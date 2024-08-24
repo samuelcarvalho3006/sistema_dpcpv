@@ -66,7 +66,7 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
                     <li>
-                        <a href="../logout.php" class="nav-link" style="color: red;">
+                        <a href="./logout.php" class="nav-link" style="color: red;">
                             <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                                 class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                                 <path fill-rule="evenodd"
