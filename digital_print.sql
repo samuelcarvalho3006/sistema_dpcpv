@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 24/08/2024 às 07:03
+-- Tempo de geração: 24/08/2024 às 18:58
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -34,6 +34,13 @@ CREATE TABLE `agenda` (
   `dataPrazo` date NOT NULL,
   `informacao` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `agenda`
+--
+
+INSERT INTO `agenda` (`codAgend`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`) VALUES
+(1, 'lavar louça', '2024-08-31', '2024-08-31', 'lavar a louça pra mamãe');
 
 -- --------------------------------------------------------
 
@@ -78,7 +85,8 @@ CREATE TABLE `pedidos` (
   `bairro` varchar(50) NOT NULL,
   `entrada` varchar(50) NOT NULL,
   `valorEnt` int(11) NOT NULL,
-  `valorTotal` decimal(10,0) NOT NULL
+  `valorTotal` decimal(10,0) NOT NULL,
+  `quantidadeItens` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -92,6 +100,15 @@ CREATE TABLE `produtos` (
   `nome` varchar(50) NOT NULL,
   `valor` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `produtos`
+--
+
+INSERT INTO `produtos` (`codPro`, `nome`, `valor`) VALUES
+(1, 'banner 50x50', 45),
+(2, 'cartão de visita laminado', 180),
+(3, 'panfleto 15x10', 124);
 
 --
 -- Índices para tabelas despejadas
@@ -129,7 +146,7 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `agenda`
 --
 ALTER TABLE `agenda`
-  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
@@ -147,7 +164,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
