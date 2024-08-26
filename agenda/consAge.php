@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT codAgend, titulo, dataRegistro, dataPrazo, informacao FROM agenda";
+    $sql = "SELECT * FROM agenda";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
