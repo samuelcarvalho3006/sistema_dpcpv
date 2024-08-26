@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT codPro, nome, valor FROM produtos";
+    $sql = "SELECT * FROM produtos";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
