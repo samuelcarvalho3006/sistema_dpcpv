@@ -26,7 +26,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['bairro'],
             $_POST['entrada'],
             $_POST['valorEnt'],
-            $_POST['valorTotal']
+            $_POST['valorTotal'],
+            $_POST['quantIt']
         )
         ) {
 
@@ -92,11 +93,14 @@ if ($entrega === 'entrega') {
     $showEndereco = true;
 }
 
-$query = "SELECT codPro, nome, valor FROM produtos";
+// Consulta todos os registros da tabela produtos
+$query = "SELECT * FROM produtos";
 $result = $conexao->query($query);
 
+// Inicializa um array vazio para armazenar os produtos
 $produtos = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    // Adiciona cada (registro) ao array $produtos como um array associativo
     $produtos[] = $row;
 }
 ?>
@@ -281,7 +285,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
                         <div class="mt-2 <?= $showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
                             <label class="form-label" for="valorEnt">R$</label>
-                            <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEntrada"
+                            <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
                                 style="width: 100px;" value="0,00">
 
                         </div>
@@ -420,20 +424,28 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
+        // Função para alternar a visibilidade do elemento com ID 'valorEntradaDiv'
         function toggleEntrada(show) {
             const valorEntradaDiv = document.getElementById('valorEntradaDiv');
+            // Verifica se o parâmetro 'show' é verdadeiro
             if (show) {
+                // Remove a classe 'd-none' para exibir o elemento
                 valorEntradaDiv.classList.remove('d-none');
             } else {
+                // Adiciona a classe 'd-none' para esconder o elemento
                 valorEntradaDiv.classList.add('d-none');
             }
         }
 
+        // Função para alternar a visibilidade do elemento com ID 'enderecoDiv'
         function toggleEntrega(show) {
             const enderecoDiv = document.getElementById('enderecoDiv');
+            // Verifica se o parâmetro 'show' é verdadeiro
             if (show) {
+                // Remove a classe 'd-none' para exibir o elemento
                 enderecoDiv.classList.remove('d-none');
             } else {
+                // Adiciona a classe 'd-none' para esconder o elemento
                 enderecoDiv.classList.add('d-none');
             }
         }
@@ -457,54 +469,30 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             });
         <?php endif; ?>
 
+        // Função para atualizar o valor unitário com base no produto selecionado
         function atualizarValor() {
 
+            // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
             const selectProduto = document.getElementById('prodSelec');
+            // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
             const valorUnitario = document.getElementById('vUnit');
 
+            // Converte o array PHP $produtos em um array JavaScript usando json_encode
             const produtos = <?php echo json_encode($produtos); ?>;
+
+            // Encontra o produto selecionado no array 'produtos'
+            // 'find' retorna o primeiro elemento que satisfaz a condição
+            // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
             const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
 
+            // Verifica se um produto correspondente foi encontrado
             if (produtoSelecionado) {
+                // Se encontrado, define o valor unitário com o valor do produto selecionado
                 valorUnitario.value = produtoSelecionado.valor;
             } else {
+                // Se não encontrado, limpa o campo de valor unitário
                 valorUnitario.value = '';
             }
-        }
-
-        function confirmar() {
-            // Lógica para salvar os dados
-            const numItens = document.getElementById('numItens').value;
-            const prodSelec = document.getElementById('prodSelec').value;
-            const medida = document.querySelector('input[name="medida"]').value;
-            const descricao = document.querySelector('input[name="descricao"]').value;
-            const unidade = document.querySelector('input[name="unidade"]').value;
-            const vUnit = document.getElementById('vUnit').value;
-
-            // Exemplo de como você pode enviar os dados para o servidor
-            fetch('url_do_seu_servidor', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    numItens,
-                    prodSelec,
-                    medida,
-                    descricao,
-                    unidade,
-                    vUnit,
-                }),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    // Fechar o modal após o sucesso
-                    $('#modalItens').modal('hide');
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
         }
     </script>
 </body>
