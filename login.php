@@ -73,6 +73,7 @@ if (isset($_POST['email']) && isset($_POST['senha'])) {
                                     class="form-control border-primary rounded" type="text" name="email">
                             </div>
                             <div class="form-group">
+                                <label for="email">Senha</label>
                                 <input placeholder="senha" class="form-control border-primary rounded" type="password"
                                     name="senha">
                             </div>
