@@ -13,51 +13,67 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $_POST['pessoa'],
             $_POST['nome'],
             $_POST['contato'],
-            $_POST['codPro'],
-            $_POST['quantid'],
             $_POST['desc'],
-            $_POST['medida'],
-            $_POST['valorUnit'],
-            $_POST['dataPed'],
-            $_POST['dataPrev'],
+            $_POST['datPedido'],
+            $_POST['datPrev'],
+            $_POST['numItens'],
             $_POST['entrega'],
             $_POST['logradouro'],
             $_POST['numero'],
             $_POST['bairro'],
             $_POST['entrada'],
             $_POST['valorEnt'],
-            $_POST['valorTotal']
+            $_POST['valorTotal'],
+            //-----------------------------------------------------------------------------
+            $_POST['codPed'],
+            $_POST['codProd'],
+            $_POST['quantidade'],
+            $_POST['medida'],
+            $_POST['precoUnit'],
+            $_POST['precoTotal']
         )
         ) {
 
-            $dataPedido = date('Y-m-d', strtotime($_POST['dataPedido']));
-            $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrevista']));
+            $dataPedido = date('Y-m-d', strtotime($_POST['dataPed']));
+            $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrev']));
             // Preparar a SQL
             $sql = "INSERT INTO pedidos
-            (pessoa, nome, contato, codPro, quantid, desc, medida, valorUnit, dataPed, dataPrev, entrega, logradouro, numero, bairro, entrada, valorEnt, valorTotal, quantidadeItens, valorUnit)
-            VALUES (:p_pess, :p_nome, :p_cont, :p_codPro, :p_quan, :p_desc, :p_med, :p_vUnit, :p_datPed, :p_datPrev, :p_ent, :p_log, :p_num, :p_bairr, :p_entr, :p_vEnt, :p_vTot, :p_quanIt)";
+            (pessoa, nome, contato, quantid, desc, dataPed, dataPrev, numItens, entrega, logradouro, numero, bairro, entrada, valorEnt, valorTotal)
+            VALUES (:ped_pess, :ped_nome, :ped_ctt, :ped_quan, :ped_desc, :ped_datPed, :ped_datPev, :ped_nI :ped_entg, :ped_log, :ped_num, :ped_bair, :ped_entd, :ped_vEnt, :ped_vTot)";
 
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
-            $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
-            $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
-            $stmt->bindValue(':p_cont', $_POST['contato']); //contato
-            $stmt->bindValue(':p_codPro', $_POST['codPro']); //codigo do produto
-            $stmt->bindValue(':p_quan', $_POST['quantid']); //quantidade de itens do pedido
-            $stmt->bindValue(':p_desc', $_POST['desc']); //observações sobre o pedido
-            $stmt->bindValue(':p_med', $_POST['medida']); //medida do item
-            $stmt->bindValue(':p_vUnit', $_POST['valorUnit']); //valor unitário
-            $stmt->bindValue(':p_datPed', $_POST['datPedido']); //data do pedido
-            $stmt->bindValue(':p_datPrev', $_POST['datPrev']); //data estipulada
-            $stmt->bindValue(':p_ent', $_POST['entrega']); //forma d entrega
-            $stmt->bindValue(':p_log', $_POST['logradouro']);
-            $stmt->bindValue(':p_num', $_POST['numero']);
-            $stmt->bindValue(':p_bairr', $_POST['bairro']);
-            $stmt->bindValue(':p_entr', $_POST['entrada']);//entrada sim/nao
-            $stmt->bindValue(':p_vEnt', $_POST['valorEnt']);//valor da entrada
-            $stmt->bindValue(':p_vTot', $_POST['valorTotal']);//valor total
-            $stmt->bindValue(':p_quanIt', $_POST['quantIt']);//quantidade do produto
+            $stmt->bindValue(':ped_pess', $_POST['pessoa']); //pessoa fisica ou juridica
+            $stmt->bindValue(':ped_nome', $_POST['nome']); //nome do cliente
+            $stmt->bindValue(':ped_ctt', $_POST['contato']); //contato
+            $stmt->bindValue(':ped_desc', $_POST['desc']); //observações sobre o pedido
+            $stmt->bindValue(':ped_datPed', $_POST['datPedido']); //data do pedido
+            $stmt->bindValue(':ped_datPrev', $_POST['datPrev']); //data estipulada
+            $stmt->bindValue(':ped_nI', $_POST['numItens']);
+            $stmt->bindValue(':ped_entg', $_POST['entrega']); //forma d entrega
+            $stmt->bindValue(':ped_log', $_POST['logradouro']);
+            $stmt->bindValue(':ped_num', $_POST['numero']);
+            $stmt->bindValue(':ped_bair', $_POST['bairro']);
+            $stmt->bindValue(':ped_entd', $_POST['entrada']);//entrada sim/nao
+            $stmt->bindValue(':ped_vEnt', $_POST['valorEnt']);//valor da entrada
+            $stmt->bindValue(':ped_vTot', $_POST['valorTotal']);//valor total
+
+            //------------------------------------------------------------------------------------------------
+
+            $sql = "INSERT INTO itenspedidos
+            (codPed, codProd, quantidade, medida, precoUnit, precoTotal)
+            VALUES (:it_cPed, :it_cPro, :it_quant, :it_med, :it_pUni, :it_pTot)";
+
+            $stmt = $conexao->prepare($sql);
+
+            // Associar os valores aos placeholders
+            $stmt->bindValue(':it_cPed', $_POST['codPed']); //código referente ao pedido
+            $stmt->bindValue(':it_cPro', $_POST['codProd']); //código referente ao produto
+            $stmt->bindValue(':it_quant', $_POST['quantidade']); //quantidade
+            $stmt->bindValue(':it_med', $_POST['medida']); //medida
+            $stmt->bindValue(':it_pUnit', $_POST['precoUnit']); //preco unitario
+            $stmt->bindValue(':it_pTot', $_POST['precoTotal']); //preco total
 
             // Executar a SQL
             $stmt->execute();
@@ -187,7 +203,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control" name="dataPrev">
+                        <input type="date" class="form-control" name="datPrev">
                     </div>
 
                     <div class="form-group mb-3">
@@ -281,7 +297,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
                         <div class="mt-2 <?= $showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
                             <label class="form-label" for="valorEnt">R$</label>
-                            <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEntrada"
+                            <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
                                 style="width: 100px;" value="0,00">
 
                         </div>
@@ -305,7 +321,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                         <div class="form-group form-modal form-modal">
                                             <label class="form-label" for="numItens">nº de itens</label>
                                             <input type="number" class="form-control numItens" id="numItens"
-                                                name="quantid">
+                                                name="numItens">
                                         </div>
                                     </div>
                                 </div>
@@ -333,14 +349,21 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                                     <div class="col-md-6">
                                         <div class="form-group form-modal">
                                             <label class="form-label">Quantidade</label>
-                                            <input type="number" class="form-control numItens" name="quantIt">
+                                            <input type="number" class="form-control numItens" name="quantidade">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group form-modal">
                                             <label class="form-label">V.U.</label>
-                                            <input type="text" class="form-control" id="vUnit" readonly
-                                                name="valorUnit">
+                                            <input type="text" class="form-control" id="precoUnit" readonly
+                                                name="precoUnit">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-modal">
+                                            <label class="form-label">V.T.</label>
+                                            <input type="text" class="form-control" id="precoTotal" readonly
+                                                name="precoTotal">
                                         </div>
                                     </div>
                                 </div>
@@ -457,10 +480,10 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             });
         <?php endif; ?>
 
-        function atualizarValor() {
+        function atualizarValorUnit() {
 
             const selectProduto = document.getElementById('prodSelec');
-            const valorUnitario = document.getElementById('vUnit');
+            const valorUnitario = document.getElementById('precoUnit');
 
             const produtos = <?php echo json_encode($produtos); ?>;
             const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
@@ -472,6 +495,24 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             }
         }
 
+        function atualizarValorTotal() {
+
+            const selectProduto = document.getElementById('prodSelec');
+            const valorUnitario = document.getElementById('precoUnit');
+            const quantidade = parseFloat(document.getElementById('quantidade').value) || 0;
+            const valorTotal = document.getElementById('precoTotal');
+
+            const produtos = <?php echo json_encode($produtos); ?>;
+            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
+
+            if (valorUnit) {
+                valorUnitario.value = produtoSelecionado.valor;
+                valorTotal.value = valorUnit.valor * quantidade;
+            } else {
+                valorTotal.value = '';
+            }
+        }
+
         function confirmar() {
             // Lógica para salvar os dados
             const numItens = document.getElementById('numItens').value;
@@ -479,10 +520,11 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             const medida = document.querySelector('input[name="medida"]').value;
             const descricao = document.querySelector('input[name="descricao"]').value;
             const unidade = document.querySelector('input[name="unidade"]').value;
-            const vUnit = document.getElementById('vUnit').value;
+            const valorUnit = document.getElementById('precoUnit').value;
+            const valorTotal = document.getElementById('precoTotal').value;
 
             // Exemplo de como você pode enviar os dados para o servidor
-            fetch('url_do_seu_servidor', {
+            fetch('http://localhost:80', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -493,18 +535,10 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     medida,
                     descricao,
                     unidade,
-                    vUnit,
+                    valorUnit,
+                    valorTotal,
                 }),
             })
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Success:', data);
-                    // Fechar o modal após o sucesso
-                    $('#modalItens').modal('hide');
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
         }
     </script>
 </body>

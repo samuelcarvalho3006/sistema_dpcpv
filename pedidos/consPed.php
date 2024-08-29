@@ -114,13 +114,13 @@ try {
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['codPed']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['nome']); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
-                            <td><?php echo htmlspecialchars($registro['entrada']); ?></td>
+                            <td><?php echo($registro['codPed']); ?></td>
+                            <td><?php echo($registro['nome']); ?></td>
+                            <td><?php echo(date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
+                            <td><?php echo(date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
+                            <td><?php echo($registro['entrada']); ?></td>
                             <td></td>
-                            <td><?php echo htmlspecialchars($registro['valorTotal']); ?></td>
+                            <td><?php echo($registro['valorTotal']); ?></td>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>

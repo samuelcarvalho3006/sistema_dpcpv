@@ -44,7 +44,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.0">
 </head>
 
 <body>
@@ -125,6 +125,7 @@ try {
                     <div class="form-group mb-3">
                         <label class="form-label">Valor:</label>
                         <input type="text" class="form-control" name="valor" placeholder="R$ 0,00" required>
+                        <span class="aviso">Utilize ponto ao invés de vírgula</span>
                     </div>
                 </div>
 
