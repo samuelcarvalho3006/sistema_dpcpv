@@ -32,7 +32,7 @@ try {
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="../admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -51,8 +51,8 @@ try {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="./cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="#">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="./cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="./consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -62,8 +62,8 @@ try {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir na Agenda</a>
-                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar Agenda</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -73,10 +73,11 @@ try {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="../produto/editProd.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -114,13 +115,13 @@ try {
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo($registro['codPed']); ?></td>
-                            <td><?php echo($registro['nome']); ?></td>
-                            <td><?php echo(date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
-                            <td><?php echo(date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
-                            <td><?php echo($registro['entrada']); ?></td>
+                            <td><?php echo ($registro['codPed']); ?></td>
+                            <td><?php echo ($registro['nome']); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
+                            <td><?php echo ($registro['entrada']); ?></td>
                             <td></td>
-                            <td><?php echo($registro['valorTotal']); ?></td>
+                            <td><?php echo ($registro['valorTotal']); ?></td>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>

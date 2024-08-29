@@ -131,7 +131,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 <body>
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="..//admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -150,8 +150,8 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="./consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="./cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="./consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -161,8 +161,8 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir na Agenda</a>
-                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar Agenda</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -172,10 +172,11 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="../produto/editProd.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -480,66 +481,29 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             });
         <?php endif; ?>
 
-        function atualizarValorUnit() {
+        function atualizarValor() {
 
             const selectProduto = document.getElementById('prodSelec');
             const valorUnitario = document.getElementById('precoUnit');
 
+            // Converte o array PHP $produtos em um array JavaScript usando json_encode
             const produtos = <?php echo json_encode($produtos); ?>;
+
+            // Encontra o produto selecionado no array 'produtos'
+            // 'find' retorna o primeiro elemento que satisfaz a condição
+            // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
             const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
 
+            // Verifica se um produto correspondente foi encontrado
             if (produtoSelecionado) {
+                // Se encontrado, define o valor unitário com o valor do produto selecionado
                 valorUnitario.value = produtoSelecionado.valor;
             } else {
+                // Se não encontrado, limpa o campo de valor unitário
                 valorUnitario.value = '';
             }
         }
 
-        function atualizarValorTotal() {
-
-            const selectProduto = document.getElementById('prodSelec');
-            const valorUnitario = document.getElementById('precoUnit');
-            const quantidade = parseFloat(document.getElementById('quantidade').value) || 0;
-            const valorTotal = document.getElementById('precoTotal');
-
-            const produtos = <?php echo json_encode($produtos); ?>;
-            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
-
-            if (valorUnit) {
-                valorUnitario.value = produtoSelecionado.valor;
-                valorTotal.value = valorUnit.valor * quantidade;
-            } else {
-                valorTotal.value = '';
-            }
-        }
-
-        function confirmar() {
-            // Lógica para salvar os dados
-            const numItens = document.getElementById('numItens').value;
-            const prodSelec = document.getElementById('prodSelec').value;
-            const medida = document.querySelector('input[name="medida"]').value;
-            const descricao = document.querySelector('input[name="descricao"]').value;
-            const unidade = document.querySelector('input[name="unidade"]').value;
-            const valorUnit = document.getElementById('precoUnit').value;
-            const valorTotal = document.getElementById('precoTotal').value;
-
-            // Exemplo de como você pode enviar os dados para o servidor
-            fetch('http://localhost:80', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    numItens,
-                    prodSelec,
-                    medida,
-                    descricao,
-                    unidade,
-                    valorUnit,
-                    valorTotal,
-                }),
-            })
-        }
     </script>
 </body>
 

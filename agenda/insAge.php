@@ -62,7 +62,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="..//admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Inserir na Agenda</a>
-                            <a class="dropdown-item" href="consAge.php">Consultar Agenda</a>
+                            <a class="dropdown-item" href="./insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="./consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -103,10 +103,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="../produto/editProd.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -145,7 +146,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
 
                     <div class="form-group mb-3">
                         <label class="form-label">Informações:</label>
-                        <input type="text" class="form-control" name="informacao" placeholder="Informações">
+                        <textarea class="form-control" name="informacao"
+                            placeholder="Digite as informações sobre o registro..." rows="5"></textarea>
                     </div>
 
                 </div>
