@@ -27,10 +27,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
-            $stmt->bindValue('a_t', $_POST['titulo']);
-            $stmt->bindValue('a_dR', $_POST['dataRegistro']);
-            $stmt->bindValue('a_dP', $_POST['dataPrazo']);
-            $stmt->bindValue('a_I', $_POST['informacao']);
+            $stmt->bindValue(':a_t', $_POST['titulo']);
+            $stmt->bindValue(':a_dR', $_POST['dataRegistro']);
+            $stmt->bindValue(':a_dP', $_POST['dataPrazo']);
+            $stmt->bindValue(':a_I', $_POST['informacao']);
 
             // Executar a SQL
             $stmt->execute();
@@ -81,8 +81,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -92,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Inserir na Agenda</a>
-                            <a class="dropdown-item" href="consAge.php">Consultar Agenda</a>
+                            <a class="dropdown-item" href="#">Inserir</a>
+                            <a class="dropdown-item" href="consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -103,8 +103,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="../produto/editProd.php">Edição de Produtos</a>
+                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
+                        </div>
+                    </li> <!-- FECHA O DROPDOWN MENU-->
+
+                    <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
+                        <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Funcionários
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="../funcionarios/cadFunc.php">Cadastro</a>
+                            <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->

@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT codAgend, titulo, dataRegistro, dataPrazo, informacao FROM agenda";
+    $sql = "SELECT * FROM funcionarios";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -32,7 +32,7 @@ try {
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="nav justify-content-start m-2" href="../admInicial.php">
+            <a class="navbar-brand m-2" href="..//admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -62,8 +62,8 @@ try {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="insAge.php">Inserir</a>
-                            <a class="dropdown-item" href="#">Consultar</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -84,11 +84,10 @@ try {
                             Funcionários
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../funcionarios/cadFunc.php">Cadastro</a>
-                            <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
+                            <a class="dropdown-item" href="./cadFunc.php">Cadastro</a>
+                            <a class="dropdown-item" href="./listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -104,7 +103,7 @@ try {
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <div class="container mt-5">
-        <h3 class="text-center mb-5">Agenda Cadastrada</h3>
+        <h3 class="text-center mb-5">Lista de Funcionários</h3>
 
         <?php if ($erro): ?>
             <div class="alert alert-danger" role="alert">
@@ -115,21 +114,16 @@ try {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Título</th>
-                        <th>Data de Registro</th>
-                        <th>Data de Prazo</th>
-                        <th>Informação</th>
+                        <th>Nome</th>
                         <th>Operações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['codAgend']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['titulo']); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
-                            <td><?php echo htmlspecialchars($registro['informacao']); ?></td>
+                            <td><?php echo htmlspecialchars($registro['cod_func']); ?></td>
+                            <td><?php echo htmlspecialchars($registro['nome']); ?></td>
+                            <td></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

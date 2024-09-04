@@ -52,8 +52,8 @@ try {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro de Pedidos</a>
-                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta de Pedidos</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -63,8 +63,8 @@ try {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir na Agenda</a>
-                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar Agenda</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -74,8 +74,19 @@ try {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadProd.php">Cadastro de Produtos</a>
-                            <a class="dropdown-item" href="#">Edição de Produtos</a>
+                            <a class="dropdown-item" href="cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="#">Edição</a>
+                        </div>
+                    </li> <!-- FECHA O DROPDOWN MENU-->
+
+                    <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
+                        <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
+                            data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Funcionários
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="../funcionarios/cadFunc.php">Cadastro</a>
+                            <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
