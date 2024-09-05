@@ -104,7 +104,7 @@ try {
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <div class="container mt-5">
-        <h3 class="text-center mb-5">Agenda Cadastrada</h3>
+        <h3 class="text-center mb-5">Lista de Produtos</h3>
 
         <?php if ($erro): ?> <!-- Se a variável $erro for true, exibe uma mensagem de erro. -->
             <div class="alert alert-danger" role="alert">

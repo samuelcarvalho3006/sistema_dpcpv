@@ -68,8 +68,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Funcionários
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../funcionarios/cadFunc.php">Cadastro</a>
-                            <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
+                            <a class="dropdown-item" href="./funcionarios/cadFunc.php">Cadastro</a>
+                            <a class="dropdown-item" href="./funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->

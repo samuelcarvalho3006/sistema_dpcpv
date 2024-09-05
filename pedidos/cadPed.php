@@ -12,27 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrevista']));
         // Preparar a SQL
         $sql = "INSERT INTO pedidos
-            (funcionario, tipoPessoa, nomeCli, contato, desc, dataPed, dataPrev, entrega, logradouro, numero, bairro)
-            VALUES (:p_func, :p_pess, :p_nome, :p_cont, :p_desc, :p_datPed, :p_datPrev, :p_ent, :p_log, :p_num, :p_bairr)";
+            (funcionario, dataPed, dataPrev, nomeCli, tipoPessoa, contato
+            VALUES (:p_func, :p_datPed, :p_datPrev, :p_nome, :p_pess, :p_cont)";
 
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue(':p_func', $_POST['funcionario']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
-        $stmt->bindValue(':p_cont', $_POST['contato']); //contato
-        $stmt->bindValue(':p_codPro', $_POST['codPro']); //codigo do produto
-        $stmt->bindValue(':p_quan', $_POST['quantid']); //quantidade de itens do pedido
-        $stmt->bindValue(':p_desc', $_POST['desc']); //observações sobre o pedido
-        $stmt->bindValue(':p_med', $_POST['medida']); //medida do item
-        $stmt->bindValue(':p_vUnit', $_POST['valorUnit']); //valor unitário
+        $stmt->bindValue(':p_func', $_POST['funcionario']); //funcionario responsavel
         $stmt->bindValue(':p_datPed', $_POST['datPedido']); //data do pedido
         $stmt->bindValue(':p_datPrev', $_POST['datPrev']); //data estipulada
-        $stmt->bindValue(':p_ent', $_POST['entrega']); //forma d entrega
-        $stmt->bindValue(':p_log', $_POST['logradouro']);
-        $stmt->bindValue(':p_num', $_POST['numero']);
-        $stmt->bindValue(':p_bairr', $_POST['bairro']);
+        $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
+        $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
+        $stmt->bindValue(':p_cont', $_POST['contato']); //contato
+
 
         // Executar a SQL
         $stmt->execute();
@@ -168,8 +160,8 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
+    <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
     <div class="container container-custom">
-        <h3 class="text-center mb-4">Cadastro de Pedidos</h3>
         <form method="POST">
             <div class="row row-custom">
 
@@ -194,6 +186,10 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                         <label class="form-label">Data prevista:</label>
                         <input type="date" class="form-control" name="dataPrev">
                     </div>
+                </div>
+
+                <!-- Segunda Coluna -->
+                <div class="col-custom2">
 
                     <div class="form-group mb-3">
                         <label class="form-label">Nome do cliente:</label>
@@ -209,26 +205,23 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             <label class="form-check-label" for="pessoaJur">Jurídica</label>
                         </div>
                     </div>
-                </div>
-                    <!-- Segunda Coluna -->
-                    <div class="col-custom2">
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Contato:</label>
-                            <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc.">
-                        </div>
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Observações:</label>
-                            <input type="text" class="form-control" name="desc" placeholder="Informações extras">
-                        </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Contato:</label>
+                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc.">
+                    </div>
 
-                        <!--
+                    <!--
+                    <div class="form-group mb-3">
+                        <label class="form-label">Observações:</label>
+                        <input type="text" class="form-control" name="desc" placeholder="Informações extras">
+                    </div>
+
                     <div class="form-group mb-3">
                         <button class="btn btn-outline-primary btn-personalizado" data-bs-toggle="modal"
                             data-bs-target="#modalItens" type="button">Inserir itens</button>
                     </div>
-                    -->
 
                         <div class="form-group mb-3">
                             <label class="form-label">Forma de entrega:</label>
@@ -294,7 +287,9 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             </div>
                         </div>
                     </div>
-                </div>
+                            -->
+
+                </div> <!-- FECHA COL -->
 
                 <!-- Modal
             <div class="modal fade custom-modal-lg" id="modalItens" tabindex="-1" aria-labelledby="modalItensLabel"
