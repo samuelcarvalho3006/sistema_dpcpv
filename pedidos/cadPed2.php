@@ -7,32 +7,21 @@ $sucesso = false;
 $error = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-
-        $dataPedido = date('Y-m-d', strtotime($_POST['dataPedido']));
-        $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrevista']));
+        
         // Preparar a SQL
-        $sql = "INSERT INTO pedidos
-            (funcionario, tipoPessoa, nomeCli, contato, desc, dataPed, dataPrev, entrega, logradouro, numero, bairro)
-            VALUES (:p_func, :p_pess, :p_nome, :p_cont, :p_desc, :p_datPed, :p_datPrev, :p_ent, :p_log, :p_num, :p_bairr)";
+        $sql = "INSERT INTO itens_pedido
+            (codPro, medida, quantidade, valorUnit, valorTotal)
+            VALUES (:i_codpro, :i_medida, :i_quantidade, :i_vUnit, :i_vTot)";
 
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue(':p_func', $_POST['funcionario']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
-        $stmt->bindValue(':p_cont', $_POST['contato']); //contato
-        $stmt->bindValue(':p_codPro', $_POST['codPro']); //codigo do produto
-        $stmt->bindValue(':p_quan', $_POST['quantid']); //quantidade de itens do pedido
-        $stmt->bindValue(':p_desc', $_POST['desc']); //observações sobre o pedido
-        $stmt->bindValue(':p_med', $_POST['medida']); //medida do item
-        $stmt->bindValue(':p_vUnit', $_POST['valorUnit']); //valor unitário
-        $stmt->bindValue(':p_datPed', $_POST['datPedido']); //data do pedido
-        $stmt->bindValue(':p_datPrev', $_POST['datPrev']); //data estipulada
-        $stmt->bindValue(':p_ent', $_POST['entrega']); //forma d entrega
-        $stmt->bindValue(':p_log', $_POST['logradouro']);
-        $stmt->bindValue(':p_num', $_POST['numero']);
-        $stmt->bindValue(':p_bairr', $_POST['bairro']);
+        $stmt->bindValue(':i_codpro', $_POST['codpro']);
+        $stmt->bindValue(':i_medida', $_POST['medida']);
+        $stmt->bindValue(':i_quantidade', $_POST['quantidade']);
+        $stmt->bindValue(':i_vUnit', $_POST['vUnit']);
+        $stmt->bindValue(':i_vTot', $_POST['vTot']);
+
 
         // Executar a SQL
         $stmt->execute();
@@ -44,26 +33,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-//-------------------------------------------------------------
-// PROGRAMAÇÃO PARA EXIBIR OU NÃO ENDEREÇO E VALOR DE ENTRADA
-
-$showValorEntrada = false;
-$showEndereco = false;
-
-// Capturando os valores enviados via POST
-$entrada = $_POST['entrada'] ?? null;
-$entrega = $_POST['entrega'] ?? null;
-
-// Verificando se "Sim" foi selecionado para "Entrada"
-if ($entrada === 'sim') {
-    $showValorEntrada = true;
-}
-
-// Verificando se "Entrega" foi selecionada para "Forma de entrega"
-if ($entrega === 'entrega') {
-    $showEndereco = true;
-}
-
 // Consulta todos os registros da tabela produtos
 $query = "SELECT * FROM produtos";
 $result = $conexao->query($query);
@@ -73,14 +42,6 @@ $produtos = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     // Adiciona cada (registro) ao array $produtos como um array associativo
     $produtos[] = $row;
-}
-
-$query = "SELECT * FROM funcionarios";
-$resultado = $conexao->query($query);
-$funcionarios = [];
-while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $funcionarios como um array associativo
-    $funcionarios[] = $row;
 }
 ?>
 
@@ -284,31 +245,6 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
         <script>
-            // Função para alternar a visibilidade do elemento com ID 'valorEntradaDiv'
-            function toggleEntrada(show) {
-                const valorEntradaDiv = document.getElementById('valorEntradaDiv');
-                // Verifica se o parâmetro 'show' é verdadeiro
-                if (show) {
-                    // Remove a classe 'd-none' para exibir o elemento
-                    valorEntradaDiv.classList.remove('d-none');
-                } else {
-                    // Adiciona a classe 'd-none' para esconder o elemento
-                    valorEntradaDiv.classList.add('d-none');
-                }
-            }
-
-            // Função para alternar a visibilidade do elemento com ID 'enderecoDiv'
-            function toggleEntrega(show) {
-                const enderecoDiv = document.getElementById('enderecoDiv');
-                // Verifica se o parâmetro 'show' é verdadeiro
-                if (show) {
-                    // Remove a classe 'd-none' para exibir o elemento
-                    enderecoDiv.classList.remove('d-none');
-                } else {
-                    // Adiciona a classe 'd-none' para esconder o elemento
-                    enderecoDiv.classList.add('d-none');
-                }
-            }
 
             <?php if ($sucesso): ?>
                 /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"

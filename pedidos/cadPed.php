@@ -3,16 +3,13 @@ include('../protect.php'); // Inclui a função de proteção ao acesso da pági
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$sucesso = false;
+//$sucesso = false;
 $error = false;
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     try {
-
-        $dataPedido = date('Y-m-d', strtotime($_POST['dataPedido']));
-        $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrevista']));
         // Preparar a SQL
         $sql = "INSERT INTO pedidos
-            (funcionario, dataPed, dataPrev, nomeCli, tipoPessoa, contato
+            (funcionario, dataPed, dataPrev, nomeCli, tipoPessoa, contato)
             VALUES (:p_func, :p_datPed, :p_datPrev, :p_nome, :p_pess, :p_cont)";
 
         $stmt = $conexao->prepare($sql);
@@ -39,33 +36,33 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 //-------------------------------------------------------------
 // PROGRAMAÇÃO PARA EXIBIR OU NÃO ENDEREÇO E VALOR DE ENTRADA
 
-$showValorEntrada = false;
-$showEndereco = false;
+//$showValorEntrada = false;
+//$showEndereco = false;
 
 // Capturando os valores enviados via POST
-$entrada = $_POST['entrada'] ?? null;
-$entrega = $_POST['entrega'] ?? null;
+//$entrada = $_POST['entrada'] ?? null;
+//$entrega = $_POST['entrega'] ?? null;
 
 // Verificando se "Sim" foi selecionado para "Entrada"
-if ($entrada === 'sim') {
-    $showValorEntrada = true;
-}
+//if ($entrada === 'sim') {
+//    $showValorEntrada = true;
+//}
 
 // Verificando se "Entrega" foi selecionada para "Forma de entrega"
-if ($entrega === 'entrega') {
-    $showEndereco = true;
-}
+//if ($entrega === 'entrega') {
+//    $showEndereco = true;
+//}
 
 // Consulta todos os registros da tabela produtos
-$query = "SELECT * FROM produtos";
-$result = $conexao->query($query);
+//$query = "SELECT * FROM produtos";
+//$result = $conexao->query($query);
 
 // Inicializa um array vazio para armazenar os produtos
-$produtos = [];
-while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+//$produtos = [];
+//while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     // Adiciona cada (registro) ao array $produtos como um array associativo
-    $produtos[] = $row;
-}
+//    $produtos[] = $row;
+//}
 
 $query = "SELECT * FROM funcionarios";
 $resultado = $conexao->query($query);
@@ -366,53 +363,53 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         </form>
     </div>
 
-    <!-- PopUp de sucesso -->
+    <!-- PopUp de sucesso
     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup success -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+        <div class="modal-dialog">  chama classe JS de popup success 
+            <div class="modal-content">  cria estrutura do pop up 
+                <div class="modal-header">  cabecalho do popup, notifcação em destaque 
                     <h5 class="modal-title" id="successModalLabel">sucesso</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
+                         cria botão de fechar em forma de "x" 
                             data-dismiss: faz o botão fecha o popup
-                        -->
+                        
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                <div class="modal-body"> corpo do popup, exibe qual foi o erro 
                     O produto foi cadastrado com sucesso!
                 </div>
                 <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
+                     parte de baixo do popup, cria botão fechar 
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
+                     data-dismiss: faz o botão fecha o popup 
                 </div>
             </div>
         </div>
     </div>
-    <!-- fim do popup de sucesso -->
+    fim do popup de sucesso -->
 
     <!-- PopUp de Erro -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup error -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+        <div class="modal-dialog">  chama classe JS de popup error 
+            <div class="modal-content">  cria estrutura do pop up 
+                <div class="modal-header">  cabecalho do popup, notifcação em destaque 
                     <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
+                         cria botão de fechar em forma de "x" 
                             data-dismiss: faz o botão fecha o popup
-                        -->
+                        
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                <div class="modal-body"> corpo do popup, exibe qual foi o erro 
                     Não foi possível inserir o registro.<br>
                     Por favor, tente novamente.
                 </div>
                 <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
+                     parte de baixo do popup, cria botão fechar 
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
+                     data-dismiss: faz o botão fecha o popup 
                 </div>
             </div>
         </div>
@@ -424,75 +421,75 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
         // Função para alternar a visibilidade do elemento com ID 'valorEntradaDiv'
-        function toggleEntrada(show) {
-            const valorEntradaDiv = document.getElementById('valorEntradaDiv');
+//        function toggleEntrada(show) {
+//            const valorEntradaDiv = document.getElementById('valorEntradaDiv');
             // Verifica se o parâmetro 'show' é verdadeiro
-            if (show) {
+//            if (show) {
                 // Remove a classe 'd-none' para exibir o elemento
-                valorEntradaDiv.classList.remove('d-none');
-            } else {
+//                valorEntradaDiv.classList.remove('d-none');
+//            } else {
                 // Adiciona a classe 'd-none' para esconder o elemento
-                valorEntradaDiv.classList.add('d-none');
-            }
-        }
+//                valorEntradaDiv.classList.add('d-none');
+//            }
+//        }
 
         // Função para alternar a visibilidade do elemento com ID 'enderecoDiv'
-        function toggleEntrega(show) {
-            const enderecoDiv = document.getElementById('enderecoDiv');
+//        function toggleEntrega(show) {
+//            const enderecoDiv = document.getElementById('enderecoDiv');
             // Verifica se o parâmetro 'show' é verdadeiro
-            if (show) {
+//            if (show) {
                 // Remove a classe 'd-none' para exibir o elemento
-                enderecoDiv.classList.remove('d-none');
-            } else {
+//                enderecoDiv.classList.remove('d-none');
+//            } else {
                 // Adiciona a classe 'd-none' para esconder o elemento
-                enderecoDiv.classList.add('d-none');
-            }
-        }
+//                enderecoDiv.classList.add('d-none');
+//            }
+//        }
 
-        <?php if ($sucesso): ?>
+       <?php //if ($sucesso): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
+/*            $(document).ready(function () {
                 $('#successModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
-        <?php if ($error): ?>
+                 chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup 
+            }); */
+        <?php // endif; ?>
+        <?php // if ($error): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
+            /*$(document).ready(function () {
                 $('#errorModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
+                 chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup 
+            });*/
+        <?php //endif; ?>
 
         // Função para atualizar o valor unitário com base no produto selecionado
-        function atualizarValor() {
+//        function atualizarValor() {
 
             // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
-            const selectProduto = document.getElementById('prodSelec');
+//            const selectProduto = document.getElementById('prodSelec');
             // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
-            const valorUnitario = document.getElementById('vUnit');
+//            const valorUnitario = document.getElementById('vUnit');
 
             // Converte o array PHP $produtos em um array JavaScript usando json_encode
-            const produtos = <?php echo json_encode($produtos); ?>;
+//            const produtos = <?php echo json_encode($produtos); ?>;
 
             // Encontra o produto selecionado no array 'produtos'
             // 'find' retorna o primeiro elemento que satisfaz a condição
             // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
-            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
+//            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
 
             // Verifica se um produto correspondente foi encontrado
-            if (produtoSelecionado) {
+//            if (produtoSelecionado) {
                 // Se encontrado, define o valor unitário com o valor do produto selecionado
-                valorUnitario.value = produtoSelecionado.valor;
-            } else {
-                // Se não encontrado, limpa o campo de valor unitário
-                valorUnitario.value = '';
-            }
-        }
+//                valorUnitario.value = produtoSelecionado.valor;
+//            } else {
+//               // Se não encontrado, limpa o campo de valor unitário
+//                valorUnitario.value = '';
+//            }
+//        }
     </script>
 </body>
 
