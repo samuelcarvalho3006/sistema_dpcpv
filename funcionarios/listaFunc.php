@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT * FROM produtos";
+    $sql = "SELECT * FROM funcionarios";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -25,7 +25,6 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Agenda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" href="../style.css">
 </head>
 
@@ -33,7 +32,7 @@ try {
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="../admInicial.php">
+            <a class="navbar-brand m-2" href="..//admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -74,8 +73,8 @@ try {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadProd.php">Cadastro</a>
-                            <a class="dropdown-item" href="#">Edição</a>
+                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -85,8 +84,8 @@ try {
                             Funcionários
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../funcionarios/cadFunc.php">Cadastro</a>
-                            <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
+                            <a class="dropdown-item" href="./cadFunc.php">Cadastro</a>
+                            <a class="dropdown-item" href="./listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
@@ -104,28 +103,26 @@ try {
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <div class="container mt-5">
-        <h3 class="text-center mb-5">Agenda Cadastrada</h3>
+        <h3 class="text-center mb-5">Lista de Funcionários</h3>
 
-        <?php if ($erro): ?> <!-- Se a variável $erro for true, exibe uma mensagem de erro. -->
+        <?php if ($erro): ?>
             <div class="alert alert-danger" role="alert">
                 Não foi possível carregar os dados.
             </div>
-        <?php else: ?> <!-- Se não houve erro, exibe a tabela com os registros. -->
+        <?php else: ?>
             <table class="table table-striped">
-                <thead> <!-- define o cabeçalho da tabela -->
+                <thead>
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
-                        <th>Valor</th>
                         <th>Operações</th>
                     </tr>
                 </thead>
-                <tbody> <!-- define o corpo da tabela -->
+                <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['codPro']); ?></td>
+                            <td><?php echo htmlspecialchars($registro['cod_func']); ?></td>
                             <td><?php echo htmlspecialchars($registro['nome']); ?></td>
-                            <td>R$<?php echo htmlspecialchars($registro['valor']); ?></td>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>

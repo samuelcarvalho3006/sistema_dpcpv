@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 24/08/2024 às 18:58
+-- Tempo de geração: 05/09/2024 às 11:24
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -64,19 +64,49 @@ INSERT INTO `dp_login` (`log_id`, `log_email`, `log_senha`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Estrutura para tabela `funcionarios`
+--
+
+CREATE TABLE `funcionarios` (
+  `cod_func` int(5) NOT NULL,
+  `nome` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `funcionarios`
+--
+
+INSERT INTO `funcionarios` (`cod_func`, `nome`) VALUES
+(1, 'jenifer');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `itens_pedido`
+--
+
+CREATE TABLE `itens_pedido` (
+  `cod_itensPed` int(5) NOT NULL,
+  `codPro` int(5) NOT NULL,
+  `medida` varchar(50) NOT NULL,
+  `quantidade` int(5) NOT NULL,
+  `valorUnit` decimal(10,0) NOT NULL,
+  `valorTotal` decimal(10,0) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estrutura para tabela `pedidos`
 --
 
 CREATE TABLE `pedidos` (
   `codPed` int(5) NOT NULL,
-  `pessoa` varchar(50) NOT NULL,
-  `nome` varchar(50) NOT NULL,
+  `funcionario` varchar(50) NOT NULL,
+  `tipoPessoa` varchar(50) NOT NULL,
+  `nomeCli` varchar(50) NOT NULL,
   `contato` varchar(50) NOT NULL,
-  `codPro` varchar(50) NOT NULL,
-  `quantid` int(5) NOT NULL,
   `desc` text NOT NULL,
-  `medida` varchar(50) NOT NULL,
-  `valorUnit` decimal(10,0) NOT NULL,
   `dataPed` date NOT NULL,
   `dataPrev` date NOT NULL,
   `entrega` varchar(50) NOT NULL,
@@ -84,9 +114,9 @@ CREATE TABLE `pedidos` (
   `numero` int(5) NOT NULL,
   `bairro` varchar(50) NOT NULL,
   `entrada` varchar(50) NOT NULL,
-  `valorEnt` int(11) NOT NULL,
+  `valorEnt` decimal(10,0) NOT NULL,
   `valorTotal` decimal(10,0) NOT NULL,
-  `quantidadeItens` int(5) NOT NULL
+  `cod_itensPed` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -108,7 +138,8 @@ CREATE TABLE `produtos` (
 INSERT INTO `produtos` (`codPro`, `nome`, `valor`) VALUES
 (1, 'banner 50x50', 45),
 (2, 'cartão de visita laminado', 180),
-(3, 'panfleto 15x10', 124);
+(3, 'panfleto 15x10', 124),
+(4, 'Fabrizio', 1);
 
 --
 -- Índices para tabelas despejadas
@@ -125,6 +156,18 @@ ALTER TABLE `agenda`
 --
 ALTER TABLE `dp_login`
   ADD PRIMARY KEY (`log_id`);
+
+--
+-- Índices de tabela `funcionarios`
+--
+ALTER TABLE `funcionarios`
+  ADD PRIMARY KEY (`cod_func`);
+
+--
+-- Índices de tabela `itens_pedido`
+--
+ALTER TABLE `itens_pedido`
+  ADD PRIMARY KEY (`cod_itensPed`);
 
 --
 -- Índices de tabela `pedidos`
@@ -155,6 +198,18 @@ ALTER TABLE `dp_login`
   MODIFY `log_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
 
 --
+-- AUTO_INCREMENT de tabela `funcionarios`
+--
+ALTER TABLE `funcionarios`
+  MODIFY `cod_func` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
+--
+-- AUTO_INCREMENT de tabela `itens_pedido`
+--
+ALTER TABLE `itens_pedido`
+  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
@@ -164,7 +219,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

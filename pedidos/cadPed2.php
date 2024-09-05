@@ -175,128 +175,96 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Responsável:</label>
-                        <select class="form-select" name="funcionario">
-                            <option selected disabled>Selecione um funcionário</option>
-                            <?php foreach ($funcionarios as $funcionario): ?>
-                                <option value="<?php echo htmlspecialchars($funcionario['cod_func']); ?>">
-                                    <?php echo htmlspecialchars($funcionario['nome']); ?>
-                                </option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label">Data do pedido:</label>
-                        <input type="date" class="form-control" name="datPedido">
-                    </div>
 
-                    <div class="form-group mb-3">
-                        <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control" name="dataPrev">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Nome do cliente:</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente">
-                    </div>
-                    <div class="form-group mb-3">
-                        <label class="form-label">Tipo de pessoa</label>
-                        <div>
-                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input">
-                            <label class="form-check-label" for="pessoaFis">Física</label>
-
-                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3">
-                            <label class="form-check-label" for="pessoaJur">Jurídica</label>
-                        </div>
                     </div>
                 </div>
-                    <!-- Segunda Coluna -->
-                    <div class="col-custom2">
+                <!-- Segunda Coluna -->
+                <div class="col-custom2">
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Contato:</label>
-                            <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc.">
-                        </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Contato:</label>
+                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc.">
+                    </div>
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Observações:</label>
-                            <input type="text" class="form-control" name="desc" placeholder="Informações extras">
-                        </div>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Observações:</label>
+                        <input type="text" class="form-control" name="desc" placeholder="Informações extras">
+                    </div>
 
-                        <!--
+                    <!--
                     <div class="form-group mb-3">
                         <button class="btn btn-outline-primary btn-personalizado" data-bs-toggle="modal"
                             data-bs-target="#modalItens" type="button">Inserir itens</button>
                     </div>
                     -->
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Forma de entrega:</label>
-                            <div>
+                    <!--
+                    <div class="form-group mb-3">
+                        <label class="form-label">Forma de entrega:</label>
+                        <div>
 
-                                <input type="radio" id="retirada" name="entrega" value="retirada"
-                                    class="form-check-input" <?= !$showEndereco ? 'checked' : '' ?>
-                                    onclick="toggleEntrega(false)">
-                                <label class="form-check-label" for="retirada">Retirada</label>
+                            <input type="radio" id="retirada" name="entrega" value="retirada" class="form-check-input"
+                                <?= //!$showEndereco ? 'checked' : '' ?> onclick="toggleEntrega(false)">
+                            <label class="form-check-label" for="retirada">Retirada</label>
 
-                                <input type="radio" id="entrega" name="entrega" value="entrega"
-                                    class="form-check-input ms-3" <?= $showEndereco ? 'checked' : '' ?>
-                                    onclick="toggleEntrega(true)">
-                                <label class="form-check-label" for="entrega">Entrega</label>
+                            <input type="radio" id="entrega" name="entrega" value="entrega"
+                                class="form-check-input ms-3" <?=// $showEndereco ? 'checked' : '' ?>
+                                onclick="toggleEntrega(true)">
+                            <label class="form-check-label" for="entrega">Entrega</label>
 
-                            </div>
-
-                            <div class="mt-2 <?= $showEndereco ? '' : 'd-none' ?>" id="enderecoDiv">
-                                <label class="form-label" for="enderecoRua">R.</label>
-                                <input type="text" class="form-control d-inline-block" id="enderecoRua"
-                                    name="logradouro" style="width: 200px;">
-
-                                <div class="mt-2">
-                                    <label class="form-label" for="enderecoNumero">Nº</label>
-                                    <input type="text" class="form-control d-inline-block" id="enderecoNumero"
-                                        name="numero" style="width: 100px;">
-                                </div>
-
-                                <div class="mt-2">
-                                    <label class="form-label" for="enderecoBairro">Bairro</label>
-                                    <input type="text" class="form-control d-inline-block" id="enderecoBairro"
-                                        name="bairro" style="width: 200px;">
-                                </div>
-                            </div>
                         </div>
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Valor Total:</label>
-                            <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00">
-                        </div>
+                        <div class="mt-2 <?=// $showEndereco ? '' : 'd-none' ?>" id="enderecoDiv">
+                            <label class="form-label" for="enderecoRua">R.</label>
+                            <input type="text" class="form-control d-inline-block" id="enderecoRua" name="logradouro"
+                                style="width: 200px;">
 
-                        <div class="form-group mb-3">
-                            <label class="form-label">Entrada:</label>
-
-                            <div>
-
-                                <input type="radio" id="entradaNao" name="entrad" value="nao" class="form-check-input"
-                                    <?= !$showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(false)">
-                                <label class="form-check-label" for="entradaNao">Não</label>
-
-                                <input type="radio" id="entradaSim" name="entrada" value="sim"
-                                    class="form-check-input ms-3" <?= $showValorEntrada ? 'checked' : '' ?>
-                                    onclick="toggleEntrada(true)">
-                                <label class="form-check-label" for="entradaSim">Sim</label>
-
+                            <div class="mt-2">
+                                <label class="form-label" for="enderecoNumero">Nº</label>
+                                <input type="text" class="form-control d-inline-block" id="enderecoNumero" name="numero"
+                                    style="width: 100px;">
                             </div>
 
-                            <div class="mt-2 <?= $showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
-                                <label class="form-label" for="valorEnt">R$</label>
-                                <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
-                                    style="width: 100px;" value="0,00">
-
+                            <div class="mt-2">
+                                <label class="form-label" for="enderecoBairro">Bairro</label>
+                                <input type="text" class="form-control d-inline-block" id="enderecoBairro" name="bairro"
+                                    style="width: 200px;">
                             </div>
                         </div>
                     </div>
-                </div>
 
-                <!-- Modal
+                    <div class="form-group mb-3">
+                        <label class="form-label">Valor Total:</label>
+                        <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Entrada:</label>
+
+                        <div>
+
+                            <input type="radio" id="entradaNao" name="entrad" value="nao" class="form-check-input"
+                                <?= //!$showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(false)">
+                            <label class="form-check-label" for="entradaNao">Não</label>
+
+                            <input type="radio" id="entradaSim" name="entrada" value="sim" class="form-check-input ms-3"
+                                <?= //$showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(true)">
+                            <label class="form-check-label" for="entradaSim">Sim</label>
+
+                        </div>
+
+                        <div class="mt-2 <?= //$showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
+                            <label class="form-label" for="valorEnt">R$</label>
+                            <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
+                                style="width: 100px;" value="0,00">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+-->
+
+            <!-- Modal
             <div class="modal fade custom-modal-lg" id="modalItens" tabindex="-1" aria-labelledby="modalItensLabel"
                 aria-hidden="true">
                 <div class="modal-dialog modal-dialog-scrollable">
@@ -363,11 +331,11 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
             </div>
 -->
 
-                <!-- Botões centralizados abaixo das colunas -->
-                <div class="row mt-4 btn-group-custom">
-                    <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-                    <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
-                </div>
+            <!-- Botões centralizados abaixo das colunas -->
+            <div class="row mt-4 btn-group-custom">
+                <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
+            </div>
         </form>
     </div>
 
