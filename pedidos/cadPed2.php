@@ -3,34 +3,24 @@ include('../protect.php'); // Inclui a função de proteção ao acesso da pági
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$sucesso = false;
 $error = false;
+
+// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        
-        // Preparar a SQL
-        $sql = "INSERT INTO itens_pedido
-            (codPro, medida, quantidade, valorUnit, valorTotal)
-            VALUES (:i_codpro, :i_medida, :i_quantidade, :i_vUnit, :i_vTot)";
+    // Armazenar os dados do formulário na sessão
+    $_SESSION['form_data'] = [
+        'numItens' => $_POST['numItens'],
+        'codPro' => $_POST['codPro'],
+        'medida' => $_POST['medida'],
+        'quantidade' => $_POST['quantidade'],
+        'observacao' => $_POST['observacao'],
+        'vUnit' => $_POST['valorUnit'],
+        'vTot' => $_POST['valorTotal']
+    ];
 
-        $stmt = $conexao->prepare($sql);
-
-        // Associar os valores aos placeholders
-        $stmt->bindValue(':i_codpro', $_POST['codpro']);
-        $stmt->bindValue(':i_medida', $_POST['medida']);
-        $stmt->bindValue(':i_quantidade', $_POST['quantidade']);
-        $stmt->bindValue(':i_vUnit', $_POST['vUnit']);
-        $stmt->bindValue(':i_vTot', $_POST['vTot']);
-
-
-        // Executar a SQL
-        $stmt->execute();
-
-        $sucesso = true;
-
-    } catch (PDOException $e) {
-        $error . $e->getMessage();
-    }
+    // Redireciona para a página de confirmação
+    header('Location: cadPed3.php');
+    exit;
 }
 
 // Consulta todos os registros da tabela produtos
@@ -162,14 +152,14 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
-                        <input class="form-control" name="medida">
+                        <input class="form-control" name="observacao">
                     </div>
                 </div>
 
                 <div class="col-custom2">
                     <div class="form-group mb-3">
                         <label class="form-label">Quantidade</label>
-                        <input type="number" class="form-control numItens" name="quantIt">
+                        <input type="number" class="form-control numItens" name="quantidade">
                     </div>
 
                     <div class="form-group mb-3">
@@ -178,7 +168,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total</label>
-                        <input type="text" class="form-control" id="vTot" readonly name="valorTotal">
+                        <input type="text" class="form-control" id="vTot" name="valorTotal">
                     </div>
                 </div>
                 <!-- Botões centralizados abaixo das colunas -->
@@ -187,32 +177,6 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
                 </div>
         </form>
-
-        <!-- PopUp de sucesso -->
-        <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-            <div class="modal-dialog"> <!-- chama classe JS de popup success -->
-                <div class="modal-content"> <!-- cria estrutura do pop up -->
-                    <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                        <h5 class="modal-title" id="successModalLabel">sucesso</h5>
-                        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                            <!-- cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        -->
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                        O produto foi cadastrado com sucesso!
-                    </div>
-                    <div class="modal-footer">
-                        <!-- parte de baixo do popup, cria botão fechar -->
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                        <!-- data-dismiss: faz o botão fecha o popup -->
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- fim do popup de sucesso -->
 
         <!-- PopUp de Erro -->
         <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
@@ -246,15 +210,6 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
         <script>
 
-            <?php if ($sucesso): ?>
-                /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-                realiza a ação de chamar o popup Modal e exibe o erro */
-                $(document).ready(function () {
-                    $('#successModal').modal('show');
-                    /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                    com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-                });
-            <?php endif; ?>
             <?php if ($error): ?>
                 /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
                 realiza a ação de chamar o popup Modal e exibe o erro */

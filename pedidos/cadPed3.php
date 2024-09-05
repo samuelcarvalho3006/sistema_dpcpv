@@ -3,45 +3,23 @@ include('../protect.php'); // Inclui a função de proteção ao acesso da pági
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$sucesso = false;
 $error = false;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
+    // Armazenar os dados do formulário na sessão
+    $_SESSION['form_data'] = [
+        'valorTotal' => $_POST['valorTotal'],
+        'entrada' => $_POST['entrada'],
+        'valorEnt' => $_POST['valorEnt'],
+        'entrega' => $_POST['entrega'],
+        'logradouro' => $_POST['logradouro'],
+        'numero' => $_POST['numero'],
+        'bairro' => $_POST['bairro'],
+    ];
 
-        $dataPedido = date('Y-m-d', strtotime($_POST['dataPedido']));
-        $dataPrevista = date('Y-m-d', strtotime($_POST['dataPrevista']));
-        // Preparar a SQL
-        $sql = "INSERT INTO pedidos
-            (funcionario, tipoPessoa, nomeCli, contato, desc, dataPed, dataPrev, entrega, logradouro, numero, bairro)
-            VALUES (:p_func, :p_pess, :p_nome, :p_cont, :p_desc, :p_datPed, :p_datPrev, :p_ent, :p_log, :p_num, :p_bairr)";
-
-        $stmt = $conexao->prepare($sql);
-
-        // Associar os valores aos placeholders
-        $stmt->bindValue(':p_func', $_POST['funcionario']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
-        $stmt->bindValue(':p_cont', $_POST['contato']); //contato
-        $stmt->bindValue(':p_codPro', $_POST['codPro']); //codigo do produto
-        $stmt->bindValue(':p_quan', $_POST['quantid']); //quantidade de itens do pedido
-        $stmt->bindValue(':p_desc', $_POST['desc']); //observações sobre o pedido
-        $stmt->bindValue(':p_med', $_POST['medida']); //medida do item
-        $stmt->bindValue(':p_vUnit', $_POST['valorUnit']); //valor unitário
-        $stmt->bindValue(':p_datPed', $_POST['datPedido']); //data do pedido
-        $stmt->bindValue(':p_datPrev', $_POST['datPrev']); //data estipulada
-        $stmt->bindValue(':p_ent', $_POST['entrega']); //forma d entrega
-        $stmt->bindValue(':p_log', $_POST['logradouro']);
-        $stmt->bindValue(':p_num', $_POST['numero']);
-        $stmt->bindValue(':p_bairr', $_POST['bairro']);
-
-        // Executar a SQL
-        $stmt->execute();
-
-        $sucesso = true;
-
-    } catch (PDOException $e) {
-        $error . $e->getMessage();
-    }
+    // Redireciona para a página de confirmação
+    header('Location: confirmacao.php');
+    exit;
 }
 
 //-------------------------------------------------------------
@@ -73,14 +51,6 @@ $produtos = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     // Adiciona cada (registro) ao array $produtos como um array associativo
     $produtos[] = $row;
-}
-
-$query = "SELECT * FROM funcionarios";
-$resultado = $conexao->query($query);
-$funcionarios = [];
-while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $funcionarios como um array associativo
-    $funcionarios[] = $row;
 }
 ?>
 
@@ -185,7 +155,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                         <div>
 
-                            <input type="radio" id="entradaNao" name="entrad" value="nao" class="form-check-input"
+                            <input type="radio" id="entradaNao" name="entrada" value="nao" class="form-check-input"
                                 <?= !$showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(false)">
                             <label class="form-check-label" for="entradaNao">Não</label>
 
@@ -247,32 +217,6 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         </form>
     </div>
 
-    <!-- PopUp de sucesso -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup success -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                    <h5 class="modal-title" id="successModalLabel">sucesso</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        -->
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    O produto foi cadastrado com sucesso!
-                </div>
-                <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- fim do popup de sucesso -->
-
     <!-- PopUp de Erro -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
         <div class="modal-dialog"> <!-- chama classe JS de popup error -->
@@ -329,16 +273,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 enderecoDiv.classList.add('d-none');
             }
         }
-
-        <?php if ($sucesso): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
-                $('#successModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
+        
         <?php if ($error): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */

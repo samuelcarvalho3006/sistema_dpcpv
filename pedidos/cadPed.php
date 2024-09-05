@@ -3,34 +3,21 @@ include('../protect.php'); // Inclui a função de proteção ao acesso da pági
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-//$sucesso = false;
-$error = false;
+// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    try {
-        // Preparar a SQL
-        $sql = "INSERT INTO pedidos
-            (funcionario, dataPed, dataPrev, nomeCli, tipoPessoa, contato)
-            VALUES (:p_func, :p_datPed, :p_datPrev, :p_nome, :p_pess, :p_cont)";
+    // Armazenar os dados do formulário na sessão
+    $_SESSION['form_data'] = [
+        'funcionario' => $_POST['funcionario'],
+        'datPedido' => $_POST['datPedido'],
+        'dataPrev' => $_POST['dataPrev'],
+        'nome' => $_POST['nome'],
+        'pessoa' => $_POST['pessoa'],
+        'contato' => $_POST['contato']
+    ];
 
-        $stmt = $conexao->prepare($sql);
-
-        // Associar os valores aos placeholders
-        $stmt->bindValue(':p_func', $_POST['funcionario']); //funcionario responsavel
-        $stmt->bindValue(':p_datPed', $_POST['datPedido']); //data do pedido
-        $stmt->bindValue(':p_datPrev', $_POST['datPrev']); //data estipulada
-        $stmt->bindValue(':p_nome', $_POST['nome']); //nome do cliente
-        $stmt->bindValue(':p_pess', $_POST['pessoa']); //pessoa fisica ou juridica
-        $stmt->bindValue(':p_cont', $_POST['contato']); //contato
-
-
-        // Executar a SQL
-        $stmt->execute();
-
-        $sucesso = true;
-
-    } catch (PDOException $e) {
-        $error . $e->getMessage();
-    }
+    // Redireciona para a página de confirmação
+    header('Location: cadPed2.php');
+    exit;
 }
 
 //-------------------------------------------------------------
@@ -60,9 +47,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Inicializa um array vazio para armazenar os produtos
 //$produtos = [];
 //while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $produtos como um array associativo
+// Adiciona cada (registro) ao array $produtos como um array associativo
 //    $produtos[] = $row;
 //}
+
 
 $query = "SELECT * FROM funcionarios";
 $resultado = $conexao->query($query);
@@ -168,7 +156,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                         <select class="form-select" name="funcionario">
                             <option selected disabled>Selecione um funcionário</option>
                             <?php foreach ($funcionarios as $funcionario): ?>
-                                <option value="<?php echo htmlspecialchars($funcionario['cod_func']); ?>">
+                                <option value="<?php echo htmlspecialchars($funcionario['nome']); ?>">
                                     <?php echo htmlspecialchars($funcionario['nome']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -195,14 +183,14 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                     <div class="form-group mb-3">
                         <label class="form-label">Tipo de pessoa</label>
                         <div>
-                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input">
+                            <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input" value="Física">
                             <label class="form-check-label" for="pessoaFis">Física</label>
 
-                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3">
+                            <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3"
+                                value="Jurídica">
                             <label class="form-check-label" for="pessoaJur">Jurídica</label>
                         </div>
                     </div>
-
 
                     <div class="form-group mb-3">
                         <label class="form-label">Contato:</label>
@@ -391,25 +379,25 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
     <!-- PopUp de Erro -->
     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog">  chama classe JS de popup error 
-            <div class="modal-content">  cria estrutura do pop up 
-                <div class="modal-header">  cabecalho do popup, notifcação em destaque 
+        <div class="modal-dialog"> chama classe JS de popup error
+            <div class="modal-content"> cria estrutura do pop up
+                <div class="modal-header"> cabecalho do popup, notifcação em destaque
                     <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                         cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        
+                        cria botão de fechar em forma de "x"
+                        data-dismiss: faz o botão fecha o popup
+
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body"> corpo do popup, exibe qual foi o erro 
+                <div class="modal-body"> corpo do popup, exibe qual foi o erro
                     Não foi possível inserir o registro.<br>
                     Por favor, tente novamente.
                 </div>
                 <div class="modal-footer">
-                     parte de baixo do popup, cria botão fechar 
+                    parte de baixo do popup, cria botão fechar
                     <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                     data-dismiss: faz o botão fecha o popup 
+                    data-dismiss: faz o botão fecha o popup
                 </div>
             </div>
         </div>
@@ -421,75 +409,75 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
         // Função para alternar a visibilidade do elemento com ID 'valorEntradaDiv'
-//        function toggleEntrada(show) {
-//            const valorEntradaDiv = document.getElementById('valorEntradaDiv');
-            // Verifica se o parâmetro 'show' é verdadeiro
-//            if (show) {
-                // Remove a classe 'd-none' para exibir o elemento
-//                valorEntradaDiv.classList.remove('d-none');
-//            } else {
-                // Adiciona a classe 'd-none' para esconder o elemento
-//                valorEntradaDiv.classList.add('d-none');
-//            }
-//        }
+        //        function toggleEntrada(show) {
+        //            const valorEntradaDiv = document.getElementById('valorEntradaDiv');
+        // Verifica se o parâmetro 'show' é verdadeiro
+        //            if (show) {
+        // Remove a classe 'd-none' para exibir o elemento
+        //                valorEntradaDiv.classList.remove('d-none');
+        //            } else {
+        // Adiciona a classe 'd-none' para esconder o elemento
+        //                valorEntradaDiv.classList.add('d-none');
+        //            }
+        //        }
 
         // Função para alternar a visibilidade do elemento com ID 'enderecoDiv'
-//        function toggleEntrega(show) {
-//            const enderecoDiv = document.getElementById('enderecoDiv');
-            // Verifica se o parâmetro 'show' é verdadeiro
-//            if (show) {
-                // Remove a classe 'd-none' para exibir o elemento
-//                enderecoDiv.classList.remove('d-none');
-//            } else {
-                // Adiciona a classe 'd-none' para esconder o elemento
-//                enderecoDiv.classList.add('d-none');
-//            }
-//        }
+        //        function toggleEntrega(show) {
+        //            const enderecoDiv = document.getElementById('enderecoDiv');
+        // Verifica se o parâmetro 'show' é verdadeiro
+        //            if (show) {
+        // Remove a classe 'd-none' para exibir o elemento
+        //                enderecoDiv.classList.remove('d-none');
+        //            } else {
+        // Adiciona a classe 'd-none' para esconder o elemento
+        //                enderecoDiv.classList.add('d-none');
+        //            }
+        //        }
 
-       <?php //if ($sucesso): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-/*            $(document).ready(function () {
-                $('#successModal').modal('show');
-                 chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup 
-            }); */
+        <?php //if ($sucesso): ?>
+        /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
+        realiza a ação de chamar o popup Modal e exibe o erro */
+        /*            $(document).ready(function () {
+                        $('#successModal').modal('show');
+                         chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+                        com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup 
+                    }); */
         <?php // endif; ?>
         <?php // if ($error): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            /*$(document).ready(function () {
-                $('#errorModal').modal('show');
-                 chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup 
-            });*/
+        /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
+        realiza a ação de chamar o popup Modal e exibe o erro */
+        /*$(document).ready(function () {
+            $('#errorModal').modal('show');
+             chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
+            com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup 
+        });*/
         <?php //endif; ?>
 
         // Função para atualizar o valor unitário com base no produto selecionado
-//        function atualizarValor() {
+        //        function atualizarValor() {
 
-            // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
-//            const selectProduto = document.getElementById('prodSelec');
-            // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
-//            const valorUnitario = document.getElementById('vUnit');
+        // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
+        //            const selectProduto = document.getElementById('prodSelec');
+        // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
+        //            const valorUnitario = document.getElementById('vUnit');
 
-            // Converte o array PHP $produtos em um array JavaScript usando json_encode
-//            const produtos = <?php echo json_encode($produtos); ?>;
+        // Converte o array PHP $produtos em um array JavaScript usando json_encode
+        //            const produtos = <?php echo json_encode($produtos); ?>;
 
-            // Encontra o produto selecionado no array 'produtos'
-            // 'find' retorna o primeiro elemento que satisfaz a condição
-            // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
-//            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
+        // Encontra o produto selecionado no array 'produtos'
+        // 'find' retorna o primeiro elemento que satisfaz a condição
+        // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
+        //            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
 
-            // Verifica se um produto correspondente foi encontrado
-//            if (produtoSelecionado) {
-                // Se encontrado, define o valor unitário com o valor do produto selecionado
-//                valorUnitario.value = produtoSelecionado.valor;
-//            } else {
-//               // Se não encontrado, limpa o campo de valor unitário
-//                valorUnitario.value = '';
-//            }
-//        }
+        // Verifica se um produto correspondente foi encontrado
+        //            if (produtoSelecionado) {
+        // Se encontrado, define o valor unitário com o valor do produto selecionado
+        //                valorUnitario.value = produtoSelecionado.valor;
+        //            } else {
+        //               // Se não encontrado, limpa o campo de valor unitário
+        //                valorUnitario.value = '';
+        //            }
+        //        }
     </script>
 </body>
 
