@@ -15,6 +15,7 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -51,8 +52,6 @@ try {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
-                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                             <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
@@ -117,6 +116,7 @@ try {
                 <thead>
                     <tr>
                         <th>ID</th>
+                        <th>Responsável</th>
                         <th>Título</th>
                         <th>Data de Registro</th>
                         <th>Data de Prazo</th>
@@ -128,6 +128,7 @@ try {
                     <?php foreach ($registros as $registro): ?>
                         <tr>
                             <td><?php echo ($registro['codAgend']); ?></td>
+                            <td><?php echo ($registro['cod_func']); ?></td>
                             <td><?php echo ($registro['titulo']); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>

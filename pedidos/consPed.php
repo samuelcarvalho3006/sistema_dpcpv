@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT codPed, nome, contato, dataPed, dataPrev, entrada, valorTotal FROM pedidos";
+    $sql = "SELECT codPed, nomeCli, contato, dataPed, dataPrev, entrada, valorTotal FROM pedidos";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -105,7 +105,7 @@ try {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <div class="container mt-5">
+    <div class="container mt-5 consulta">
         <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
 
         <?php if ($erro): ?>
@@ -121,7 +121,9 @@ try {
                         <th>Data de Registro</th>
                         <th>Data Prevista</th>
                         <th>Entrada</th>
-                        <th>Mais Info.</th>
+                        <th>Itens do Pedido</th>
+                        <th>Status Pagamento</th>
+                        <th>Forma de entrega</th>
                         <th>Operações</th>
                     </tr>
                 </thead>
@@ -129,12 +131,14 @@ try {
                     <?php foreach ($registros as $registro): ?>
                         <tr>
                             <td><?php echo ($registro['codPed']); ?></td>
-                            <td><?php echo ($registro['nome']); ?></td>
+                            <td><?php echo ($registro['nomeCli']); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
-                            <td><?php echo ($registro['entrada']); ?></td>
-                            <td></td>
+                            <td><a href="#">Visualizar</a></td>
+                            <td><a href="#">Visualizar</a></td>
+                            <td><a href="#">Visualizar</a></td>
                             <td><?php echo ($registro['valorTotal']); ?></td>
+                            <td></td>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>

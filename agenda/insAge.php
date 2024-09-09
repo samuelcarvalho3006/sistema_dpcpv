@@ -92,8 +92,6 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
-                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
-                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -205,7 +203,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                     </button>
                 </div>
                 <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    O produto foi cadastrado com sucesso!
+                    O registro foi inserido com sucesso!
                 </div>
                 <div class="modal-footer">
                     <!-- parte de baixo do popup, cria botão fechar -->
@@ -222,7 +220,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         <div class="modal-dialog"> <!-- chama classe JS de popup error -->
             <div class="modal-content"> <!-- cria estrutura do pop up -->
                 <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                    <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
+                    <h5 class="modal-title" id="errorModalLabel">Erro</h5>
                     <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                         <!-- cria botão de fechar em forma de "x" 
                             data-dismiss: faz o botão fecha o popup

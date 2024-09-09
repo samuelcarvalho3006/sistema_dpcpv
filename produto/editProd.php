@@ -54,8 +54,6 @@ try {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
-                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
-                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
