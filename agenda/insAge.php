@@ -10,6 +10,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
         // Verificar se todos os campos obrigatórios estão preenchidos
         if (
             isset(
+            $_POST['func'],
             $_POST['titulo'],
             $_POST['dataRegistro'],
             $_POST['dataPrazo'],
@@ -23,10 +24,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
 
 
             // Preparar a SQL
-            $sql = "INSERT INTO agenda (titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_t, :a_dR, :a_dP, :a_I)";
+            $sql = "INSERT INTO agenda (cod_func, titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_cf, :a_t, :a_dR, :a_dP, :a_I)";
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
+            $stmt->bindValue(':a_cf', $_POST['func']);
             $stmt->bindValue(':a_t', $_POST['titulo']);
             $stmt->bindValue(':a_dR', $_POST['dataRegistro']);
             $stmt->bindValue(':a_dP', $_POST['dataPrazo']);
@@ -45,6 +47,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
     }
 }
 
+$query = "SELECT * FROM funcionarios";
+$resultado = $conexao->query($query);
+$funcionarios = [];
+while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+    // Adiciona cada (registro) ao array $funcionarios como um array associativo
+    $funcionarios[] = $row;
+}
 ?>
 
 <!DOCTYPE html>
@@ -137,36 +146,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
         <h3 class="text-center mb-4">Inserir na Agenda</h3>
         <form method="POST">
             <div class="row row-custom">
-
-                <div class="col-custom"> <!-- Primeira Coluna -->
-                    <div class="form-group mb-3">
-                        <label class="form-label">Título da Agenda:</label>
-                        <input type="text" class="form-control" name="titulo" placeholder="Título da Agenda">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Data de registro:</label>
-                        <input type="date" class="form-control" name="dataRegistro">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Data de Prazo:</label>
-                        <input type="date" class="form-control" name="dataPrazo">
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <label class="form-label">Informações:</label>
-                        <input type="text" class="form-control" name="informacao" placeholder="Informações">
-                    </div>
-
+                <div class="form-group mb-3">
+                    <label class="form-label">Responsável:</label>
+                    <select class="form-select" name="func">
+                        <option selected disabled>Selecione um funcionário</option>
+                        <?php foreach ($funcionarios as $funcionario): ?>
+                            <option value="<?php echo htmlspecialchars($funcionario['nome']); ?>">
+                                <?php echo htmlspecialchars($funcionario['nome']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="form-group mb-3">
+                    <label class="form-label">Título da Agenda:</label>
+                    <input type="text" class="form-control" name="titulo" placeholder="Título da Agenda">
                 </div>
 
-                <!-- Botões centralizados abaixo das colunas -->
-                <div class="row mt-4 btn-group-custom">
-                    <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-                    <button type="submit" class="btn btn-success btn-personalizado">Confirmar</button>
+                <div class="form-group mb-3">
+                    <label class="form-label">Data de registro:</label>
+                    <input type="date" class="form-control" name="dataRegistro">
                 </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Data de Prazo:</label>
+                    <input type="date" class="form-control" name="dataPrazo">
+                </div>
+
+                <div class="form-group mb-3">
+                    <label class="form-label">Informações:</label>
+                    <input type="text" class="form-control" name="informacao" placeholder="Informações">
+                </div>
+
             </div>
+
+            <!-- Botões centralizados abaixo das colunas -->
+            <div class="row mt-4 btn-group-custom">
+                <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Confirmar</button>
+            </div>
+    </div>
     </div>
 
     <!-- PopUp de sucesso -->
