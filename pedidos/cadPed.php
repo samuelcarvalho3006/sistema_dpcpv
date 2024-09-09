@@ -75,7 +75,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 <body>
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="..//admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -131,6 +131,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -169,7 +170,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control" name="dataPrev">
+                        <input type="date" class="form-control" name="datPrev">
                     </div>
                 </div>
 
@@ -292,7 +293,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                                         <div class="form-group form-modal form-modal">
                                             <label class="form-label" for="numItens">nº de itens</label>
                                             <input type="number" class="form-control numItens" id="numItens"
-                                                name="quantid">
+                                                name="numItens">
                                         </div>
                                     </div>
                                 </div>
@@ -320,14 +321,21 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                                     <div class="col-md-6">
                                         <div class="form-group form-modal">
                                             <label class="form-label">Quantidade</label>
-                                            <input type="number" class="form-control numItens" name="quantIt">
+                                            <input type="number" class="form-control numItens" name="quantidade">
                                         </div>
                                     </div>
                                     <div class="col-md-6">
                                         <div class="form-group form-modal">
                                             <label class="form-label">V.U.</label>
-                                            <input type="text" class="form-control" id="vUnit" readonly
-                                                name="valorUnit">
+                                            <input type="text" class="form-control" id="precoUnit" readonly
+                                                name="precoUnit">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group form-modal">
+                                            <label class="form-label">V.T.</label>
+                                            <input type="text" class="form-control" id="precoTotal" readonly
+                                                name="precoTotal">
                                         </div>
                                     </div>
                                 </div>

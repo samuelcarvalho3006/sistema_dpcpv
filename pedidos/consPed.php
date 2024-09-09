@@ -32,7 +32,7 @@ try {
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="../admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -64,6 +64,8 @@ try {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
                             <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -88,6 +90,7 @@ try {
                             <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -125,13 +128,13 @@ try {
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['codPed']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['nome']); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
-                            <td><?php echo htmlspecialchars($registro['entrada']); ?></td>
+                            <td><?php echo ($registro['codPed']); ?></td>
+                            <td><?php echo ($registro['nome']); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
+                            <td><?php echo ($registro['entrada']); ?></td>
                             <td></td>
-                            <td><?php echo htmlspecialchars($registro['valorTotal']); ?></td>
+                            <td><?php echo ($registro['valorTotal']); ?></td>
                             <td></td>
                         </tr>
                     <?php endforeach; ?>

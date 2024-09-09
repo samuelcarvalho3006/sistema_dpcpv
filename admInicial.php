@@ -19,6 +19,9 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
+            <a class="nav justify-content-start m-2" href="#">
+                <img src="./img/back.png">
+            </a>
 
             <button class="navbar-toggler hamburguer" data-bs-toggle="collapse" data-bs-target="#navegacao">
                 <span class="navbar-toggler-icon"></span>
@@ -37,6 +40,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="./pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="./pedidos/consPed.php">Consulta</a>
+                            <a class="dropdown-item" href="./pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="./pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -46,6 +51,8 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="./agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="./agenda/consAge.php">Consultar</a>
                             <a class="dropdown-item" href="./agenda/insAge.php">Inserir</a>
                             <a class="dropdown-item" href="./agenda/consAge.php">Consultar</a>
                         </div>
@@ -72,9 +79,10 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             <a class="dropdown-item" href="./funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
-            <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
+            <a href="./logout.php" class="nav-link justify-content-end" style="color: red;">
                 <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor"
                     class="bi bi-box-arrow-right" viewBox="0 0 16 16">
                     <path fill-rule="evenodd"

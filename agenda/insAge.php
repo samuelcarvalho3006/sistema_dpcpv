@@ -71,7 +71,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="..//admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -90,6 +90,8 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                             <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
@@ -127,6 +129,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -174,7 +177,8 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <div class="form-group mb-3">
                     <label class="form-label">Informações:</label>
-                    <input type="text" class="form-control" name="informacao" placeholder="Informações">
+                    <textarea class="form-control" name="informacao"
+                        placeholder="Digite as informações sobre o registro..." rows="5"></textarea>
                 </div>
 
             </div>

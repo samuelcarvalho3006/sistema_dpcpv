@@ -44,14 +44,14 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.0">
 </head>
 
 <body>
 
-<div class="container-fluid cabecalho"> <!-- CABECALHO -->
+    <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="../admInicial.php">
+            <a class="nav justify-content-start m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -72,6 +72,8 @@ try {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -81,6 +83,8 @@ try {
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
+                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                             <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
                             <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
@@ -107,6 +111,7 @@ try {
                             <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
+
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -136,6 +141,7 @@ try {
                     <div class="form-group mb-3">
                         <label class="form-label">Valor:</label>
                         <input type="text" class="form-control" name="valor" placeholder="R$ 0,00" required>
+                        <span class="aviso">Utilize ponto ao invés de vírgula</span>
                     </div>
                 </div>
 

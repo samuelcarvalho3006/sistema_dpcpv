@@ -53,6 +53,8 @@ try {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -125,11 +127,11 @@ try {
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['codAgend']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['titulo']); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
-                            <td><?php echo htmlspecialchars(date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
-                            <td><?php echo htmlspecialchars($registro['informacao']); ?></td>
+                            <td><?php echo ($registro['codAgend']); ?></td>
+                            <td><?php echo ($registro['titulo']); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
+                            <td><?php echo ($registro['informacao']); ?></td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
