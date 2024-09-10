@@ -1,6 +1,27 @@
 <?php
-
 include('protect.php'); /*inclui a função de proteção ao acesso da página */
+require_once('./conexao.php');
+$conexao = novaConexao();
+$registros = [];
+$erro = false;
+
+try {
+    $sql = "SELECT * FROM agenda WHERE dataPrazo > CURDATE()"; //filtra registros por data mais próxima
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+} catch (PDOException $e) {
+    $erro = true; // Configura erro se houver uma exceção
+    echo "Erro: " . $e->getMessage();
+}
+$query = "SELECT * FROM funcionarios";
+$resultado = $conexao->query($query);
+$funcionarios = [];
+while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
+    // Adiciona cada (registro) ao array $funcionarios como um array associativo
+    $funcionarios[] = $row;
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -40,8 +61,6 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="./pedidos/cadPed.php">Cadastro</a>
                             <a class="dropdown-item" href="./pedidos/consPed.php">Consulta</a>
-                            <a class="dropdown-item" href="./pedidos/cadPed.php">Cadastro</a>
-                            <a class="dropdown-item" href="./pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -51,8 +70,6 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
                             Agenda
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="./agenda/insAge.php">Inserir</a>
-                            <a class="dropdown-item" href="./agenda/consAge.php">Consultar</a>
                             <a class="dropdown-item" href="./agenda/insAge.php">Inserir</a>
                             <a class="dropdown-item" href="./agenda/consAge.php">Consultar</a>
                         </div>
@@ -93,6 +110,42 @@ include('protect.php'); /*inclui a função de proteção ao acesso da página *
             </a>
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
+
+    <div class="container mt-5">
+        <h3 class="text-center mb-5">Registros da Agenda a Expirar</h3>
+
+        <?php if ($erro): ?>
+            <div class="alert alert-danger" role="alert">
+                Não foi possível carregar os dados.
+            </div>
+        <?php else: ?>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Responsável</th>
+                        <th>Título</th>
+                        <th>Data de Registro</th>
+                        <th>Data de Prazo</th>
+                        <th>Informação</th>
+                        <th>Operações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($registros as $registro): ?>
+                        <tr>
+                            <td><?php echo ($registro['codAgend']); ?></td>
+                            <td><?php echo ($registro['cod_func']); ?></td>
+                            <td><?php echo ($registro['titulo']); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
+                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
+                            <td><?php echo ($registro['informacao']); ?></td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        <?php endif; ?>
+    </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>

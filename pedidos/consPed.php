@@ -64,8 +64,6 @@ try {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
                             <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
-                            <a class="dropdown-item" href="../agenda/insAge.php">Inserir</a>
-                            <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 

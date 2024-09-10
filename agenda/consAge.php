@@ -105,7 +105,7 @@ try {
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <div class="container mt-5">
-        <h3 class="text-center mb-5">Agenda Cadastrada</h3>
+        <h3 class="text-center mb-5">Registros Cadastrados</h3>
 
         <?php if ($erro): ?>
             <div class="alert alert-danger" role="alert">
