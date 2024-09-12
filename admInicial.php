@@ -14,6 +14,7 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
 $query = "SELECT * FROM funcionarios";
 $resultado = $conexao->query($query);
 $funcionarios = [];
@@ -22,6 +23,44 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
     $funcionarios[] = $row;
 }
 
+if (isset($_POST['delete'])) {
+    $id = $_POST['codAgend'];
+
+    $_SESSION['form_data'] = [
+        'funcionario' => $_POST['funcionario'],
+        'datPedido' => $_POST['datPedido'],
+        'dataPrev' => $_POST['dataPrev'],
+        'nome' => $_POST['nome'],
+        'pessoa' => $_POST['pessoa'],
+        'contato' => $_POST['contato']
+    ];
+
+    // Redireciona para a página de confirmação
+    header('Location: cadPed2.php');
+    exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+
+if (isset($_POST['edit'])) {
+    $id = $_POST['codAgend'];
+
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM agenda WHERE codAgend = :id";
+
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
 
 ?>
 <!DOCTYPE html>
@@ -140,6 +179,22 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
                             <td><?php echo ($registro['informacao']); ?></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form method="POST">
+                                            <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
+                                            <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4">
+                                    <form method="POST">
+                                            <input type="hidden" name="edit" value="<?php echo $registro['codAgend']; ?>">
+                                            <button type="submit" name="edit" class="btn btn-primary">Editar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

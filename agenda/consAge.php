@@ -16,6 +16,25 @@ try {
     echo "Erro: " . $e->getMessage();
 }
 
+if (isset($_POST['delete'])) {
+    $id = $_POST['codAgend'];
+
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM agenda WHERE codAgend = :id";
+
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -133,6 +152,12 @@ try {
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
                             <td><?php echo ($registro['informacao']); ?></td>
+                            <td>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
+                                    <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
