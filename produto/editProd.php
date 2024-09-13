@@ -117,6 +117,7 @@ try {
                     <tr>
                         <th>ID</th>
                         <th>Nome</th>
+                        <th>Medidas</th>
                         <th>Valor</th>
                         <th>Operações</th>
                     </tr>
@@ -126,6 +127,7 @@ try {
                         <tr>
                             <td><?php echo htmlspecialchars($registro['codPro']); ?></td>
                             <td><?php echo htmlspecialchars($registro['nome']); ?></td>
+                            <td><?php echo htmlspecialchars($registro['medida']); ?></td>
                             <td>R$<?php echo htmlspecialchars($registro['valor']); ?></td>
                             <td></td>
                         </tr>

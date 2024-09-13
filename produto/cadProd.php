@@ -11,15 +11,17 @@ try {
     if (
         isset(
         $_POST['nome'],
+        $_POST['medida'],
         $_POST['valor'],
     )
     ) {
         // Preparar a SQL
-        $sql = "INSERT INTO produtos (nome, valor) VALUES (:p_n, :p_v)";
+        $sql = "INSERT INTO produtos (nome, medida, valor) VALUES (:p_n, :p_m, :p_v)";
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
         $stmt->bindValue('p_n', $_POST['nome']);
+        $stmt->bindValue('p_m', $_POST['medida']);
         $stmt->bindValue('p_v', $_POST['valor']);
 
         // Executar a SQL
@@ -132,6 +134,11 @@ try {
                 <div class="form-group mb-3">
                         <label class="form-label">Nome do Produto:</label>
                         <input type="text" class="form-control" name="nome" placeholder="Nome do produto" required>
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Medidas:</label>
+                        <input type="text" class="form-control" name="medida" placeholder="Medidas" required>
                     </div>
 
                     <div class="form-group mb-3">

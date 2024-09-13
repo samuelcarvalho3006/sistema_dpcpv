@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 05/09/2024 às 11:24
+-- Tempo de geração: 13/09/2024 às 20:12
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -106,7 +106,7 @@ CREATE TABLE `pedidos` (
   `tipoPessoa` varchar(50) NOT NULL,
   `nomeCli` varchar(50) NOT NULL,
   `contato` varchar(50) NOT NULL,
-  `desc` text NOT NULL,
+  `descr` varchar(50) NOT NULL,
   `dataPed` date NOT NULL,
   `dataPrev` date NOT NULL,
   `entrega` varchar(50) NOT NULL,
@@ -128,6 +128,7 @@ CREATE TABLE `pedidos` (
 CREATE TABLE `produtos` (
   `codPro` int(5) NOT NULL,
   `nome` varchar(50) NOT NULL,
+  `medida` varchar(30) NOT NULL,
   `valor` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -135,11 +136,14 @@ CREATE TABLE `produtos` (
 -- Despejando dados para a tabela `produtos`
 --
 
-INSERT INTO `produtos` (`codPro`, `nome`, `valor`) VALUES
-(1, 'banner 50x50', 45),
-(2, 'cartão de visita laminado', 180),
-(3, 'panfleto 15x10', 124),
-(4, 'Fabrizio', 1);
+INSERT INTO `produtos` (`codPro`, `nome`, `medida`, `valor`) VALUES
+(1, 'banner 50x50', '', 45),
+(2, 'cartão de visita laminado', '', 180),
+(3, 'panfleto 15x10', '', 124),
+(4, 'Fabrizio', '', 1),
+(5, 'banner', '50x50', 24),
+(6, 'Gabrielle', '40x40', 56),
+(7, 'samuel', '40x40', 24);
 
 --
 -- Índices para tabelas despejadas
@@ -219,7 +223,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
