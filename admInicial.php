@@ -42,26 +42,6 @@ if (isset($_POST['delete'])) {
         echo "Erro ao excluir linha: ";
     }
 
-if (isset($_POST['edit'])) {
-    $id = $_POST['codAgend'];
-
-    // SQL para excluir a linha com base no ID
-    $sql = "DELETE FROM agenda WHERE codAgend = :id";
-
-    // Prepara a declaração SQL
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">

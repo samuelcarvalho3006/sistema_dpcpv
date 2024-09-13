@@ -1,21 +1,37 @@
 <?php
-include('../protect.php'); // Inclui a função de proteção ao acesso da página
+// Inicia a sessão para continuar a armazenar os dados
+session_start();
 require_once('../conexao.php');
 $conexao = novaConexao();
 
 $error = false;
 
+// Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Armazenar os dados do formulário na sessão
-    $_SESSION['form_data'] = [
-        'valorTotal' => $_POST['valorTotal'],
-        'entrada' => $_POST['entrada'],
-        'valorEnt' => $_POST['valorEnt'],
-        'entrega' => $_POST['entrega'],
-        'logradouro' => $_POST['logradouro'],
-        'numero' => $_POST['numero'],
-        'bairro' => $_POST['bairro'],
-    ];
+    // Verifica se já existe algum dado armazenado na sessão e preserva os dados anteriores
+    if (isset($_SESSION['form_data'])) {
+        // Mescla os dados existentes com os novos
+        $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
+            'valorTotal' => $_POST['valorTotal'],
+            'entrada' => $_POST['entrada'],
+            'valorEnt' => $_POST['valorEnt'] ?? null,
+            'entrega' => $_POST['entrega'],
+            'logradouro' => $_POST['logradouro'] ?? null,
+            'numero' => $_POST['numero'] ?? null,
+            'bairro' => $_POST['bairro'] ?? null,
+        ]);
+    } else {
+        // Caso não existam dados anteriores, cria a sessão com os novos dados
+        $_SESSION['form_data'] = [
+            'valorTotal' => $_POST['valorTotal'],
+            'entrada' => $_POST['entrada'],
+            'valorEnt' => $_POST['valorEnt'] ?? null,
+            'entrega' => $_POST['entrega'],
+            'logradouro' => $_POST['logradouro'] ?? null,
+            'numero' => $_POST['numero'] ?? null,
+            'bairro' => $_POST['bairro'] ?? null,
+        ];
+    }
 
     // Redireciona para a página de confirmação
     header('Location: confirmacao.php');
@@ -24,11 +40,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 //-------------------------------------------------------------
 // PROGRAMAÇÃO PARA EXIBIR OU NÃO ENDEREÇO E VALOR DE ENTRADA
-
 $showValorEntrada = false;
 $showEndereco = false;
 
-// Capturando os valores enviados via POST
+// Capturando os valores enviados via POST (para controle dinâmico dos campos)
 $entrada = $_POST['entrada'] ?? null;
 $entrega = $_POST['entrega'] ?? null;
 
@@ -42,16 +57,6 @@ if ($entrega === 'entrega') {
     $showEndereco = true;
 }
 
-// Consulta todos os registros da tabela produtos
-$query = "SELECT * FROM produtos";
-$result = $conexao->query($query);
-
-// Inicializa um array vazio para armazenar os produtos
-$produtos = [];
-while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $produtos como um array associativo
-    $produtos[] = $row;
-}
 ?>
 
 <!DOCTYPE html>
@@ -273,7 +278,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 enderecoDiv.classList.add('d-none');
             }
         }
-        
+
         <?php if ($error): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */

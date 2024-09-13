@@ -1,5 +1,5 @@
 <?php
-include('../protect.php'); // Inclui a função de proteção ao acesso da página
+session_start(); // Iniciar a sessão para armazenar os dados
 require_once('../conexao.php');
 $conexao = novaConexao();
 
@@ -9,54 +9,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $_SESSION['form_data'] = [
         'funcionario' => $_POST['funcionario'],
         'datPedido' => $_POST['datPedido'],
-        'dataPrev' => $_POST['dataPrev'],
+        'dataPrev' => $_POST['datPrev'],
         'nome' => $_POST['nome'],
         'pessoa' => $_POST['pessoa'],
         'contato' => $_POST['contato']
     ];
 
-    // Redireciona para a página de confirmação
+    // Redireciona para a próxima página
     header('Location: cadPed2.php');
     exit;
 }
 
-//-------------------------------------------------------------
-// PROGRAMAÇÃO PARA EXIBIR OU NÃO ENDEREÇO E VALOR DE ENTRADA
-
-//$showValorEntrada = false;
-//$showEndereco = false;
-
-// Capturando os valores enviados via POST
-//$entrada = $_POST['entrada'] ?? null;
-//$entrega = $_POST['entrega'] ?? null;
-
-// Verificando se "Sim" foi selecionado para "Entrada"
-//if ($entrada === 'sim') {
-//    $showValorEntrada = true;
-//}
-
-// Verificando se "Entrega" foi selecionada para "Forma de entrega"
-//if ($entrega === 'entrega') {
-//    $showEndereco = true;
-//}
-
-// Consulta todos os registros da tabela produtos
-//$query = "SELECT * FROM produtos";
-//$result = $conexao->query($query);
-
-// Inicializa um array vazio para armazenar os produtos
-//$produtos = [];
-//while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-// Adiciona cada (registro) ao array $produtos como um array associativo
-//    $produtos[] = $row;
-//}
-
-
+// Consulta para buscar os funcionários
 $query = "SELECT * FROM funcionarios";
 $resultado = $conexao->query($query);
+
+// Armazenar os funcionários em um array
 $funcionarios = [];
 while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $funcionarios como um array associativo
     $funcionarios[] = $row;
 }
 ?>

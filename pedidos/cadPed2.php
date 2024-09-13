@@ -1,5 +1,6 @@
 <?php
-include('../protect.php'); // Inclui a função de proteção ao acesso da página
+// Inicia a sessão para continuar a armazenar os dados
+session_start();
 require_once('../conexao.php');
 $conexao = novaConexao();
 
@@ -7,18 +8,32 @@ $error = false;
 
 // Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Armazenar os dados do formulário na sessão
-    $_SESSION['form_data'] = [
-        'numItens' => $_POST['numItens'],
-        'codPro' => $_POST['codPro'],
-        'medida' => $_POST['medida'],
-        'quantidade' => $_POST['quantidade'],
-        'observacao' => $_POST['observacao'],
-        'vUnit' => $_POST['valorUnit'],
-        'vTot' => $_POST['valorTotal']
-    ];
+    // Verifica se já existe algum dado armazenado na sessão e preserva os dados anteriores
+    if (isset($_SESSION['form_data'])) {
+        // Mescla os dados existentes com os novos
+        $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
+            'numItens' => $_POST['numItens'],
+            'codPro' => $_POST['codPro'],
+            'medida' => $_POST['medida'],
+            'quantidade' => $_POST['quantidade'],
+            'desc' => $_POST['desc'],
+            'vUnit' => $_POST['valorUnit'],
+            'vTot' => $_POST['valorTotal']
+        ]);
+    } else {
+        // Caso não existam dados anteriores, cria a sessão com os novos dados
+        $_SESSION['form_data'] = [
+            'numItens' => $_POST['numItens'],
+            'codPro' => $_POST['codPro'],
+            'medida' => $_POST['medida'],
+            'quantidade' => $_POST['quantidade'],
+            'desc' => $_POST['desc'],
+            'vUnit' => $_POST['valorUnit'],
+            'vTot' => $_POST['valorTotal']
+        ];
+    }
 
-    // Redireciona para a página de confirmação
+    // Redireciona para a página cadPed3.php
     header('Location: cadPed3.php');
     exit;
 }
@@ -30,7 +45,7 @@ $result = $conexao->query($query);
 // Inicializa um array vazio para armazenar os produtos
 $produtos = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $produtos como um array associativo
+    // Adiciona cada registro ao array $produtos como um array associativo
     $produtos[] = $row;
 }
 ?>
@@ -152,7 +167,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
-                        <input class="form-control" name="observacao">
+                        <input class="form-control" name="desc">
                     </div>
                 </div>
 

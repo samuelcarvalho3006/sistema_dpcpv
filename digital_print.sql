@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 05/09/2024 às 11:24
+-- Tempo de geração: 13/09/2024 às 19:04
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -29,6 +29,7 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `agenda` (
   `codAgend` int(5) NOT NULL,
+  `cod_func` varchar(50) NOT NULL,
   `titulo` varchar(50) NOT NULL,
   `dataRegistro` date NOT NULL,
   `dataPrazo` date NOT NULL,
@@ -39,8 +40,8 @@ CREATE TABLE `agenda` (
 -- Despejando dados para a tabela `agenda`
 --
 
-INSERT INTO `agenda` (`codAgend`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`) VALUES
-(1, 'lavar louça', '2024-08-31', '2024-08-31', 'lavar a louça pra mamãe');
+INSERT INTO `agenda` (`codAgend`, `cod_func`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`) VALUES
+(9, 'jenifer', 'teste', '2024-09-12', '2024-09-14', 'testando paizao');
 
 -- --------------------------------------------------------
 
@@ -102,7 +103,7 @@ CREATE TABLE `itens_pedido` (
 
 CREATE TABLE `pedidos` (
   `codPed` int(5) NOT NULL,
-  `funcionario` varchar(50) NOT NULL,
+  `cod_func` varchar(50) NOT NULL,
   `tipoPessoa` varchar(50) NOT NULL,
   `nomeCli` varchar(50) NOT NULL,
   `contato` varchar(50) NOT NULL,
@@ -138,8 +139,7 @@ CREATE TABLE `produtos` (
 INSERT INTO `produtos` (`codPro`, `nome`, `valor`) VALUES
 (1, 'banner 50x50', 45),
 (2, 'cartão de visita laminado', 180),
-(3, 'panfleto 15x10', 124),
-(4, 'Fabrizio', 1);
+(3, 'panfleto 15x10', 124);
 
 --
 -- Índices para tabelas despejadas
@@ -189,7 +189,7 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `agenda`
 --
 ALTER TABLE `agenda`
-  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
