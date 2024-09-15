@@ -5,35 +5,73 @@ $conexao = novaConexao();
 
 $sucesso = false;
 $error = false;
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
-try {
-    // Verificar se todos os campos obrigatórios estão preenchidos
-    if (
-        isset(
-        $_POST['nome'],
-        $_POST['valor'],
-    )
-    ) {
-        // Preparar a SQL
-        $sql = "INSERT INTO produtos (nome, valor) VALUES (:p_n, :p_v)";
-        $stmt = $conexao->prepare($sql);
+    try {
+        $codCat = null;
+        $nomeCategoria = null;
 
-        // Associar os valores aos placeholders
-        $stmt->bindValue('p_n', $_POST['nome']);
-        $stmt->bindValue('p_v', $_POST['valor']);
+        if (isset($_POST['codCat']) && $_POST['codCat'] === 'Novo') {
+            // Pegando os dados da nova categoria que foram inseridos no formulário
+            $nomeCategoria = $_POST['nome'] ?? null;
 
-        // Executar a SQL
-        $stmt->execute();
+            if ($nomeCategoria) {
+                // Inserindo a nova categoria na tabela 'categoria'
+                $sql = "INSERT INTO categoria (nome) VALUES (:c_n)";
+                $stmt = $conexao->prepare($sql);
 
-        $sucesso = true;
-    } else {
-        $error = true;
+                // Associar os valores aos placeholders
+                $stmt->bindValue(':c_n', $nomeCategoria);
+                // Executar a SQL
+                $stmt->execute();
+
+                // Pegando o ID da nova categoria inserida
+                $codCat = $nomeCategoria;
+            }
+        } else {
+            // Se uma categoria existente foi selecionada, usamos o ID dela
+            $codCat = $_POST['codCat'] ?? null;
+        }
+
+        // Verificar se todos os campos obrigatórios estão preenchidos
+        if ($codCat && isset($_POST['medida'], $_POST['valor'])) {
+            // Preparar a SQL
+            $sql = "INSERT INTO produtos (codCat, medida, valor) VALUES (:p_p, :p_m, :p_v)";
+            $stmt = $conexao->prepare($sql);
+
+            // Associar os valores aos placeholders
+            $stmt->bindValue(':p_p', $codCat);
+            $stmt->bindValue(':p_m', $_POST['medida']);
+            $stmt->bindValue(':p_v', $_POST['valor']);
+
+            // Executar a SQL
+            $stmt->execute();
+            $sucesso = true;
+        } else {
+            $error = true;
+        }
+    } catch (PDOException $e) {
+        // Adiciona log do erro para depuração
+        error_log("Erro: " . $e->getMessage());
+        $error = true; // Configura erro se houver uma exceção
     }
-} catch (PDOException $e) {
-    $error = true; // Configura erro se houver uma exceção
-}
 }
 
+// Consulta todos os registros da tabela categoria
+$query = "SELECT * FROM categoria";
+$result = $conexao->query($query);
+// Inicializa um array vazio para armazenar as categorias
+$categorias = [];
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    // Adiciona cada registro ao array $categorias como um array associativo
+    $categorias[] = $row;
+}
+
+// Capturando os valores enviados via POST (para controle dinâmico dos campos)
+$novCat = $_POST['codCat'] ?? null;
+
+// Verificando se "Nova categoria" foi selecionado
+$showNovCat = $novCat === 'Novo';
 ?>
 
 <!DOCTYPE html>
@@ -60,10 +98,7 @@ try {
             </button>
 
             <div class="collapse navbar-collapse justify-content-center" id="navegacao">
-
                 <ul class="nav nav-pills justify-content-center listas"> <!-- LISTAS DO MENU CABECALHO-->
-
-
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -74,7 +109,6 @@ try {
                             <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -85,7 +119,6 @@ try {
                             <a class="dropdown-item" href="../agenda/consAge.php">Consultar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -93,10 +126,10 @@ try {
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="#">Cadastro</a>
-                            <a class="dropdown-item" href="editProd.php">Edição</a>
+                            <a class="dropdown-item" href="./editProd.php">Edição</a>
+                            <a class="dropdown-item" href="./categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
                     <li class="nav-item dropdown"> <!-- LINK BOOTSTRAP DORPDOWN MENU-->
                         <a class="nav-link dropdown-toggle cor_fonte" href="#" id="navbarDropdownMenuLink"
                             data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -107,7 +140,6 @@ try {
                             <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -122,16 +154,32 @@ try {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-
     <div class="container container-custom">
         <h3 class="text-center mb-4">Cadastro de Produtos</h3>
         <form method="POST">
             <div class="row row-custom">
+                <div class="col-custom">
+                    <div class="form-group mb-3">
+                        <label class="form-label">Categoria:</label>
+                        <select class="form-select" id="categoria" name="codCat" onchange="toggleNovCat(this.value)">
+                            <option selected disabled>Selecione a categoria</option>
+                            <?php foreach ($categorias as $categoria): ?>
+                                <option value="<?= htmlspecialchars($categoria['nome']) ?>">
+                                    <?= htmlspecialchars($categoria['nome']) ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <option value="Novo">Nova</option>
+                        </select>
+                    </div>
 
-                <div class="col-custom"> <!-- Primeira Coluna -->
-                <div class="form-group mb-3">
-                        <label class="form-label">Nome do Produto:</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Nome do produto" required>
+                    <div class="form-group mb-3" id="novaCategoriaDiv" style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
+                        <label class="form-label">Nova Categoria:</label>
+                        <input type="text" class="form-control" id="novaCategoria" name="nome">
+                    </div>
+
+                    <div class="form-group mb-3">
+                        <label class="form-label">Medida:</label>
+                        <input type="text" class="form-control" name="medida" placeholder="Altura x Largura" required>
                     </div>
 
                     <div class="form-group mb-3">
@@ -140,10 +188,8 @@ try {
                         <span class="aviso">Utilize ponto ao invés de vírgula</span>
                     </div>
                 </div>
-
             </div>
 
-            <!-- Botões centralizados abaixo das colunas -->
             <div class="row mt-4 btn-group-custom">
                 <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
                 <button type="submit" class="btn btn-success btn-personalizado">Cadastrar produto</button>
@@ -151,81 +197,35 @@ try {
         </form>
     </div>
 
-     <!-- PopUp de sucesso -->
-     <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup success -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                    <h5 class="modal-title" id="successModalLabel">sucesso</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        -->
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    O produto foi cadastrado com sucesso!
-                </div>
-                <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- fim do popup de sucesso -->
-
-     <!-- PopUp de Erro -->
-     <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup error -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                    <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        -->
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    Não foi possível inserir o registro.<br>
-                    Por favor, tente novamente.
-                </div>
-                <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- fim do popup de erro -->
-
+    <!-- Popups de sucesso e erro -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
         <?php if ($sucesso): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#successModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
             });
         <?php endif; ?>
-         <?php if ($error): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
+        <?php if ($error): ?>
+            $(document).ready(function() {
                 $('#errorModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
             });
         <?php endif; ?>
+
+        function toggleNovCat(value) {
+            const novaCategoriaDiv = document.getElementById('novaCategoriaDiv');
+            if (value === 'Novo') {
+                novaCategoriaDiv.style.display = 'block';
+            } else {
+                novaCategoriaDiv.style.display = 'none';
+            }
+        }
+
+        // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
+        document.addEventListener('DOMContentLoaded', function() {
+            toggleNovCat(document.getElementById('codCat').value);
+        });
     </script>
 </body>
 

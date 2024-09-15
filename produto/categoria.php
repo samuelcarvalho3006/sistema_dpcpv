@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT * FROM agenda ORDER BY dataPrazo ASC";
+    $sql = "SELECT * FROM categoria";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -17,10 +17,10 @@ try {
 }
 
 if (isset($_POST['delete'])) {
-    $id = $_POST['codAgend'];
+    $id = $_POST['codCat'];
 
     // SQL para excluir a linha com base no ID
-    $sql = "DELETE FROM agenda WHERE codAgend = :id";
+    $sql = "DELETE FROM categoria WHERE codCat = :id";
 
     // Prepara a declaração SQL
     $stmt = $conexao->prepare($sql);
@@ -93,9 +93,9 @@ if (isset($_POST['delete'])) {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
-                            <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
-                            <a class="dropdown-item" href="../produto/categoria.php">Categoria</a>
+                            <a class="dropdown-item" href="./cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="./editProd.php">Edição</a>
+                            <a class="dropdown-item" href="./categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -136,26 +136,18 @@ if (isset($_POST['delete'])) {
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>Responsável</th>
-                        <th>Título</th>
-                        <th>Data de Registro</th>
-                        <th>Data de Prazo</th>
-                        <th>Informação</th>
+                        <th>Nome</th>
                         <th>Operações</th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo ($registro['codAgend']); ?></td>
-                            <td><?php echo ($registro['cod_func']); ?></td>
-                            <td><?php echo ($registro['titulo']); ?></td>
-                            <td><?php echo (date('d/m/Y', strtotime($registro['dataRegistro']))); ?></td>
-                            <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
-                            <td><?php echo ($registro['informacao']); ?></td>
+                            <td><?php echo ($registro['codCat']); ?></td>
+                            <td><?php echo ($registro['nome']); ?></td>
                             <td>
                                 <form method="POST" action="">
-                                    <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
+                                    <input type="hidden" name="codCat" value="<?php echo $registro['codCat']; ?>">
                                     <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
                                 </form>
                             </td>

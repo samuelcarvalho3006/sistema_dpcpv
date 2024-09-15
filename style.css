@@ -197,3 +197,7 @@ h2 {
 .consulta{
     width: 100%;
 }
+
+.numeroItens{
+    border-bottom: 1px solid #1AA7E7;
+}

@@ -38,6 +38,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
             $stmt->execute();
 
             $sucesso = true;
+
+            header("Location: ./consAge.php");
         } else {
             $error = true;
         }
@@ -114,6 +116,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
                             <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
+                            <a class="dropdown-item" href="../produto/categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -165,12 +168,12 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <div class="form-group mb-3">
                     <label class="form-label">Data de registro:</label>
-                    <input type="date" class="form-control" name="dataRegistro">
+                    <input type="date" class="form-control data" name="dataRegistro">
                 </div>
 
                 <div class="form-group mb-3">
                     <label class="form-label">Data de Prazo:</label>
-                    <input type="date" class="form-control" name="dataPrazo">
+                    <input type="date" class="form-control data" name="dataPrazo">
                 </div>
 
                 <div class="form-group mb-3">
@@ -264,6 +267,25 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
             });
         <?php endif; ?>
+
+        var hoje = new Date();
+
+        var dia = String(hoje.getDate()).padStart(2, '0');
+        var mes = String(hoje.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
+        var ano = hoje.getFullYear();
+
+        // Monta a string no formato aceito pelo input de data
+        var dataAtual = ano + '-' + mes + '-' + dia;
+
+        // Seleciona todos os inputs com a classe 'data'
+        var inputsData = document.querySelectorAll('.data');
+
+        // Aplica o valor e o mínimo em todos os campos de data
+        inputsData.forEach(function (input) {
+            input.value = dataAtual;           // Predefine a data atual
+            input.setAttribute('min', dataAtual);  // Define o valor mínimo
+        });
+
     </script>
 </body>
 

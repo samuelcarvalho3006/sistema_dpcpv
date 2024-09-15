@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 13/09/2024 às 19:04
+-- Tempo de geração: 15/09/2024 às 21:04
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -41,7 +41,28 @@ CREATE TABLE `agenda` (
 --
 
 INSERT INTO `agenda` (`codAgend`, `cod_func`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`) VALUES
-(9, 'jenifer', 'teste', '2024-09-12', '2024-09-14', 'testando paizao');
+(12, 'jenifer', 'Jenifer', '2024-09-15', '2024-09-18', 'ppppppp'),
+(13, 'jenifer', 'sla2', '2024-09-15', '2024-09-22', 'ooooooooo'),
+(15, 'jenifer', 'lavar louça', '2024-09-15', '2024-09-15', 'llllllllllllllll');
+
+-- --------------------------------------------------------
+
+--
+-- Estrutura para tabela `categoria`
+--
+
+CREATE TABLE `categoria` (
+  `codCat` int(5) NOT NULL,
+  `nome` varchar(50) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `categoria`
+--
+
+INSERT INTO `categoria` (`codCat`, `nome`) VALUES
+(4, 'Banner'),
+(5, 'Cartão de visita');
 
 -- --------------------------------------------------------
 
@@ -107,7 +128,7 @@ CREATE TABLE `pedidos` (
   `tipoPessoa` varchar(50) NOT NULL,
   `nomeCli` varchar(50) NOT NULL,
   `contato` varchar(50) NOT NULL,
-  `desc` text NOT NULL,
+  `descr` text NOT NULL,
   `dataPed` date NOT NULL,
   `dataPrev` date NOT NULL,
   `entrega` varchar(50) NOT NULL,
@@ -128,7 +149,8 @@ CREATE TABLE `pedidos` (
 
 CREATE TABLE `produtos` (
   `codPro` int(5) NOT NULL,
-  `nome` varchar(50) NOT NULL,
+  `codCat` varchar(50) NOT NULL,
+  `medida` varchar(50) NOT NULL,
   `valor` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -136,10 +158,9 @@ CREATE TABLE `produtos` (
 -- Despejando dados para a tabela `produtos`
 --
 
-INSERT INTO `produtos` (`codPro`, `nome`, `valor`) VALUES
-(1, 'banner 50x50', 45),
-(2, 'cartão de visita laminado', 180),
-(3, 'panfleto 15x10', 124);
+INSERT INTO `produtos` (`codPro`, `codCat`, `medida`, `valor`) VALUES
+(4, 'Banner', '50x50', 45),
+(5, 'Cartão de visita', '9x5', 124);
 
 --
 -- Índices para tabelas despejadas
@@ -150,6 +171,12 @@ INSERT INTO `produtos` (`codPro`, `nome`, `valor`) VALUES
 --
 ALTER TABLE `agenda`
   ADD PRIMARY KEY (`codAgend`);
+
+--
+-- Índices de tabela `categoria`
+--
+ALTER TABLE `categoria`
+  ADD PRIMARY KEY (`codCat`);
 
 --
 -- Índices de tabela `dp_login`
@@ -189,7 +216,13 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `agenda`
 --
 ALTER TABLE `agenda`
-  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+
+--
+-- AUTO_INCREMENT de tabela `categoria`
+--
+ALTER TABLE `categoria`
+  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
@@ -219,7 +252,7 @@ ALTER TABLE `pedidos`
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

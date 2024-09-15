@@ -15,6 +15,26 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['codPro'];
+
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM produtos WHERE codPro = :id";
+
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -74,8 +94,9 @@ try {
                             Produtos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="cadProd.php">Cadastro</a>
-                            <a class="dropdown-item" href="#">Edição</a>
+                            <a class="dropdown-item" href="./cadProd.php">Cadastro</a>
+                            <a class="dropdown-item" href="./editProd.php">Edição</a>
+                            <a class="dropdown-item" href="./categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -116,7 +137,8 @@ try {
                 <thead> <!-- define o cabeçalho da tabela -->
                     <tr>
                         <th>ID</th>
-                        <th>Nome</th>
+                        <th>Categoria</th>
+                        <th>Medida</th>
                         <th>Valor</th>
                         <th>Operações</th>
                     </tr>
@@ -125,9 +147,15 @@ try {
                     <?php foreach ($registros as $registro): ?>
                         <tr>
                             <td><?php echo htmlspecialchars($registro['codPro']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['nome']); ?></td>
+                            <td><?php echo htmlspecialchars($registro['codCat']); ?></td>
+                            <td><?php echo htmlspecialchars($registro['medida']); ?></td>
                             <td>R$<?php echo htmlspecialchars($registro['valor']); ?></td>
-                            <td></td>
+                            <td>
+                                <form method="POST" action="">
+                                    <input type="hidden" name="codPro" value="<?php echo $registro['codPro']; ?>">
+                                    <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

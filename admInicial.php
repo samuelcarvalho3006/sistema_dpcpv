@@ -6,7 +6,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT * FROM agenda WHERE dataPrazo > CURDATE()"; //filtra registros por data mais próxima
+    $sql = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) ORDER BY dataPrazo ASC"; //filtra registros por data mais próxima
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -26,22 +26,22 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 if (isset($_POST['delete'])) {
     $id = $_POST['codAgend'];
 
-    $_SESSION['form_data'] = [
-        'funcionario' => $_POST['funcionario'],
-        'datPedido' => $_POST['datPedido'],
-        'dataPrev' => $_POST['dataPrev'],
-        'nome' => $_POST['nome'],
-        'pessoa' => $_POST['pessoa'],
-        'contato' => $_POST['contato']
-    ];
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM agenda WHERE codAgend = :id";
 
-    // Redireciona para a página de confirmação
-    header('Location: cadPed2.php');
-    exit;
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
     } else {
         echo "Erro ao excluir linha: ";
     }
-
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -102,6 +102,7 @@ if (isset($_POST['delete'])) {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="./produto/cadProd.php">Cadastro</a>
                             <a class="dropdown-item" href="./produto/editProd.php">Edição</a>
+                            <a class="dropdown-item" href="./produto/categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -168,7 +169,7 @@ if (isset($_POST['delete'])) {
                                         </form>
                                     </div>
                                     <div class="col-4">
-                                    <form method="POST">
+                                        <form method="POST">
                                             <input type="hidden" name="edit" value="<?php echo $registro['codAgend']; ?>">
                                             <button type="submit" name="edit" class="btn btn-primary">Editar</button>
                                         </form>

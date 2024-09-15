@@ -75,6 +75,7 @@ try {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
                             <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
+                            <a class="dropdown-item" href="../produto/categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 

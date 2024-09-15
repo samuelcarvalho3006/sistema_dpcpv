@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Mescla os dados existentes com os novos
         $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
             'numItens' => $_POST['numItens'],
-            'codPro' => $_POST['codPro'],
+            'codCat' => $_POST['codCat'],
             'medida' => $_POST['medida'],
             'quantidade' => $_POST['quantid'],
             'desc' => $_POST['desc'],
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Caso não existam dados anteriores, cria a sessão com os novos dados
         $_SESSION['form_data'] = [
             'numItens' => $_POST['numItens'],
-            'codPro' => $_POST['codPro'],
+            'codCat' => $_POST['codCat'],
             'medida' => $_POST['medida'],
             'quantidade' => $_POST['quantid'],
             'desc' => $_POST['desc'],
@@ -39,13 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Consulta todos os registros da tabela produtos
-$query = "SELECT * FROM produtos";
+$query = "SELECT codCat FROM produtos";
 $result = $conexao->query($query);
 // Inicializa um array vazio para armazenar os produtos
 $produtos = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     // Adiciona cada registro ao array $produtos como um array associativo
     $produtos[] = $row;
+}
+
+$medidas = [];
+while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
+    // Adiciona cada registro ao array $medidas como um array associativo
+    $medidas[] = $row;
 }
 ?>
 
@@ -106,6 +112,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                             <a class="dropdown-item" href="../produto/cadProd.php">Cadastro</a>
                             <a class="dropdown-item" href="../produto/editProd.php">Edição</a>
+                            <a class="dropdown-item" href="../produto/categoria.php">Categoria</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -134,27 +141,29 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
+
     <div class="container container-custom">
         <form method="POST">
-            <div class="row">
-                <div class="form-group mb-3">
-                    <label class="form-label" for="numItens">nº de itens</label>
-                    <input type="number" class="form-control numItens" id="numItens" name="quantid">
+            <div class="row justify-content-center text-center">
+                <div class="col-auto"> <!-- Use col-auto para centralizar o conteúdo -->
+                    <div class="form-group mb-3">
+                        <label class="form-label" for="numItens">nº de itens</label>
+                        <input type="number" class="form-control" id="numItens" name="quantid">
+                    </div>
                 </div>
             </div>
+
             <div class="row row-custom">
 
                 <div class="col-custom"> <!-- Primeira Coluna -->
 
-
-
                     <div class="form-group mb-3">
                         <label class="form-label">Produto:</label>
-                        <select class="form-select numItens" id="prodSelec" name="codPro" onchange="atualizarValor()">
+                        <select class="form-select" name="codCat">
                             <option selected disabled>Selecione um produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['nome']); ?>">
-                                    <?php echo htmlspecialchars($produto['nome']); ?>
+                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>">
+                                    <?php echo htmlspecialchars($produto['codCat']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -162,7 +171,16 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Medida</label>
-                        <input class="form-control" name="medida">
+                        <select class="form-select" id="prodSelec" name="medida" onchange="atualizarValor()">
+                            <option selected disabled>Selecione uma medida</option>
+                            <?php
+                            foreach ($medidas as $medida): ?>
+                                <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
+                                    <?php echo htmlspecialchars($medida['medida']); ?>
+                                </option>
+                            <?php endforeach; ?>
+                            <option value="personalizado">Peronalizado...</option>
+                        </select>
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
@@ -187,7 +205,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 </div>
                 <!-- Botões centralizados abaixo das colunas -->
                 <div class="row mt-4 btn-group-custom">
-                    <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
+                    <button type="reset" class="btn btn-outline-danger btn-personalizado">Voltar</button>
                     <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
                 </div>
         </form>
@@ -223,11 +241,10 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
         <script>
-
             <?php if ($error): ?>
                 /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
                 realiza a ação de chamar o popup Modal e exibe o erro */
-                $(document).ready(function () {
+                $(document).ready(function() {
                     $('#errorModal').modal('show');
                     /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
                     com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
@@ -247,7 +264,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
                 // Encontra o produto selecionado no array 'produtos'
                 // 'find' retorna o primeiro elemento que satisfaz a condição
-                // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
+                // Aqui, compara 'codCat' do produto com o valor selecionado no dropdown
                 const produtoSelecionado = produtos.find(produto => produto.nome == selectProduto.value);
 
                 // Verifica se um produto correspondente foi encontrado
@@ -258,6 +275,10 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                     // Se não encontrado, limpa o campo de valor unitário
                     valorUnitario.value = '';
                 }
+            }
+
+            function medPers() {
+
             }
         </script>
 </body>
