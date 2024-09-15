@@ -15,7 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'numItens' => $_POST['numItens'],
             'codPro' => $_POST['codPro'],
             'medida' => $_POST['medida'],
-            'quantidade' => $_POST['quantidade'],
+            'quantidade' => $_POST['quantid'],
             'desc' => $_POST['desc'],
             'vUnit' => $_POST['valorUnit'],
             'vTot' => $_POST['valorTotal']
@@ -26,7 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             'numItens' => $_POST['numItens'],
             'codPro' => $_POST['codPro'],
             'medida' => $_POST['medida'],
-            'quantidade' => $_POST['quantidade'],
+            'quantidade' => $_POST['quantid'],
             'desc' => $_POST['desc'],
             'vUnit' => $_POST['valorUnit'],
             'vTot' => $_POST['valorTotal']
@@ -41,7 +41,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 // Consulta todos os registros da tabela produtos
 $query = "SELECT * FROM produtos";
 $result = $conexao->query($query);
-
 // Inicializa um array vazio para armazenar os produtos
 $produtos = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
@@ -154,7 +153,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                         <select class="form-select numItens" id="prodSelec" name="codPro" onchange="atualizarValor()">
                             <option selected disabled>Selecione um produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['codPro']); ?>">
+                                <option value="<?php echo htmlspecialchars($produto['nome']); ?>">
                                     <?php echo htmlspecialchars($produto['nome']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -249,7 +248,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 // Encontra o produto selecionado no array 'produtos'
                 // 'find' retorna o primeiro elemento que satisfaz a condição
                 // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
-                const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
+                const produtoSelecionado = produtos.find(produto => produto.nome == selectProduto.value);
 
                 // Verifica se um produto correspondente foi encontrado
                 if (produtoSelecionado) {
