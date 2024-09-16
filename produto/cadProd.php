@@ -47,6 +47,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
             // Executar a SQL
             $stmt->execute();
             $sucesso = true;
+
+            header("Location: ./editProd.php");
         } else {
             $error = true;
         }

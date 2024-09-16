@@ -39,20 +39,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 // Consulta todos os registros da tabela produtos
-$query = "SELECT codCat FROM produtos";
+$query = "SELECT * FROM produtos";
 $result = $conexao->query($query);
 // Inicializa um array vazio para armazenar os produtos
 $produtos = [];
+$medidas = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     // Adiciona cada registro ao array $produtos como um array associativo
     $produtos[] = $row;
-}
-
-$medidas = [];
-while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada registro ao array $medidas como um array associativo
     $medidas[] = $row;
 }
+
+$novCat = $_POST['medida'] ?? null;
+$showNovCat = $novCat === 'Novo';
 ?>
 
 <!DOCTYPE html>
@@ -170,18 +169,24 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
 
                     </div>
                     <div class="form-group mb-3">
-                        <label class="form-label">Medida</label>
-                        <select class="form-select" id="prodSelec" name="medida" onchange="atualizarValor()">
-                            <option selected disabled>Selecione uma medida</option>
-                            <?php
-                            foreach ($medidas as $medida): ?>
+                        <label class="form-label">Categoria:</label>
+                        <select class="form-select" id="medida" name="medida" onchange="toggleMedPers(this.value); atualizarValor()">
+                            <option selected disabled>Selecione a medida</option>
+                            <?php foreach ($medidas as $medida): ?>
                                 <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
                                     <?php echo htmlspecialchars($medida['medida']); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="personalizado">Peronalizado...</option>
+                            <option value="Novo">Nova</option>
                         </select>
                     </div>
+
+                    <div class="form-group mb-3" id="medidaPersonalizadaDiv"
+                        style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
+                        <label class="form-label">Nova Categoria:</label>
+                        <input type="text" class="form-control" id="novaCategoria" name="nome">
+                    </div>
+
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
                         <input class="form-control" name="desc">
@@ -244,7 +249,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             <?php if ($error): ?>
                 /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
                 realiza a ação de chamar o popup Modal e exibe o erro */
-                $(document).ready(function() {
+                $(document).ready(function () {
                     $('#errorModal').modal('show');
                     /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
                     com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
@@ -255,7 +260,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
             function atualizarValor() {
 
                 // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
-                const selectProduto = document.getElementById('prodSelec');
+                const selectProduto = document.getElementById('medida');
                 // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
                 const valorUnitario = document.getElementById('vUnit');
 
@@ -265,7 +270,7 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 // Encontra o produto selecionado no array 'produtos'
                 // 'find' retorna o primeiro elemento que satisfaz a condição
                 // Aqui, compara 'codCat' do produto com o valor selecionado no dropdown
-                const produtoSelecionado = produtos.find(produto => produto.nome == selectProduto.value);
+                const produtoSelecionado = produtos.find(produto => produto.medida == selectProduto.value);
 
                 // Verifica se um produto correspondente foi encontrado
                 if (produtoSelecionado) {
@@ -277,9 +282,20 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
                 }
             }
 
-            function medPers() {
 
+            function toggleMedPers(value) {
+                const medidaPersonalizadaDiv = document.getElementById('medidaPersonalizadaDiv');
+                if (value === 'Novo') {
+                    medidaPersonalizadaDiv.style.display = 'block';
+                } else {
+                    medidaPersonalizadaDiv.style.display = 'none';
+                }
             }
+
+            // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
+            document.addEventListener('DOMContentLoaded', function () {
+                toggleNovCat(document.getElementById('medida').value);
+            });
         </script>
 </body>
 
