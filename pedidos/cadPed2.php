@@ -50,8 +50,11 @@ while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
     $medidas[] = $row;
 }
 
+
 $novCat = $_POST['medida'] ?? null;
 $showNovCat = $novCat === 'Novo';
+
+
 ?>
 
 <!DOCTYPE html>
@@ -158,10 +161,10 @@ $showNovCat = $novCat === 'Novo';
 
                     <div class="form-group mb-3">
                         <label class="form-label">Produto:</label>
-                        <select class="form-select" name="codCat">
+                        <select class="form-select" id="categoria" name="codCat" onchange="listaMedidas()">
                             <option selected disabled>Selecione um produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>">
+                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
                                     <?php echo htmlspecialchars($produto['codCat']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -169,21 +172,21 @@ $showNovCat = $novCat === 'Novo';
 
                     </div>
                     <div class="form-group mb-3">
-                        <label class="form-label">Categoria:</label>
-                        <select class="form-select" id="medida" name="medida" onchange="toggleMedPers(this.value); atualizarValor()">
+                        <label class="form-label">Medida:</label>
+                        <select class="form-select" id="medida" name="medida"
+                            onchange="toggleMedPers(this.value); atualizarValor()">
                             <option selected disabled>Selecione a medida</option>
                             <?php foreach ($medidas as $medida): ?>
                                 <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
                                     <?php echo htmlspecialchars($medida['medida']); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="Novo">Nova</option>
+                            <option value="personalizado">Personalizado...</option>
                         </select>
                     </div>
 
                     <div class="form-group mb-3" id="medidaPersonalizadaDiv"
                         style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
-                        <label class="form-label">Nova Categoria:</label>
                         <input type="text" class="form-control" id="novaCategoria" name="nome">
                     </div>
 
@@ -258,18 +261,9 @@ $showNovCat = $novCat === 'Novo';
 
             // Função para atualizar o valor unitário com base no produto selecionado
             function atualizarValor() {
-
-                // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
                 const selectProduto = document.getElementById('medida');
-                // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
                 const valorUnitario = document.getElementById('vUnit');
-
-                // Converte o array PHP $produtos em um array JavaScript usando json_encode
                 const produtos = <?php echo json_encode($produtos); ?>;
-
-                // Encontra o produto selecionado no array 'produtos'
-                // 'find' retorna o primeiro elemento que satisfaz a condição
-                // Aqui, compara 'codCat' do produto com o valor selecionado no dropdown
                 const produtoSelecionado = produtos.find(produto => produto.medida == selectProduto.value);
 
                 // Verifica se um produto correspondente foi encontrado
@@ -285,7 +279,7 @@ $showNovCat = $novCat === 'Novo';
 
             function toggleMedPers(value) {
                 const medidaPersonalizadaDiv = document.getElementById('medidaPersonalizadaDiv');
-                if (value === 'Novo') {
+                if (value === 'personalizado') {
                     medidaPersonalizadaDiv.style.display = 'block';
                 } else {
                     medidaPersonalizadaDiv.style.display = 'none';
@@ -295,6 +289,28 @@ $showNovCat = $novCat === 'Novo';
             // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
             document.addEventListener('DOMContentLoaded', function () {
                 toggleNovCat(document.getElementById('medida').value);
+            });
+
+            const produtos = <?php echo json_encode($produtos); ?>;
+            const medidas = <?php echo json_encode($medidas); ?>;
+
+            document.getElementById('categoria').addEventListener('change', function () {
+                const categoriaSelecionada = this.value;
+                const medidaSelect = document.getElementById('medida');
+
+                // Limpar as opções anteriores de medida
+                medidaSelect.innerHTML = '<option selected disabled>Selecione a medida</option>';
+
+                // Filtrar as medidas de acordo com a categoria selecionada
+                const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
+
+                // Adicionar as medidas filtradas ao select
+                medidasFiltradas.forEach(function (medida) {
+                    const option = document.createElement('option');
+                    option.value = medida.medida;
+                    option.textContent = medida.medida;
+                    medidaSelect.appendChild(option);
+                });
             });
         </script>
 </body>
