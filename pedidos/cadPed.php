@@ -172,8 +172,9 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <!-- Botões centralizados abaixo das colunas -->
                 <div class="row mt-4 btn-group-custom">
-                    <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-                    <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
+                <button type="button" class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='../admInicial.php';">Cancelar</button>
+                <button type="reset" class="btn btn-outline-dark btn-personalizado">Limpar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
                 </div>
         </form>
     </div>

@@ -7,7 +7,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT codPed, nomeCli, contato, dataPed, dataPrev, entrada, valorTotal FROM pedidos";
+    $sql = "SELECT * FROM pedidos";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -15,6 +15,28 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['codPed'];
+
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM pedidos WHERE codPed = :id";
+    $sql = "DELETE FROM itens_pedido WHERE codPed = :id";
+
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -25,7 +47,7 @@ try {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.1">
 </head>
 
 <body>
@@ -118,10 +140,10 @@ try {
                         <th>Cliente</th>
                         <th>Data de Registro</th>
                         <th>Data Prevista</th>
-                        <th>Entrada</th>
                         <th>Itens do Pedido</th>
                         <th>Status Pagamento</th>
                         <th>Forma de entrega</th>
+                        <th>Valor Total</th>
                         <th>Operações</th>
                     </tr>
                 </thead>
@@ -132,36 +154,66 @@ try {
                             <td><?php echo ($registro['nomeCli']); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPed']))); ?></td>
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPrev']))); ?></td>
-                            <td><a href="#" class="btn btn-outline-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                        height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                        <path
-                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                        <path
-                                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                    </svg>Visualizar</a></td>
-                            <td><a href="#" class="btn btn-outline-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                        height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                        <path
-                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                        <path
-                                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                    </svg>Visualizar</a></td>
-                            <td><a href="#" class="btn btn-outline-primary"><svg xmlns="http://www.w3.org/2000/svg" width="20"
-                                        height="16" fill="currentColor" class="bi bi-eye" viewBox="0 0 16 16">
-                                        <path
-                                            d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8M1.173 8a13 13 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5s3.879 1.168 5.168 2.457A13 13 0 0 1 14.828 8q-.086.13-.195.288c-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5s-3.879-1.168-5.168-2.457A13 13 0 0 1 1.172 8z" />
-                                        <path
-                                            d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5M4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0" />
-                                    </svg>Visualizar</a></td>
-                            <td><?php echo ($registro['valorTotal']); ?></td>
-                            <td></td>
-                            <td></td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form method="POST">
+                                            <input type="hidden" name="codCat" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form method="POST">
+                                            <input type="hidden" name="codCat" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <?php echo ($registro['valorTotal']); ?>
+                            </td>
+                            <td>
+                                <div class="row">
+                                    <div class="col-4">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="delete" class="btn btn-outline-danger">Excluir</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="edit" class="btn btn-outline-primary">Editar</button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4">
+                                        <a class="btn btn-outline-success"
+                                            href="editar.php?id=<?php echo $usuario['id']; ?>">Concluído</a>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
         <?php endif; ?>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>

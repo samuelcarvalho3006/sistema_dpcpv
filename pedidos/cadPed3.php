@@ -5,7 +5,7 @@ require_once('../conexao.php');
 $conexao = novaConexao();
 
 $error = false;
-
+$form_data = $_SESSION['form_data'];
 // Verifica se o formulário foi enviado
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Verifica se já existe algum dado armazenado na sessão e preserva os dados anteriores
@@ -153,7 +153,8 @@ if ($entrega === 'entrega') {
                 <div class="col-custom">
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total:</label>
-                        <input type="text" class="form-control" name="valorTotal" placeholder="R$ 0,00">
+                        <input type="text" class="form-control" name="valorTotal"
+                            value="<?php echo htmlspecialchars($form_data['vTot']); ?>" readonly>
                     </div>
 
                     <div class="form-group mb-3">
@@ -217,7 +218,8 @@ if ($entrega === 'entrega') {
 
             <!-- Botões centralizados abaixo das colunas -->
             <div class="row mt-4 btn-group-custom">
-                <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
+                <button type="button" class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='cadPed2.php';">Voltar</button>
+                <button type="reset" class="btn btn-outline-dark btn-personalizado">Limpar</button>
                 <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
             </div>
         </form>

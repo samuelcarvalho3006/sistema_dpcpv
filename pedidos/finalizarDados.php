@@ -62,6 +62,7 @@ try {
     // Associar os valores aos placeholders para os itens do pedido
     //$stmtItens->bindValue(':pedido_id', $pedidoId); // Associar o ID do pedido inserido
     $stmtItens->bindValue(':codPro', checkValue($form_data['codPro'], 0)); // Valor padrão 0 se não definido
+    $stmtItens->bindValue(':codPed', checkValue($form_data['codPro'], 0)); // Valor padrão 0 se não definido
     $stmtItens->bindValue(':medida', checkValue($form_data['medida'], '')); // Valor padrão vazio se não definido
     $stmtItens->bindValue(':quantidade', checkValue($form_data['quantidade'], 1)); // Valor padrão 1 se não definido
     $stmtItens->bindValue(':vUnit', checkValue($form_data['vUnit'], 0)); // Valor padrão 0 se não definido

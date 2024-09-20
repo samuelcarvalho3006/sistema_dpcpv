@@ -6,7 +6,7 @@ $registros = [];
 $erro = false;
 
 try {
-    $sql = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) ORDER BY dataPrazo ASC"; //filtra registros por data mais próxima
+    $sql = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 7 DAY) ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
@@ -130,6 +130,8 @@ if (isset($_POST['delete'])) {
             </a>
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
+
+    
 
     <div class="container mt-5">
         <h3 class="text-center mb-5">Registros da Agenda a Expirar</h3>

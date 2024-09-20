@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Mescla os dados existentes com os novos
         $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
             'numItens' => $_POST['numItens'],
-            'codPro' => $_POST['codPro'],
+            'codCat' => $_POST['codCat'],
             'medida' => $_POST['medida'],
             'quantidade' => $_POST['quantid'],
             'desc' => $_POST['desc'],
@@ -24,7 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         // Caso não existam dados anteriores, cria a sessão com os novos dados
         $_SESSION['form_data'] = [
             'numItens' => $_POST['numItens'],
-            'codPro' => $_POST['codPro'],
+            'codCat' => $_POST['codCat'],
             'medida' => $_POST['medida'],
             'quantidade' => $_POST['quantid'],
             'desc' => $_POST['desc'],
@@ -145,36 +145,35 @@ $showNovCat = $novCat === 'Novo';
     <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
 
     <div class="container container-custom">
-        <form method="POST">
-            <div class="row justify-content-center text-center">
-                <div class="col-auto"> <!-- Use col-auto para centralizar o conteúdo -->
-                    <div class="form-group mb-3">
-                        <label class="form-label" for="numItens">nº de itens</label>
-                        <input type="number" class="form-control" id="numItens" name="quantid">
-                    </div>
+        <div class="row justify-content-center text-center">
+            <div class="col-auto">
+                <div class="form-group mb-3">
+                    <label class="form-label" for="numItens-1">nº de itens</label>
+                    <input type="number" class="form-control" id="numItens-1" name="quantid" style="width: 100px"
+                        value="1" onchange="atualizarFormularios()">
                 </div>
             </div>
+        </div>
 
-            <div class="row row-custom">
+        <form method="POST" id="form-container">
 
-                <div class="col-custom"> <!-- Primeira Coluna -->
-
+            <div class="row row-custom formulario-produto" id="form-produto-1">
+                <div class="col-custom">
                     <div class="form-group mb-3">
                         <label class="form-label">Produto:</label>
-                        <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
+                        <select class="form-select" id="categoria-1" name="codCat">
                             <option selected disabled>Selecione um produto</option>
                             <?php foreach ($produtos as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
+                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>">
                                     <?php echo htmlspecialchars($produto['codCat']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
                     </div>
+
                     <div class="form-group mb-3">
                         <label class="form-label">Medida:</label>
-                        <select class="form-select" id="medida" name="medida"
-                            onchange="toggleMedPers(this.value); atualizarValor()">
+                        <select class="form-select" id="medida-1" name="medida">
                             <option selected disabled>Selecione a medida</option>
                             <?php foreach ($medidas as $medida): ?>
                                 <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
@@ -185,44 +184,38 @@ $showNovCat = $novCat === 'Novo';
                         </select>
                     </div>
 
-                    <div class="form-group mb-3" id="medidaPersonalizadaDiv"
-                        style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
-                        <input type="text" class="form-control" id="novaCategoria" name="nome">
-                    </div>
-
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
-                        <input class="form-control" name="desc">
+                        <input class="form-control" id="desc-1" name="desc">
                     </div>
                 </div>
 
                 <div class="col-custom2">
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Unitário</label>
-                        <input type="text" class="form-control" id="vUnit" name="valorUnit">
+                        <input type="text" class="form-control" id="vUnit-1" name="valorUnit">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Quantidade</label>
-                        <input type="number" class="form-control numItens" name="quantid" id="quantidade"
+                        <input type="number" class="form-control numItens" id="quantidade-1" name="quantidade"
                             onchange="atualizarValorTotal()">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total</label>
-                        <input type="text" class="form-control" id="vTot" name="valorTotal">
+                        <input type="text" class="form-control" id="vTot-1" name="valorTotal">
                     </div>
                 </div>
             </div>
 
-
             <!-- Botões centralizados abaixo das colunas -->
-            <div class="row mt-4 btn-group-custom">
-            <button type="button" class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='cadPed.php';">Voltar</button>
-                <button type="reset" class="btn btn-outline-dark btn-personalizado">Limpar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
-            </div>
+
         </form>
+        <div class="row mt-4 btn-group-custom">
+            <button type="reset" class="btn btn-outline-danger btn-personalizado">Voltar</button>
+            <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
+        </div>
     </div>
 
     <!-- PopUp de Erro -->
@@ -304,14 +297,9 @@ $showNovCat = $novCat === 'Novo';
             }
         }
 
-
         function toggleMedPers(value) {
             const medidaPersonalizadaDiv = document.getElementById('medidaPersonalizadaDiv');
-            if (value === 'personalizado') {
-                medidaPersonalizadaDiv.style.display = 'block';
-            } else {
-                medidaPersonalizadaDiv.style.display = 'none';
-            }
+            medidaPersonalizadaDiv.style.display = value === 'personalizado' ? 'block' : 'none';
         }
 
         // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
@@ -340,6 +328,47 @@ $showNovCat = $novCat === 'Novo';
                 medidaSelect.appendChild(option);
             });
         });
+
+        let formularioCount = 1;  // Contador para manter controle sobre os IDs dos formulários
+
+        function atualizarFormularios() {
+            const quantidadeInput = document.getElementById(`numItens-${formularioCount}`);
+
+            // Verifica se a quantidade aumentou
+            if (quantidadeInput.value > formularioCount) {
+                adicionarNovoFormulario();
+            }
+        }
+
+        function adicionarNovoFormulario() {
+            formularioCount++;
+
+            // Clona o primeiro formulário
+            const novoFormulario = document.querySelector('.formulario-produto').cloneNode(true);
+
+            // Atualiza os IDs e nomes dos elementos do novo formulário
+            novoFormulario.id = `form-produto-${formularioCount}`;
+            const inputs = novoFormulario.querySelectorAll('input, select');
+
+            inputs.forEach((input) => {
+                // Atualiza o ID de cada campo no novo formulário
+                const novoId = input.id.split('-')[0] + '-' + formularioCount;
+                input.id = novoId;
+
+                // Limpa os valores dos novos inputs, exceto o de quantidade
+                if (input.type !== 'number') {
+                    input.value = '';
+                }
+
+                if (input.type === 'number') {
+                    input.value = '1';  // Começa a quantidade com 1
+                    input.oninput = atualizarFormularios;  // Adiciona o evento oninput ao novo input de quantidade
+                }
+            });
+
+            // Adiciona o novo formulário ao final do container de formulários
+            document.getElementById('form-container').appendChild(novoFormulario);
+        }
     </script>
 </body>
 
