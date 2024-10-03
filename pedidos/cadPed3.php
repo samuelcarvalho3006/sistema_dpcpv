@@ -39,24 +39,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 //-------------------------------------------------------------
-// PROGRAMAÇÃO PARA EXIBIR OU NÃO ENDEREÇO E VALOR DE ENTRADA
-$showValorEntrada = false;
-$showEndereco = false;
-
-// Capturando os valores enviados via POST (para controle dinâmico dos campos)
-$entrada = $_POST['entrada'] ?? null;
-$entrega = $_POST['entrega'] ?? null;
-
-// Verificando se "Sim" foi selecionado para "Entrada"
-if ($entrada === 'sim') {
-    $showValorEntrada = true;
-}
-
-// Verificando se "Entrega" foi selecionada para "Forma de entrega"
-if ($entrega === 'entrega') {
-    $showEndereco = true;
-}
-
+// Verifica o estado atual dos campos de entrada e entrega para exibição/ocultação dinâmica
+$showValorEntrada = isset($_POST['entrada']) && $_POST['entrada'] === 'sim';
+$showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
 ?>
 
 <!DOCTYPE html>
@@ -161,55 +146,53 @@ if ($entrega === 'entrega') {
                         <label class="form-label">Entrada:</label>
 
                         <div>
-
                             <input type="radio" id="entradaNao" name="entrada" value="nao" class="form-check-input"
-                                <?= !$showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(false)">
+                                onclick="toggleEntrada(false)">
                             <label class="form-check-label" for="entradaNao">Não</label>
 
                             <input type="radio" id="entradaSim" name="entrada" value="sim" class="form-check-input ms-3"
-                                <?= $showValorEntrada ? 'checked' : '' ?> onclick="toggleEntrada(true)">
+                                onclick="toggleEntrada(true)">
                             <label class="form-check-label" for="entradaSim">Sim</label>
-
                         </div>
 
                         <div class="mt-2 <?= $showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
                             <label class="form-label" for="valorEnt">R$</label>
                             <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
-                                style="width: 100px;" value="0,00">
-
+                                style="width: 100px;"
+                                value="<?php echo htmlspecialchars($form_data['valorEnt'] ?? '0,00'); ?>">
                         </div>
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Forma de entrega:</label>
                         <div>
-
                             <input type="radio" id="retirada" name="entrega" value="retirada" class="form-check-input"
-                                <?= !$showEndereco ? 'checked' : '' ?> onclick="toggleEntrega(false)">
+                                onclick="toggleEntrega(false)">
                             <label class="form-check-label" for="retirada">Retirada</label>
 
                             <input type="radio" id="entrega" name="entrega" value="entrega"
-                                class="form-check-input ms-3" <?= $showEndereco ? 'checked' : '' ?>
-                                onclick="toggleEntrega(true)">
+                                class="form-check-input ms-3" onclick="toggleEntrega(true)">
                             <label class="form-check-label" for="entrega">Entrega</label>
-
                         </div>
 
                         <div class="mt-2 <?= $showEndereco ? '' : 'd-none' ?>" id="enderecoDiv">
                             <label class="form-label" for="enderecoRua">R.</label>
                             <input type="text" class="form-control d-inline-block" id="enderecoRua" name="logradouro"
-                                style="width: 200px;">
+                                style="width: 200px;"
+                                value="<?php echo htmlspecialchars($form_data['logradouro'] ?? ''); ?>">
 
                             <div class="mt-2">
                                 <label class="form-label" for="enderecoNumero">Nº</label>
                                 <input type="text" class="form-control d-inline-block" id="enderecoNumero" name="numero"
-                                    style="width: 100px;">
+                                    style="width: 100px;"
+                                    value="<?php echo htmlspecialchars($form_data['numero'] ?? ''); ?>">
                             </div>
 
                             <div class="mt-2">
                                 <label class="form-label" for="enderecoBairro">Bairro</label>
                                 <input type="text" class="form-control d-inline-block" id="enderecoBairro" name="bairro"
-                                    style="width: 200px;">
+                                    style="width: 200px;"
+                                    value="<?php echo htmlspecialchars($form_data['bairro'] ?? ''); ?>">
                             </div>
                         </div>
                     </div>
@@ -218,8 +201,8 @@ if ($entrega === 'entrega') {
 
             <!-- Botões centralizados abaixo das colunas -->
             <div class="row mt-4 btn-group-custom">
-                <button type="button" class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='cadPed2.php';">Voltar</button>
-                <button type="reset" class="btn btn-outline-dark btn-personalizado">Limpar</button>
+                <button type="button" class="btn btn-outline-danger btn-personalizado"
+                    onclick="window.location.href='cadPed2.php';">Voltar</button>
                 <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
             </div>
         </form>
@@ -256,67 +239,30 @@ if ($entrega === 'entrega') {
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-        // Função para alternar a visibilidade do elemento com ID 'valorEntradaDiv'
+        // Funções que controlam a exibição de Entrada e Entrega
         function toggleEntrada(show) {
             const valorEntradaDiv = document.getElementById('valorEntradaDiv');
-            // Verifica se o parâmetro 'show' é verdadeiro
             if (show) {
-                // Remove a classe 'd-none' para exibir o elemento
                 valorEntradaDiv.classList.remove('d-none');
             } else {
-                // Adiciona a classe 'd-none' para esconder o elemento
                 valorEntradaDiv.classList.add('d-none');
             }
         }
 
-        // Função para alternar a visibilidade do elemento com ID 'enderecoDiv'
         function toggleEntrega(show) {
             const enderecoDiv = document.getElementById('enderecoDiv');
-            // Verifica se o parâmetro 'show' é verdadeiro
             if (show) {
-                // Remove a classe 'd-none' para exibir o elemento
                 enderecoDiv.classList.remove('d-none');
             } else {
-                // Adiciona a classe 'd-none' para esconder o elemento
                 enderecoDiv.classList.add('d-none');
             }
         }
 
-        <?php if ($error): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
-                $('#errorModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
+        // Executa apenas a função "atualizarValor" no carregamento da página
+        window.onload = function () {
+            atualizarValor();
+        };
 
-        // Função para atualizar o valor unitário com base no produto selecionado
-        function atualizarValor() {
-
-            // Seleciona o elemento de seleção de produto pelo ID 'prodSelec'
-            const selectProduto = document.getElementById('prodSelec');
-            // Seleciona o campo de entrada para o valor unitário pelo ID 'vUnit'
-            const valorUnitario = document.getElementById('vUnit');
-
-            // Converte o array PHP $produtos em um array JavaScript usando json_encode
-            const produtos = <?php echo json_encode($produtos); ?>;
-
-            // Encontra o produto selecionado no array 'produtos'
-            // 'find' retorna o primeiro elemento que satisfaz a condição
-            // Aqui, compara 'codPro' do produto com o valor selecionado no dropdown
-            const produtoSelecionado = produtos.find(produto => produto.codPro == selectProduto.value);
-
-            // Verifica se um produto correspondente foi encontrado
-            if (produtoSelecionado) {
-                // Se encontrado, define o valor unitário com o valor do produto selecionado
-                valorUnitario.value = produtoSelecionado.valor;
-            } else {
-                // Se não encontrado, limpa o campo de valor unitário
-                valorUnitario.value = '';
-            }
-        }
     </script>
 </body>
 

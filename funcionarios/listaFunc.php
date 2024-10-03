@@ -15,6 +15,26 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['codfunc'];
+
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM funcionarios WHERE cod_func = :id";
+
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -124,7 +144,12 @@ try {
                         <tr>
                             <td><?php echo htmlspecialchars($registro['cod_func']); ?></td>
                             <td><?php echo htmlspecialchars($registro['nome']); ?></td>
-                            <td></td>
+                            <td>
+                                <form method="POST">
+                                    <input type="hidden" name="codfunc" value="<?php echo $registro['cod_func']; ?>">
+                                    <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
+                                </form>
+                            </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>

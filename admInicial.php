@@ -131,7 +131,19 @@ if (isset($_POST['delete'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    
+    <div class="container mt-5">
+        <h3 class="text-center mb-5">Pedidos Próximos do Prazo</h3>
+
+        <?php if ($erro): ?>
+            <div class="alert alert-danger" role="alert">
+                Não foi possível carregar os dados.
+            </div>
+        <?php else: ?>
+            
+            <!-- COLOCAR AQUI A TABLE DE CONSULTA DOS PRODUTOS PARA FILTRAR POR MAIS PRÓXIMO NA TELA ADMINICIAL -->
+
+        <?php endif; ?>
+    </div>
 
     <div class="container mt-5">
         <h3 class="text-center mb-5">Registros da Agenda a Expirar</h3>

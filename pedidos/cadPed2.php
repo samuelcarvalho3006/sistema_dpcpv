@@ -150,7 +150,7 @@ $showNovCat = $novCat === 'Novo';
                 <div class="col-auto"> <!-- Use col-auto para centralizar o conteúdo -->
                     <div class="form-group mb-3">
                         <label class="form-label" for="numItens">nº de itens</label>
-                        <input type="number" class="form-control" id="numItens" name="quantid">
+                        <input type="text" class="form-control" id="numItens" value="1" name="numItens">
                     </div>
                 </div>
             </div>
@@ -218,9 +218,9 @@ $showNovCat = $novCat === 'Novo';
 
             <!-- Botões centralizados abaixo das colunas -->
             <div class="row mt-4 btn-group-custom">
-            <button type="button" class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='cadPed.php';">Voltar</button>
-                <button type="reset" class="btn btn-outline-dark btn-personalizado">Limpar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
+                <button type="button" class="btn btn-outline-danger btn-personalizado"
+                    onclick="window.location.href='cadPed.php';">Voltar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
             </div>
         </form>
     </div>

@@ -45,7 +45,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 <body>
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="nav justify-content-start m-2" href="../admInicial.php">
+            <a class="navbar-brand m-2" href="..//admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -102,7 +102,6 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                             <a class="dropdown-item" href="../funcionarios/listaFunc.php">Listar</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
-
                 </ul> <!-- FECHA LISTAS MENU CABECALHO -->
             </div>
             <a href="../logout.php" class="nav-link justify-content-end" style="color: red;">
@@ -172,39 +171,12 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <!-- Botões centralizados abaixo das colunas -->
                 <div class="row mt-4 btn-group-custom">
-                <button type="button" class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='../admInicial.php';">Cancelar</button>
-                <button type="reset" class="btn btn-outline-dark btn-personalizado">Limpar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
+                    <button type="button" class="btn btn-outline-danger btn-personalizado"
+                        onclick="window.location.href='../admInicial.php';">Cancelar</button>
+                    <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
                 </div>
         </form>
     </div>
-
-    <!-- PopUp de Erro -->
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> chama classe JS de popup error
-            <div class="modal-content"> cria estrutura do pop up
-                <div class="modal-header"> cabecalho do popup, notifcação em destaque
-                    <h5 class="modal-title" id="errorModalLabel">Erro de Login</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        cria botão de fechar em forma de "x"
-                        data-dismiss: faz o botão fecha o popup
-
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body"> corpo do popup, exibe qual foi o erro
-                    Não foi possível inserir o registro.<br>
-                    Por favor, tente novamente.
-                </div>
-                <div class="modal-footer">
-                    parte de baixo do popup, cria botão fechar
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    data-dismiss: faz o botão fecha o popup
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- fim do popup de erro -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>

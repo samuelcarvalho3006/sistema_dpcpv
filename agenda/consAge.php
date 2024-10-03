@@ -4,7 +4,6 @@ require_once('../conexao.php');
 $conexao = novaConexao();
 
 $registros = [];
-$erro = false;
 
 try {
     $sql = "SELECT * FROM agenda ORDER BY dataPrazo ASC";
@@ -154,7 +153,7 @@ if (isset($_POST['delete'])) {
                             <td><?php echo (date('d/m/Y', strtotime($registro['dataPrazo']))); ?></td>
                             <td><?php echo ($registro['informacao']); ?></td>
                             <td>
-                                <form method="POST" action="">
+                                <form method="POST">
                                     <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
                                     <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
                                 </form>
