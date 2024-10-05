@@ -177,11 +177,8 @@ $form_data = $_SESSION['form_data'];
                     </div>
                 </div>
                 <div class="row mt-4 btn-group-custom">
-
-                    <button type="submit" class="btn btn-success btn-personalizado">Finalizar Pedido</button>
-
                     <a href="cadPed.php" class="btn btn-outline-dark btn-personalizado">Voltar ao Formulário</a>
-
+                    <button type="submit" class="btn btn-success btn-personalizado">Finalizar Pedido</button>
                 </div>
             </div>
         </form>
