@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 15/09/2024 às 21:04
+-- Tempo de geração: 10/10/2024 às 20:56
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -41,9 +41,7 @@ CREATE TABLE `agenda` (
 --
 
 INSERT INTO `agenda` (`codAgend`, `cod_func`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`) VALUES
-(12, 'jenifer', 'Jenifer', '2024-09-15', '2024-09-18', 'ppppppp'),
-(13, 'jenifer', 'sla2', '2024-09-15', '2024-09-22', 'ooooooooo'),
-(15, 'jenifer', 'lavar louça', '2024-09-15', '2024-09-15', 'llllllllllllllll');
+(23, 'Samuel de Jesus', 'Finalizar o TCC', '2024-10-10', '2024-11-10', 'Bora acabar o TCC filhão, tu ta solando o sistema e ainda ta atrasado!?');
 
 -- --------------------------------------------------------
 
@@ -62,7 +60,8 @@ CREATE TABLE `categoria` (
 
 INSERT INTO `categoria` (`codCat`, `nome`) VALUES
 (4, 'Banner'),
-(5, 'Cartão de visita');
+(5, 'Cartão de visita'),
+(6, 'Fachada');
 
 -- --------------------------------------------------------
 
@@ -99,7 +98,12 @@ CREATE TABLE `funcionarios` (
 --
 
 INSERT INTO `funcionarios` (`cod_func`, `nome`) VALUES
-(1, 'jenifer');
+(2, 'Jenifer Soares'),
+(3, 'Samuel de Jesus'),
+(4, 'Matheus Coelho'),
+(5, 'Gabriel Roma'),
+(6, 'Gabrielle Regina'),
+(7, 'Davi Nicésio');
 
 -- --------------------------------------------------------
 
@@ -109,12 +113,20 @@ INSERT INTO `funcionarios` (`cod_func`, `nome`) VALUES
 
 CREATE TABLE `itens_pedido` (
   `cod_itensPed` int(5) NOT NULL,
-  `codPro` int(5) NOT NULL,
+  `codPed` int(5) NOT NULL,
+  `codPro` varchar(5) NOT NULL,
   `medida` varchar(50) NOT NULL,
   `quantidade` int(5) NOT NULL,
   `valorUnit` decimal(10,0) NOT NULL,
   `valorTotal` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `itens_pedido`
+--
+
+INSERT INTO `itens_pedido` (`cod_itensPed`, `codPed`, `codPro`, `medida`, `quantidade`, `valorUnit`, `valorTotal`) VALUES
+(5, 5, 'Facha', '50x50', 5, 45, 225);
 
 -- --------------------------------------------------------
 
@@ -141,6 +153,13 @@ CREATE TABLE `pedidos` (
   `cod_itensPed` int(5) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `pedidos`
+--
+
+INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `descr`, `dataPed`, `dataPrev`, `entrega`, `logradouro`, `numero`, `bairro`, `entrada`, `valorEnt`, `valorTotal`, `cod_itensPed`) VALUES
+(5, 'Samuel de Jesus', 'Jurídica', 'samuel', '123123', '3fsdfsf', '2024-10-10', '2024-10-30', 'entrega', 'asdas', 82, 'asdasd', 'sim', 35, 225, 0);
+
 -- --------------------------------------------------------
 
 --
@@ -160,7 +179,9 @@ CREATE TABLE `produtos` (
 
 INSERT INTO `produtos` (`codPro`, `codCat`, `medida`, `valor`) VALUES
 (4, 'Banner', '50x50', 45),
-(5, 'Cartão de visita', '9x5', 124);
+(5, 'Cartão de visita', '9x5', 124),
+(6, 'Fachada', '50x50', 46),
+(9, 'Banner', '75x75', 12313);
 
 --
 -- Índices para tabelas despejadas
@@ -216,13 +237,13 @@ ALTER TABLE `produtos`
 -- AUTO_INCREMENT de tabela `agenda`
 --
 ALTER TABLE `agenda`
-  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `codAgend` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=24;
 
 --
 -- AUTO_INCREMENT de tabela `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
@@ -234,25 +255,25 @@ ALTER TABLE `dp_login`
 -- AUTO_INCREMENT de tabela `funcionarios`
 --
 ALTER TABLE `funcionarios`
-  MODIFY `cod_func` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `cod_func` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT de tabela `itens_pedido`
 --
 ALTER TABLE `itens_pedido`
-  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT;
+  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
