@@ -171,7 +171,7 @@ if (isset($_POST['delete'])) {
                             <div class="row justify-content-center text-center titleCons">Itens do Pedido</div>
                         </th>
                         <th>
-                            <div class="row justify-content-center text-center titleCons">Status Pagamento</div>
+                            <div class="row justify-content-center text-center titleCons">Informações de Pagamento</div>
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">Forma de entrega</div>
