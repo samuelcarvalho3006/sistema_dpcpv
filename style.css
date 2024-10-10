@@ -188,15 +188,28 @@ h2 {
     font-size: 16px;
 }
 
-.aviso{
+.aviso {
     font-size: 16px;
     color: rgb(158, 158, 158);
 }
 
 /*----------------------------------------------------------------------------------------*/
-.consulta{
+
+.consContainer {
     width: 100%;
-    text-align: center;
-    justify-content: center;
-    align-items: center;
+}
+
+.titleCons {
+    margin-left: 15px;
+    margin-right: 15px;
+}
+
+.oprBtn{
+    margin-left: 5px;
+    margin-right: 5px;
+}
+
+.registro {
+    margin-left: 10px;
+    margin-right: 10px
 }

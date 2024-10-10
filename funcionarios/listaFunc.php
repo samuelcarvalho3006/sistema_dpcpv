@@ -17,7 +17,7 @@ try {
 }
 
 if (isset($_POST['delete'])) {
-    $id = $_POST['codfunc'];
+    $id = $_POST['cod_func'];
 
     // SQL para excluir a linha com base no ID
     $sql = "DELETE FROM funcionarios WHERE cod_func = :id";
@@ -123,39 +123,83 @@ if (isset($_POST['delete'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <div class="container mt-5">
-        <h3 class="text-center mb-5">Lista de Funcionários</h3>
+    <h3 class="text-center mb-5">Lista de Funcionários</h3>
 
-        <?php if ($erro): ?>
-            <div class="alert alert-danger" role="alert">
-                Não foi possível carregar os dados.
-            </div>
-        <?php else: ?>
+    <?php if ($erro): ?>
+        <div class="alert alert-danger" role="alert">
+            Não foi possível carregar os dados.
+        </div>
+    <?php else: ?>
+        <div class="container consContainer">
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>Operações</th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                ID
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Nome
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Operações
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['cod_func']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['nome']); ?></td>
                             <td>
-                                <form method="POST">
-                                    <input type="hidden" name="codfunc" value="<?php echo $registro['cod_func']; ?>">
-                                    <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
-                                </form>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['cod_func']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['nome']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row text-center justify-content-center operacoes">
+                                    <div class="col-1 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="cod_func" value="<?php echo $registro['cod_func']; ?>">
+                                            <button type="submit" name="delete" class="btn btn-outline-danger">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-1 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="cod_func" value="<?php echo $registro['cod_func']; ?>">
+                                            <button type="submit" name="edit" class="btn btn-outline-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        <?php endif; ?>
-    </div>
+        </div>
+    <?php endif; ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>

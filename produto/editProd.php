@@ -125,43 +125,103 @@ if (isset($_POST['delete'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <div class="container mt-5">
-        <h3 class="text-center mb-5">Lista de Produtos</h3>
+    <h3 class="text-center mb-5">Lista de Produtos</h3>
 
-        <?php if ($erro): ?> <!-- Se a variável $erro for true, exibe uma mensagem de erro. -->
-            <div class="alert alert-danger" role="alert">
-                Não foi possível carregar os dados.
-            </div>
-        <?php else: ?> <!-- Se não houve erro, exibe a tabela com os registros. -->
+    <?php if ($erro): ?> <!-- Se a variável $erro for true, exibe uma mensagem de erro. -->
+        <div class="alert alert-danger" role="alert">
+            Não foi possível carregar os dados.
+        </div>
+    <?php else: ?> <!-- Se não houve erro, exibe a tabela com os registros. -->
+        <div class="container consContainer">
             <table class="table table-striped">
                 <thead> <!-- define o cabeçalho da tabela -->
                     <tr>
-                        <th>ID</th>
-                        <th>Categoria</th>
-                        <th>Medida</th>
-                        <th>Valor</th>
-                        <th>Operações</th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                ID
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Categoria
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Medida
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Valor
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Operações
+                            </div>
+                        </th>
                     </tr>
                 </thead>
                 <tbody> <!-- define o corpo da tabela -->
                     <?php foreach ($registros as $registro): ?>
                         <tr>
-                            <td><?php echo htmlspecialchars($registro['codPro']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['codCat']); ?></td>
-                            <td><?php echo htmlspecialchars($registro['medida']); ?></td>
-                            <td>R$<?php echo htmlspecialchars($registro['valor']); ?></td>
                             <td>
-                                <form method="POST" action="">
-                                    <input type="hidden" name="codPro" value="<?php echo $registro['codPro']; ?>">
-                                    <button type="submit" name="delete" class="btn btn-danger">Excluir</button>
-                                </form>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['codPro']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['codCat']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['medida']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['valor']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row text-center justify-content-center operacoes">
+                                    <div class="col-2 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPro" value="<?php echo $registro['codPro']; ?>">
+                                            <button type="submit" name="delete" class="btn btn-outline-danger">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-2 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPro" value="<?php echo $registro['codPro']; ?>">
+                                            <button type="submit" name="edit" class="btn btn-outline-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
                             </td>
                         </tr>
                     <?php endforeach; ?>
                 </tbody>
             </table>
-        <?php endif; ?>
-    </div>
+        </div>
+    <?php endif; ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
