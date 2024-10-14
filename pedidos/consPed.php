@@ -51,7 +51,7 @@ if (isset($_POST['visuPedidos'])) {
 if (isset($_POST['visuPag'])) {
     $id = $_POST['codPed'];
 
-    header("Location: itensPag.php");
+    header("Location: infoPag.php");
     exit;
 }
 
