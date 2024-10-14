@@ -26,8 +26,8 @@ try {
     $conexao->beginTransaction();
 
     // Preparar a SQL para a tabela `pedidos`
-    $sqlPedido = "INSERT INTO pedidos (cod_func, dataPed, dataPrev, nomeCli, tipoPessoa, contato, valorTotal, entrada, valorEnt, entrega, logradouro, numero, bairro, descr)
-            VALUES (:funcionario, :datPedido, :dataPrev, :nome, :pessoa, :contato, :valorTotal, :entrada, :valorEnt, :entrega, :logradouro, :numero, :bairro, :descr)";
+    $sqlPedido = "INSERT INTO pedidos (cod_func, dataPed, dataPrev, nomeCli, tipoPessoa, contato, valorTotal, entrada, formaPag, valorEnt, entrega, logradouro, numero, bairro, descr)
+            VALUES (:funcionario, :datPedido, :dataPrev, :nome, :pessoa, :contato, :valorTotal, :entrada, :formaPag, :valorEnt, :entrega, :logradouro, :numero, :bairro, :descr)";
 
     $stmtPedido = $conexao->prepare($sqlPedido);
 
@@ -40,6 +40,7 @@ try {
     $stmtPedido->bindValue(':contato', $form_data['contato']);
     $stmtPedido->bindValue(':valorTotal', checkValue($form_data['valorTotal'], 0)); // Valor padrão 0 se não definido
     $stmtPedido->bindValue(':entrada', checkValue($form_data['entrada'], 0)); // Valor padrão 0 se não definido
+    $stmtPedido->bindValue(':formaPag', checkValue($form_data['formaPag'], 0));
     $stmtPedido->bindValue(':valorEnt', checkValue($form_data['valorEnt'], 0)); // Valor padrão 0 se não definido
     $stmtPedido->bindValue(':entrega', checkValue($form_data['entrega'], '')); // Valor padrão vazio se não definido
     $stmtPedido->bindValue(':logradouro', checkValue($form_data['logradouro'], '')); // Valor padrão vazio se não definido

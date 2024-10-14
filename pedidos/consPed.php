@@ -41,6 +41,27 @@ if (isset($_POST['delete'])) {
     }
 }
 
+if (isset($_POST['visuPedidos'])) {
+    $id = $_POST['codPed'];
+
+    header("Location: itensPed.php");
+    exit;
+}
+
+if (isset($_POST['visuPag'])) {
+    $id = $_POST['codPed'];
+
+    header("Location: itensPag.php");
+    exit;
+}
+
+if (isset($_POST['visuEntr'])) {
+    $id = $_POST['codPed'];
+
+    header("Location: infoEntr.php");
+    exit;
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -206,7 +227,7 @@ if (isset($_POST['delete'])) {
                                 <div class="col-6">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        <button type="submit" name="visuPag" class="btn btn-primary">Visualizar</button>
                                     </form>
                                 </div>
                             </div>
@@ -216,7 +237,7 @@ if (isset($_POST['delete'])) {
                                 <div class="col-6">
                                     <form method="POST">
                                         <input type="hidden" name="codCat" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        <button type="submit" name="visuEntr" class="btn btn-primary">Visualizar</button>
                                     </form>
                                 </div>
                             </div>

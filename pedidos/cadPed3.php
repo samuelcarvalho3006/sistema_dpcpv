@@ -14,6 +14,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
             'valorTotal' => $_POST['valorTotal'],
             'entrada' => $_POST['entrada'],
+            'formaPag' => $_POST['formaPag'],
             'valorEnt' => $_POST['valorEnt'] ?? null,
             'entrega' => $_POST['entrega'],
             'logradouro' => $_POST['logradouro'] ?? null,
@@ -25,6 +26,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['form_data'] = [
             'valorTotal' => $_POST['valorTotal'],
             'entrada' => $_POST['entrada'],
+            'formaPag' => $_POST['formaPag'],
             'valorEnt' => $_POST['valorEnt'] ?? null,
             'entrega' => $_POST['entrega'],
             'logradouro' => $_POST['logradouro'] ?? null,
@@ -156,6 +158,20 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
                         </div>
 
                         <div class="mt-2 <?= $showValorEntrada ? '' : 'd-none' ?>" id="valorEntradaDiv">
+                            <label class="form-label">Forma de Pagamento:</label><br>
+
+                            <input type="radio" name="formaPag" class="form-check-input" value="Dinheiro">
+                            <label class="form-check-label" for="dinheiro">Dinheiro</label><br>
+
+                            <input type="radio" name="formaPag" class="form-check-input" value="Pix">
+                            <label class="form-check-label" for="Pix">Pix</label><br>
+
+                            <input type="radio" name="formaPag" class="form-check-input" value="cartaoCredito">
+                            <label class="form-check-label" for="cartaoCredito">Cartão de Crédito</label><br>
+
+                            <input type="radio" name="formaPag" class="form-check-input" value="cartaoDebito">
+                            <label class="form-check-label" for="cartaoDebito">Cartão de Débito</label><br><br>
+
                             <label class="form-label" for="valorEnt">R$</label>
                             <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
                                 style="width: 100px;"
@@ -232,7 +248,7 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
         }
 
         // Executa apenas a função "atualizarValor" no carregamento da página
-        window.onload = function() {
+        window.onload = function () {
             atualizarValor();
         };
     </script>

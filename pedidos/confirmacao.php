@@ -160,6 +160,9 @@ $form_data = $_SESSION['form_data'];
                         <p><strong>Entrada:</strong> <?php echo htmlspecialchars($form_data['entrada']); ?></p>
                     </div>
                     <div class="form-group mb-3">
+                        <p><strong>Forma de Pagamento:</strong> <?php echo htmlspecialchars($form_data['formaPag']); ?></p>
+                    </div>
+                    <div class="form-group mb-3">
                         <p><strong>Valor da entrada:</strong> <?php echo htmlspecialchars($form_data['valorEnt']); ?>
                         </p>
                     </div>
