@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 10/10/2024 às 20:56
+-- Tempo de geração: 14/10/2024 às 14:11
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -126,7 +126,7 @@ CREATE TABLE `itens_pedido` (
 --
 
 INSERT INTO `itens_pedido` (`cod_itensPed`, `codPed`, `codPro`, `medida`, `quantidade`, `valorUnit`, `valorTotal`) VALUES
-(5, 5, 'Facha', '50x50', 5, 45, 225);
+(10, 10, 'Banne', '50x50', 4, 45, 180);
 
 -- --------------------------------------------------------
 
@@ -148,17 +148,17 @@ CREATE TABLE `pedidos` (
   `numero` int(5) NOT NULL,
   `bairro` varchar(50) NOT NULL,
   `entrada` varchar(50) NOT NULL,
+  `formaPag` varchar(30) NOT NULL,
   `valorEnt` decimal(10,0) NOT NULL,
-  `valorTotal` decimal(10,0) NOT NULL,
-  `cod_itensPed` int(5) NOT NULL
+  `valorTotal` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `pedidos`
 --
 
-INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `descr`, `dataPed`, `dataPrev`, `entrega`, `logradouro`, `numero`, `bairro`, `entrada`, `valorEnt`, `valorTotal`, `cod_itensPed`) VALUES
-(5, 'Samuel de Jesus', 'Jurídica', 'samuel', '123123', '3fsdfsf', '2024-10-10', '2024-10-30', 'entrega', 'asdas', 82, 'asdasd', 'sim', 35, 225, 0);
+INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `descr`, `dataPed`, `dataPrev`, `entrega`, `logradouro`, `numero`, `bairro`, `entrada`, `formaPag`, `valorEnt`, `valorTotal`) VALUES
+(10, 'Matheus Coelho', 'Física', 'samuel', '13213213', 'gghgfjh', '2024-10-14', '2024-10-29', 'entrega', 'jaja', 82, 'terere', 'sim', 'cartaoCredito', 50, 180);
 
 -- --------------------------------------------------------
 
@@ -261,13 +261,13 @@ ALTER TABLE `funcionarios`
 -- AUTO_INCREMENT de tabela `itens_pedido`
 --
 ALTER TABLE `itens_pedido`
-  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
