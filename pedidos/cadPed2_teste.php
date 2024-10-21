@@ -4,15 +4,28 @@ session_start();
 require_once('../conexao2.php');
 $conexao = novaConexao();
 
+$registros = [];
 $error = false;
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
-    try {
+$sql_codPed = "SELECT * FROM itens_pedido ORDER BY codPed DESC LIMIT 1";
+    $stmt = $conexao->prepare($sql_codPed);
+    $stmt->execute();
+    $ultimoRegistro = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o último registro
 
-        // Pega o último codPed da tabela pedidos
-        $sql_codped = "SELECT codPed FROM pedidos ORDER BY codPed DESC LIMIT 1";
-        $result_codped = $conexao->query($sql_codped);
-        $codPed = $result_codped->fetch(PDO::FETCH_ASSOC)['codPed'] ?? null;
+    if ($ultimoRegistro) {
+        // O último registro foi encontrado
+        $codPed = $ultimoRegistro['codPed']; // Obtém o valor de codPed
+
+        // 2. Usar o codPed para listar os itens do pedido
+        $sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
+        $stmt = $conexao->prepare($sql_listar);
+        $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+        $stmt->execute();
+        $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
+    }
+
+if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
+    try {
 
         // Preparar a SQL
         $sql = "INSERT INTO itens_pedido (codPed, codPro, medida, descr, quantidade, valorUnit, valorTotal)
@@ -33,11 +46,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
 
         $sucesso = true;
 
-        header("Location: ./cadPed3_teste.php");
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit();
+
     } catch (PDOException $e) {
         $error = true; // Configura erro se houver uma exceção
         echo "Erro: " . $e->getMessage();
     }
+}
+
+if (isset($_POST['proximo'])) {
+    header('location: cadPed3_teste.php');
 }
 
 // Consulta todos os registros da tabela produtos
@@ -67,7 +86,7 @@ $showNovCat = $novCat === 'Novo';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css?v=1.1">
+    <link rel="stylesheet" href="../style.css?v=1.7">
 </head>
 
 <body>
@@ -145,17 +164,8 @@ $showNovCat = $novCat === 'Novo';
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
-
-    <div class="container container-custom">
-        <form method="POST">
-            <div class="row justify-content-center text-center">
-                <div class="col-auto"> <!-- Use col-auto para centralizar o conteúdo -->
-                    <div class="form-group mb-3">
-                        <label class="form-label" for="numItens">nº de itens</label>
-                        <input type="text" class="form-control" id="numItens" value="1" name="numItens">
-                    </div>
-                </div>
-            </div>
+    <form method="POST" id="cadPed2Form" onsubmit="resetForm()">
+        <div class="container container-custom">
 
             <div class="row row-custom">
 
@@ -194,7 +204,7 @@ $showNovCat = $novCat === 'Novo';
 
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
-                        <input class="form-control" name="desc">
+                        <textarea name="desc" class="form-control" cols="1" rows="5"></textarea>
                     </div>
                 </div>
 
@@ -214,17 +224,118 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Valor Total</label>
                         <input type="text" class="form-control" id="vTot" name="valorTotal">
                     </div>
+                    <div class="row justify-content-end mt-4">
+                        <div class="col-3">
+                            <button type="submit" name="salvar" class="btn btn-outline-primary">salvar</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-
-            <!-- Botões centralizados abaixo das colunas -->
-            <div class="row mt-4 btn-group-custom">
-                <button type="button" class="btn btn-outline-danger btn-personalizado"
-                    onclick="window.location.href='cadPed_teste.php';">Voltar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
+            <div class="container" style="border-top: 1px solid rgba(0, 0, 0, 0.2)">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Produto</div>
+                            </th>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Medida</div>
+                            </th>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Observação</div>
+                            </th>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Valor Unitário</div>
+                            </th>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Quantidade</div>
+                            </th>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Valor Total</div>
+                            </th>
+                            <th>
+                                <div class="row justify-content-center text-center titleCons">Operações</div>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach ($registros as $registro): ?>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['codPro']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['medida']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['descr']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['valorUnit']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['quantidade']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['valorTotal']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row text-center justify-content-center text-center operacoes">
+                                    <div class="col-4 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="delete" class="btn btn-outline-danger">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                    <div class="col-4 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                            <button type="submit" name="edit" class="btn btn-outline-primary">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                                </svg>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </td>
+                            </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
             </div>
-        </form>
+        </div>
+    </form>
+
+    <!-- Botões centralizados abaixo das colunas -->
+    <div class="row mt-4 btn-group-custom">
+        <button type="button" class="btn btn-outline-danger btn-personalizado"
+            onclick="window.location.href='cadPed_teste.php';">Voltar</button>
+        <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
+    </div>
+
     </div>
 
 
@@ -316,6 +427,10 @@ $showNovCat = $novCat === 'Novo';
                 medidaSelect.appendChild(option);
             });
         });
+
+        function resetForm() {
+            document.getElementById("cadPed2Form").reset;
+        }
     </script>
 </body>
 

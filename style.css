@@ -148,11 +148,11 @@ h2 {
 }
 
 .container-custom {
-    max-width: 800px;
+    max-width: 1000px;
     margin: auto;
-    border: 1px solid #1AA7E7;
     padding: 20px;
     border-radius: 10px;
+    box-shadow: 0.5px 10px 15px rgba(0, 0, 0, 0.2);
 }
 
 .row-custom {
@@ -168,7 +168,7 @@ h2 {
 .col-custom2 {
     flex: 1;
     margin-right: 10px;
-    border-left: 1px solid #1AA7E7;
+    border-left: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 
@@ -204,7 +204,7 @@ h2 {
     margin-right: 15px;
 }
 
-.oprBtn{
+.oprBtn {
     margin-left: 5px;
     margin-right: 5px;
 }

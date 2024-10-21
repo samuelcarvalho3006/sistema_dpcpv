@@ -4,48 +4,45 @@ session_start();
 require_once('../conexao2.php');
 $conexao = novaConexao();
 
-$error = false;
-$vTot = 0;
+$sql_codItens = "SELECT cod_itensPed FROM itens_pedido ORDER BY cod_itensPed DESC LIMIT 1";
+$result_codItens = $conexao->query($sql_codItens);
+$codItens = $result_codItens->fetch(PDO::FETCH_ASSOC)['cod_itensPed'] ?? null;
+
+// Pegar o último codPed da tabela pedidos
+$sql_codped = "SELECT codPed FROM pedidos ORDER BY codPed DESC LIMIT 1";
+$result_codped = $conexao->query($sql_codped);
+$codPed = $result_codped->fetch(PDO::FETCH_ASSOC)['codPed'] ?? null;
+
+if ($codPed !== null) { // Verifica se codPed foi encontrado
+    // Calcular o total usando o codPed
+    $sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE codPed = :codPed";
+    $stmt = $conexao->prepare($sql_vTot);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+    $stmt->execute(); // Executa a consulta
+    $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
     try {
-        // Pega o último cod_itensPed da tabela itens_pedido
-        $sql_codItens = "SELECT cod_itensPed FROM itens_pedido ORDER BY cod_itensPed DESC LIMIT 1";
-        $result_codItens = $conexao->query($sql_codItens);
-        $codItens = $result_codItens->fetch(PDO::FETCH_ASSOC)['cod_itensPed'] ?? null;
-
-        // Pega o último codPed da tabela pedidos
-        $sql_codped = "SELECT codPed FROM pedidos ORDER BY codPed DESC LIMIT 1";
-        $result_codped = $conexao->query($sql_codped);
-        $codPed = $result_codped->fetch(PDO::FETCH_ASSOC)['codPed'] ?? null;
-
-        if ($codPed !== null) {
-            // Soma todos os valores de valorTotal com o mesmo codPed
-            $sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE codPed = :codPed";
-            $stmt = $conexao->prepare($sql_vTot);
-            $stmt->bindValue(':codPed', $codPed, PDO::PARAM_INT);
-            $stmt->execute();
-            $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? 0;
-        }
 
         // Preparar a SQL
-        $sql = "INSERT INTO pagentg (codPed, cod_itensPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal)
-            VALUES (:codPed, :cod_itens, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
+        $sql = "INSERT INTO pagentg (codPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal)
+VALUES (:codPed, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue(':codPed', $codPed); // Valor padrão 0 se não definido
-        $stmt->bindValue(':cod_itens', $codItens); // Valor padrão 0 se não definido
+        $stmt->bindValue(':codPed', $codPed);
         $stmt->bindValue(':entrega', $_POST['entrega']);
-        $stmt->bindValue(':logr', $_POST['logradouro']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':num', $_POST['numero']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':bair', $_POST['bairro']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':cid', $_POST['cidade']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':est', $_POST['estado']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':cep', $_POST['cep']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':entr', $_POST['entrada']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':forma', $_POST['formaPag']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':vEnt', $_POST['valorEnt']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':vTot', $vTot); // Valor padrão vazio se não definido
+        $stmt->bindValue(':logr', $_POST['logradouro']);
+        $stmt->bindValue(':num', $_POST['numero']);
+        $stmt->bindValue(':bair', $_POST['bairro']);
+        $stmt->bindValue(':cid', $_POST['cidade']);
+        $stmt->bindValue(':est', $_POST['estado']);
+        $stmt->bindValue(':cep', $_POST['cep']);
+        $stmt->bindValue(':entr', $_POST['entrada']);
+        $stmt->bindValue(':forma', $_POST['formaPag']);
+        $stmt->bindValue(':vEnt', $_POST['valorEnt']);
+        $stmt->bindValue(':vTot', $vTot);
 
         // Executar a SQL
         $stmt->execute();
@@ -74,7 +71,7 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.6">
 </head>
 
 <body>
@@ -161,7 +158,7 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total:</label>
                         <input type="text" class="form-control" name="valorTotal"
-                            value="<?php echo htmlspecialchars($vTot); ?>" readonly>
+                            value="R$ <?php echo htmlspecialchars($vTot); ?>" readonly>
                     </div>
 
                     <div class="form-group mb-3">

@@ -51,7 +51,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.6">
 </head>
 
 <body>
@@ -135,8 +135,8 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Responsável:</label>
-                        <select class="form-select" name="funcionario">
+                        <label class="form-label">Funcionário:</label>
+                        <select class="form-select" name="funcionario" required>
                             <option selected disabled>Selecione um funcionário</option>
                             <?php foreach ($funcionarios as $funcionario): ?>
                                 <option value="<?php echo htmlspecialchars($funcionario['nome']); ?>">
@@ -147,12 +147,12 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Data do pedido:</label>
-                        <input type="date" class="form-control data" name="datPedido">
+                        <input type="date" class="form-control data" name="datPedido" required>
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control data" name="datPrev">
+                        <input type="date" class="form-control data" name="datPrev" required>
                     </div>
                 </div>
 
@@ -161,7 +161,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Nome do cliente:</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente">
+                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente" required>
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Tipo de pessoa</label>
@@ -177,7 +177,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Contato:</label>
-                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc.">
+                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc." required>
                     </div>
                 </div> <!-- FECHA COL -->
 

@@ -25,6 +25,32 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
+if (isset($_POST['cancelar'])) {
+
+    $sql = "DELETE FROM itens_pedido WHERE codPed = :pedido";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Depois, exclua o registro do 'pedidos'
+    $sql = "DELETE FROM pedidos WHERE codPed = :pedido";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
+
+    $sql = "DELETE FROM pagentg WHERE codPed = :pedido";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -202,7 +228,7 @@ try {
                 </div>
                 <div class="row mt-4 btn-group-custom">
                     <button type="button" class="btn btn-outline-dark btn-personalizado"
-                        onclick="window.location.href='cadPed_teste.php';">Voltar ao Formulário</button>
+                        onclick="window.location.href='consPed_teste.php';" name="cancelar">Cancelar Pedido</button>
                     <button type="button" class="btn btn-success btn-personalizado"
                         onclick="window.location.href='consPed_teste.php';">Finalizar Pedido</button>
                 </div>
