@@ -23,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
         // Executar a SQL
         $stmt->execute();
 
-        $sucesso = true;
 
         header("Location: ./cadPed2_teste.php");
     } catch (PDOException $e) {
@@ -31,6 +30,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
         echo "Erro: " . $e->getMessage();
     }
 }
+
+$_SESSION['codPed'] = [
+    $conexao->lastInsertId()
+];
+
 
 // Consulta para buscar os funcionários
 $query = "SELECT * FROM funcionarios";
@@ -207,9 +211,9 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         var inputsData = document.querySelectorAll('.data');
 
         // Aplica o valor e o mínimo em todos os campos de data
-        inputsData.forEach(function (input) {
-            input.value = dataAtual;           // Predefine a data atual
-            input.setAttribute('min', dataAtual);  // Define o valor mínimo
+        inputsData.forEach(function(input) {
+            input.value = dataAtual; // Predefine a data atual
+            input.setAttribute('min', dataAtual); // Define o valor mínimo
         });
     </script>
 </body>

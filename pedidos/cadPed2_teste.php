@@ -7,22 +7,15 @@ $conexao = novaConexao();
 $registros = [];
 $error = false;
 
-$sql_codPed = "SELECT * FROM itens_pedido ORDER BY codPed DESC LIMIT 1";
-    $stmt = $conexao->prepare($sql_codPed);
-    $stmt->execute();
-    $ultimoRegistro = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o último registro
+// Supondo que você queira o primeiro valor do array (ajuste conforme necessário)
+$codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
 
-    if ($ultimoRegistro) {
-        // O último registro foi encontrado
-        $codPed = $ultimoRegistro['codPed']; // Obtém o valor de codPed
-
-        // 2. Usar o codPed para listar os itens do pedido
-        $sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
-        $stmt = $conexao->prepare($sql_listar);
-        $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-        $stmt->execute();
-        $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
-    }
+// Continuar com a query
+$sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
+$stmt = $conexao->prepare($sql_listar);
+$stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+$stmt->execute();
+$registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
 
 if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
     try {
@@ -33,13 +26,13 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue(':codPed', $codPed); // Valor padrão 0 se não definido
-        $stmt->bindValue(':codPro', $_POST['codPro']); // Valor padrão 0 se não definido
+        $stmt->bindValue(':codPed', $codPed);
+        $stmt->bindValue(':codPro', $_POST['codPro']);
         $stmt->bindValue(':medida', $_POST['medida']);
-        $stmt->bindValue(':quantidade', $_POST['quantid']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':descr', $_POST['desc']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':valorUnit', $_POST['valorUnit']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':valorTotal', $_POST['valorTotal']); // Valor padrão vazio se não definido
+        $stmt->bindValue(':quantidade', $_POST['quantid']);
+        $stmt->bindValue(':descr', $_POST['desc']);
+        $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
+        $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
 
         // Executar a SQL
         $stmt->execute();
@@ -48,7 +41,6 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
 
         header("Location: " . $_SERVER['PHP_SELF']);
         exit();
-
     } catch (PDOException $e) {
         $error = true; // Configura erro se houver uma exceção
         echo "Erro: " . $e->getMessage();
@@ -57,6 +49,51 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
 
 if (isset($_POST['proximo'])) {
     header('location: cadPed3_teste.php');
+}
+
+if (isset($_POST['reset'])) {
+    header("Location: " . $_SERVER['PHP_SELF']);
+}
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['cod_itensPed'];
+
+    $sql = "DELETE FROM itens_pedido WHERE cod_itensPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
+
+if (isset($_POST['editar'])) {
+    $id = $_POST['cod_itensPed'];
+
+    $sql = "UPDATE itens_pedido SET codPro, medida, descr, valorUnit, quantidade, valorTotal = :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal WHERE cod_itensPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':codPro', $_POST['codPro']);
+    $stmt->bindValue(':medida', $_POST['medida']);
+    $stmt->bindValue(':quantidade', $_POST['quantid']);
+    $stmt->bindValue(':descr', $_POST['desc']);
+    $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
+    $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
+    $stmt->execute();
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
 }
 
 // Consulta todos os registros da tabela produtos
@@ -225,6 +262,9 @@ $showNovCat = $novCat === 'Novo';
                         <input type="text" class="form-control" id="vTot" name="valorTotal">
                     </div>
                     <div class="row justify-content-end mt-4">
+                        <div class="col-2">
+                            <button type="submit" name="reset" class="btn btn-outline-danger">limpar</button>
+                        </div>
                         <div class="col-3">
                             <button type="submit" name="salvar" class="btn btn-outline-primary">salvar</button>
                         </div>
@@ -295,7 +335,7 @@ $showNovCat = $novCat === 'Novo';
                                 <div class="row text-center justify-content-center text-center operacoes">
                                     <div class="col-4 oprBtn">
                                         <form method="POST">
-                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                            <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
                                             <button type="submit" name="delete" class="btn btn-outline-danger">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
@@ -307,8 +347,8 @@ $showNovCat = $novCat === 'Novo';
                                     </div>
                                     <div class="col-4 oprBtn">
                                         <form method="POST">
-                                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                            <button type="submit" name="edit" class="btn btn-outline-primary">
+                                            <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
+                                            <button type="submit" name="editar" class="btn btn-outline-primary" onclick="editarRegistro()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path
@@ -346,7 +386,7 @@ $showNovCat = $novCat === 'Novo';
         <?php if ($error): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
+            $(document).ready(function() {
                 $('#errorModal').modal('show');
                 /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
                 com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
@@ -387,7 +427,7 @@ $showNovCat = $novCat === 'Novo';
                 // Calcula o valor total baseado na quantidade e no valor unitário
                 valorTotal.value = (quantidadeValor * valorUnitarioValor).toFixed(2);
             } else {
-                valorTotal.value = '';  // Limpa o campo se os valores forem inválidos
+                valorTotal.value = ''; // Limpa o campo se os valores forem inválidos
             }
         }
 
@@ -402,14 +442,14 @@ $showNovCat = $novCat === 'Novo';
         }
 
         // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             toggleNovCat(document.getElementById('medida').value);
         });
 
         const produtos = <?php echo json_encode($produtos); ?>;
         const medidas = <?php echo json_encode($medidas); ?>;
 
-        document.getElementById('categoria').addEventListener('change', function () {
+        document.getElementById('categoria').addEventListener('change', function() {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
@@ -420,7 +460,7 @@ $showNovCat = $novCat === 'Novo';
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function (medida) {
+            medidasFiltradas.forEach(function(medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;
@@ -430,6 +470,12 @@ $showNovCat = $novCat === 'Novo';
 
         function resetForm() {
             document.getElementById("cadPed2Form").reset;
+        }
+
+        function editarRegistro() {
+            document.getElementById("cadPed2Form").reset;
+
+
         }
     </script>
 </body>
