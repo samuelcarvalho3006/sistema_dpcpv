@@ -30,8 +30,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
             // Associar os valores aos placeholders
             $stmt->bindValue(':a_cf', $_POST['func']);
             $stmt->bindValue(':a_t', $_POST['titulo']);
-            $stmt->bindValue(':a_dR', $_POST['dataRegistro']);
-            $stmt->bindValue(':a_dP', $_POST['dataPrazo']);
+            $stmt->bindValue(':a_dR', $dataRegistro);
+            $stmt->bindValue(':a_dP', $dataPrazo);
             $stmt->bindValue(':a_I', $_POST['informacao']);
 
             // Executar a SQL

@@ -7,6 +7,9 @@ $conexao = novaConexao();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
     try {
 
+        $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
+        $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
+
         // Preparar a SQL
         $sql = "INSERT INTO pedidos (cod_func, tipoPessoa, nomeCli, contato, dataPed, dataPrev)
             VALUES (:cod_func, :tipoPessoa, :nomeCli, :contato, :dataPed, :dataPrev)";
@@ -17,8 +20,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
         $stmt->bindValue(':tipoPessoa', $_POST['pessoa']); // Valor padrão 0 se não definido
         $stmt->bindValue(':nomeCli', $_POST['nome']);
         $stmt->bindValue(':contato', $_POST['contato']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':dataPed', $_POST['datPedido']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':dataPrev', $_POST['datPrev']); // Valor padrão vazio se não definido
+        $stmt->bindValue(':dataPed', $dataRegistro); // Valor padrão vazio se não definido
+        $stmt->bindValue(':dataPrev', $dataPrazo); // Valor padrão vazio se não definido
 
         // Executar a SQL
         $stmt->execute();
@@ -181,7 +184,8 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Contato:</label>
-                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc." required>
+                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc."
+                            required>
                     </div>
                 </div> <!-- FECHA COL -->
 
@@ -211,7 +215,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         var inputsData = document.querySelectorAll('.data');
 
         // Aplica o valor e o mínimo em todos os campos de data
-        inputsData.forEach(function(input) {
+        inputsData.forEach(function (input) {
             input.value = dataAtual; // Predefine a data atual
             input.setAttribute('min', dataAtual); // Define o valor mínimo
         });

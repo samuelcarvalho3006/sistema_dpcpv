@@ -35,6 +35,30 @@ if (isset($_POST['delete'])) {
         echo "Erro ao excluir linha: ";
     }
 }
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['codPed'];
+
+    $sql = "DELETE FROM itens_pedido WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Depois, exclua o registro do 'pedidos'
+    $sql = "DELETE FROM pedidos WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -45,7 +69,7 @@ if (isset($_POST['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Agenda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css?v=1.3">
+    <link rel="stylesheet" href="../style.css?v=1.4">
 </head>
 
 <body>

@@ -6,20 +6,19 @@ session_start(); // Inicia a sessão no início do script
 
 $error = false; // Cria a variável $error inicialmente definida como falsa
 
-if (isset($_POST['email']) && isset($_POST['senha'])) {
+if (isset($_POST['login']) && isset($_POST['senha'])) {
 
-    if (empty($_POST['email'])) {
+    if (empty($_POST['login'])) {
         $error = true;
     } else if (empty($_POST['senha'])) {
         $error = true;
     } else {
         // Preparar a consulta SQL com placeholders
-        $sql_code = "SELECT * FROM dp_login WHERE log_email = :email AND log_senha = :senha";
-
+        $sql_code = "SELECT * FROM funcionarios WHERE login = :login AND senha = :senha";
         $stmt = $conexao->prepare($sql_code);
 
         // Associar os valores aos placeholders
-        $stmt->bindParam(':email', $_POST['email']);
+        $stmt->bindParam(':login', $_POST['login']);
         $stmt->bindParam(':senha', $_POST['senha']);
 
         // Executar a consulta
@@ -30,10 +29,9 @@ if (isset($_POST['email']) && isset($_POST['senha'])) {
             // Se encontrado, obter os dados do usuário
             $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
 
-            $_SESSION['log_id'] = $usuario['log_id'];
+            $_SESSION['cod_func'] = $usuario['cod_func'];
 
             header("Location: admInicial.php");
-            exit; // Sempre use exit após header para evitar que o script continue rodando
         } else {
             // Se não encontrado, define $error como verdadeiro
             $error = true;
@@ -68,9 +66,9 @@ if (isset($_POST['email']) && isset($_POST['senha'])) {
                         <h2 class="text-center mb-4">Login</h2>
                         <form method="post">
                             <div class="form-group">
-                                <label for="email">Email</label>
-                                <input autocomplete="off" placeholder="email"
-                                    class="form-control border-primary rounded" type="text" name="email">
+                                <label for="login">Login</label>
+                                <input autocomplete="off" placeholder="login"
+                                    class="form-control border-primary rounded" type="text" name="login">
                             </div>
                             <div class="form-group">
                                 <label for="email">Senha</label>

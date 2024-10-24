@@ -152,7 +152,7 @@ try {
                             <p><strong>Nome do cliente:</strong> <?php echo htmlspecialchars($registro['nomeCli']); ?></p>
                         </div>
                         <div class="form-group mb-3">
-                            <p><strong>Código do pedido:</strong> <?php echo htmlspecialchars($registro['cod_itensPed']); ?></p>
+                            <p><strong>Código do pedido:</strong> <?php echo htmlspecialchars($registro['codPed']); ?></p>
                         </div>
                         <div class="form-group mb-3">
                             <p><strong>Valor Total:</strong> <?php echo htmlspecialchars($registro['valorTotal']); ?></p>

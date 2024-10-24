@@ -7,6 +7,7 @@ $conexao = novaConexao();
 $registros = [];
 $error = false;
 
+// Supondo que você queira o primeiro valor do array (ajuste conforme necessário)
 $codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
 
 // Continuar com a query

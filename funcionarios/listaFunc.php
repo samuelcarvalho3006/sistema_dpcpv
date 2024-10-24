@@ -45,7 +45,7 @@ if (isset($_POST['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Agenda</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.4">
 </head>
 
 <body>
@@ -146,6 +146,26 @@ if (isset($_POST['delete'])) {
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">
+                                Sobrenome
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Funcao
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Login
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
+                                Senha
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
                                 Operações
                             </div>
                         </th>
@@ -165,8 +185,28 @@ if (isset($_POST['delete'])) {
                                 </div>
                             </td>
                             <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['sobrenome']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['funcao']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['login']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['senha']); ?>
+                                </div>
+                            </td>
+                            <td>
                                 <div class="row text-center justify-content-center operacoes">
-                                    <div class="col-1 oprBtn">
+                                    <div class="col-2 oprBtn">
                                         <form method="POST">
                                             <input type="hidden" name="cod_func" value="<?php echo $registro['cod_func']; ?>">
                                             <button type="submit" name="delete" class="btn btn-outline-danger">
@@ -178,7 +218,7 @@ if (isset($_POST['delete'])) {
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-1 oprBtn">
+                                    <div class="col-2 oprBtn">
                                         <form method="POST">
                                             <input type="hidden" name="cod_func" value="<?php echo $registro['cod_func']; ?>">
                                             <button type="submit" name="edit" class="btn btn-outline-primary">

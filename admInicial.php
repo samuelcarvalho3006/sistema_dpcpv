@@ -12,25 +12,73 @@ try {
     $stmt->execute();
     $registrosAgenda = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 
-    $sql = "SELECT * FROM pedidos WHERE dataPrev BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) ORDER BY dataPrev ASC LIMIT 0, 5"; //filtra registros por data mais próxima
+    $sql = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
+    LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed 
+    WHERE dataPrev BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) 
+    ORDER BY dataPrev ASC LIMIT 0, 5";
+
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
-    $registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+
+    $registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
+
 
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
 
-$query = "SELECT * FROM funcionarios";
-$resultado = $conexao->query($query);
-$funcionarios = [];
-while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
-    // Adiciona cada (registro) ao array $funcionarios como um array associativo
-    $funcionarios[] = $row;
+if (isset($_POST['deletePedidos'])) {
+    $id = $_POST['codPed'];
+
+    $sql = "DELETE FROM itens_pedido WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    // Depois, exclua o registro do 'pedidos'
+    $sql = "DELETE FROM pedidos WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
 }
 
-if (isset($_POST['delete'])) {
+if (isset($_POST['visuPedidos'])) {
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+
+    header("Location: ./pedidos/itensPed.php");
+    exit;
+}
+
+if (isset($_POST['visuPag'])) {
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+
+    header("Location: ./pedidos/infoPag.php");
+    exit;
+}
+
+if (isset($_POST['visuEntr'])) {
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+
+    header("Location: ./pedidos/infoEntr.php");
+    exit;
+}
+
+if (isset($_POST['deleteAgenda'])) {
     $id = $_POST['codAgend'];
 
     // SQL para excluir a linha com base no ID
@@ -59,7 +107,7 @@ if (isset($_POST['delete'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administração</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css?v=1.3">
+    <link rel="stylesheet" href="./style.css?v=1.4">
 </head>
 
 
@@ -251,7 +299,7 @@ if (isset($_POST['delete'])) {
                                 <div class="col-3 oprBtn">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="delete" class="btn btn-outline-danger">
+                                        <button type="submit" name="deletePedidos" class="btn btn-outline-danger">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                 <path
@@ -263,7 +311,7 @@ if (isset($_POST['delete'])) {
                                 <div class="col-3 oprBtn">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="edit" class="btn btn-outline-primary">
+                                        <button type="submit" name="editPedidos" class="btn btn-outline-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                 <path
@@ -380,7 +428,7 @@ if (isset($_POST['delete'])) {
                                     <div class="col-3 oprBtn">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
-                                            <button type="submit" name="delete" class="btn btn-outline-danger">
+                                            <button type="submit" name="deleteAgenda" class="btn btn-outline-danger">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                     <path
@@ -392,7 +440,7 @@ if (isset($_POST['delete'])) {
                                     <div class="col-3 oprBtn">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
-                                            <button type="submit" name="edit" class="btn btn-outline-primary">
+                                            <button type="submit" name="editAgenda" class="btn btn-outline-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path

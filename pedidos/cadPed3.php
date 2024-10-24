@@ -4,14 +4,18 @@ session_start();
 require_once('../conexao.php');
 $conexao = novaConexao();
 
+$codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
+
 $sql_codItens = "SELECT cod_itensPed FROM itens_pedido ORDER BY cod_itensPed DESC LIMIT 1";
 $result_codItens = $conexao->query($sql_codItens);
 $codItens = $result_codItens->fetch(PDO::FETCH_ASSOC)['cod_itensPed'] ?? null;
 
-// Pegar o último codPed da tabela pedidos
-$sql_codped = "SELECT codPed FROM pedidos ORDER BY codPed DESC LIMIT 1";
-$result_codped = $conexao->query($sql_codped);
-$codPed = $result_codped->fetch(PDO::FETCH_ASSOC)['codPed'] ?? null;
+// Continuar com a query
+$sql_codped = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
+$stmt = $conexao->prepare($sql_codped);
+$stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+$stmt->execute();
+$codped = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
 
 if ($codPed !== null) { // Verifica se codPed foi encontrado
     // Calcular o total usando o codPed
@@ -26,8 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
     try {
 
         // Preparar a SQL
-        $sql = "INSERT INTO pagentg (codPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal)
-VALUES (:codPed, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
+        $sql = "INSERT INTO pagentg (codPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal) VALUES (:codPed, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
@@ -40,7 +43,7 @@ VALUES (:codPed, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, 
         $stmt->bindValue(':est', $_POST['estado']);
         $stmt->bindValue(':cep', $_POST['cep']);
         $stmt->bindValue(':entr', $_POST['entrada']);
-        $stmt->bindValue(':forma', $_POST['formaPag']);
+        $stmt->bindValue(':forma', $_POST['formaPag'] ?? null);
         $stmt->bindValue(':vEnt', $_POST['valorEnt']);
         $stmt->bindValue(':vTot', $vTot);
 

@@ -160,6 +160,10 @@ h2 {
     justify-content: space-between;
 }
 
+.row-custom p{
+    font-size: 18px;
+}
+
 .col-custom {
     flex: 1;
     margin-right: 10px;
@@ -196,7 +200,11 @@ h2 {
 /*----------------------------------------------------------------------------------------*/
 
 .consContainer {
-    width: 100%;
+    max-width: 1520px;
+    margin: auto;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0.5px 10px 15px rgba(0, 0, 0, 0.2);
 }
 
 .titleCons {
