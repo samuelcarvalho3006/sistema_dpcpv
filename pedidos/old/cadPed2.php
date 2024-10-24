@@ -1,99 +1,41 @@
 <?php
 // Inicia a sessão para continuar a armazenar os dados
 session_start();
-require_once('../conexao2.php');
+require_once('../conexao.php');
 $conexao = novaConexao();
 
-$registros = [];
 $error = false;
 
-// Supondo que você queira o primeiro valor do array (ajuste conforme necessário)
-$codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
-
-// Continuar com a query
-$sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
-$stmt = $conexao->prepare($sql_listar);
-$stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-$stmt->execute();
-$registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
-
-if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
-    try {
-
-        // Preparar a SQL
-        $sql = "INSERT INTO itens_pedido (codPed, codPro, medida, descr, quantidade, valorUnit, valorTotal)
-            VALUES (:codPed, :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal)";
-        $stmt = $conexao->prepare($sql);
-
-        // Associar os valores aos placeholders
-        $stmt->bindValue(':codPed', $codPed);
-        $stmt->bindValue(':codPro', $_POST['codPro']);
-        $stmt->bindValue(':medida', $_POST['medida']);
-        $stmt->bindValue(':quantidade', $_POST['quantid']);
-        $stmt->bindValue(':descr', $_POST['desc']);
-        $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
-        $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
-
-        // Executar a SQL
-        $stmt->execute();
-
-        $sucesso = true;
-
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit();
-    } catch (PDOException $e) {
-        $error = true; // Configura erro se houver uma exceção
-        echo "Erro: " . $e->getMessage();
-    }
-}
-
-if (isset($_POST['proximo'])) {
-    header('location: cadPed3_teste.php');
-}
-
-if (isset($_POST['reset'])) {
-    header("Location: " . $_SERVER['PHP_SELF']);
-}
-
-if (isset($_POST['delete'])) {
-    $id = $_POST['cod_itensPed'];
-
-    $sql = "DELETE FROM itens_pedido WHERE cod_itensPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
+// Verifica se o formulário foi enviado
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Verifica se já existe algum dado armazenado na sessão e preserva os dados anteriores
+    if (isset($_SESSION['form_data'])) {
+        // Mescla os dados existentes com os novos
+        $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
+            'numItens' => $_POST['numItens'],
+            'codPro' => $_POST['codPro'],
+            'medida' => $_POST['medida'],
+            'quantidade' => $_POST['quantid'],
+            'desc' => $_POST['desc'],
+            'vUnit' => $_POST['valorUnit'],
+            'vTot' => $_POST['valorTotal']
+        ]);
     } else {
-        echo "Erro ao excluir linha: ";
+        // Caso não existam dados anteriores, cria a sessão com os novos dados
+        $_SESSION['form_data'] = [
+            'numItens' => $_POST['numItens'],
+            'codPro' => $_POST['codPro'],
+            'medida' => $_POST['medida'],
+            'quantidade' => $_POST['quantid'],
+            'desc' => $_POST['desc'],
+            'vUnit' => $_POST['valorUnit'],
+            'vTot' => $_POST['valorTotal']
+        ];
     }
-}
 
-if (isset($_POST['editar'])) {
-    $id = $_POST['cod_itensPed'];
-
-    $sql = "UPDATE itens_pedido SET codPro, medida, descr, valorUnit, quantidade, valorTotal = :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal WHERE cod_itensPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindValue(':codPro', $_POST['codPro']);
-    $stmt->bindValue(':medida', $_POST['medida']);
-    $stmt->bindValue(':quantidade', $_POST['quantid']);
-    $stmt->bindValue(':descr', $_POST['desc']);
-    $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
-    $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
+    // Redireciona para a página cadPed3.php
+    header('Location: cadPed3.php');
+    exit;
 }
 
 // Consulta todos os registros da tabela produtos
@@ -123,7 +65,7 @@ $showNovCat = $novCat === 'Novo';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css?v=1.7">
+    <link rel="stylesheet" href="../style.css?v=1.1">
 </head>
 
 <body>
@@ -201,8 +143,17 @@ $showNovCat = $novCat === 'Novo';
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
     <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
-    <form method="POST" id="cadPed2Form" onsubmit="resetForm()">
-        <div class="container container-custom">
+
+    <div class="container container-custom">
+        <form method="POST">
+            <div class="row justify-content-center text-center">
+                <div class="col-auto"> <!-- Use col-auto para centralizar o conteúdo -->
+                    <div class="form-group mb-3">
+                        <label class="form-label" for="numItens">nº de itens</label>
+                        <input type="text" class="form-control" id="numItens" value="1" name="numItens">
+                    </div>
+                </div>
+            </div>
 
             <div class="row row-custom">
 
@@ -241,7 +192,7 @@ $showNovCat = $novCat === 'Novo';
 
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
-                        <textarea name="desc" class="form-control" cols="1" rows="5"></textarea>
+                        <input class="form-control" name="desc">
                     </div>
                 </div>
 
@@ -261,123 +212,45 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Valor Total</label>
                         <input type="text" class="form-control" id="vTot" name="valorTotal">
                     </div>
-                    <div class="row justify-content-end mt-4">
-                        <div class="col-2">
-                            <button type="submit" name="reset" class="btn btn-outline-danger">limpar</button>
-                        </div>
-                        <div class="col-3">
-                            <button type="submit" name="salvar" class="btn btn-outline-primary">salvar</button>
-                        </div>
-                    </div>
                 </div>
             </div>
 
-            <div class="container" style="border-top: 1px solid rgba(0, 0, 0, 0.2)">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Produto</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Medida</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Observação</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Valor Unitário</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Quantidade</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Valor Total</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Operações</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($registros as $registro): ?>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['codPro']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['medida']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['descr']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['valorUnit']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['quantidade']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['valorTotal']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row text-center justify-content-center text-center operacoes">
-                                    <div class="col-4 oprBtn">
-                                        <form method="POST">
-                                            <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
-                                            <button type="submit" name="delete" class="btn btn-outline-danger">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <div class="col-4 oprBtn">
-                                        <form method="POST">
-                                            <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
-                                            <button type="submit" name="editar" class="btn btn-outline-primary" onclick="editarRegistro()">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                    <path fill-rule="evenodd"
-                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
+
+            <!-- Botões centralizados abaixo das colunas -->
+            <div class="row mt-4 btn-group-custom">
+                <button type="button" class="btn btn-outline-danger btn-personalizado"
+                    onclick="window.location.href='cadPed.php';">Voltar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Prosseguir</button>
+            </div>
+        </form>
+    </div>
+
+    <!-- PopUp de Erro -->
+    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
+        <div class="modal-dialog"> <!-- chama classe JS de popup error -->
+            <div class="modal-content"> <!-- cria estrutura do pop up -->
+                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
+                    <h5 class="modal-title" id="errorModalLabel">Erro</h5>
+                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                        <!-- cria botão de fechar em forma de "x" 
+                            data-dismiss: faz o botão fecha o popup
+                        -->
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
+                    Não foi possível inserir o registro.<br>
+                    Por favor, tente novamente.
+                </div>
+                <div class="modal-footer">
+                    <!-- parte de baixo do popup, cria botão fechar -->
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
+                    <!-- data-dismiss: faz o botão fecha o popup -->
+                </div>
             </div>
         </div>
-    </form>
-
-    <!-- Botões centralizados abaixo das colunas -->
-    <div class="row mt-4 btn-group-custom">
-        <button type="button" class="btn btn-outline-danger btn-personalizado"
-            onclick="window.location.href='cadPed_teste.php';">Voltar</button>
-        <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
     </div>
-
-    </div>
-
+    <!-- fim do popup de erro -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
@@ -386,7 +259,7 @@ $showNovCat = $novCat === 'Novo';
         <?php if ($error): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $('#errorModal').modal('show');
                 /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
                 com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
@@ -427,7 +300,7 @@ $showNovCat = $novCat === 'Novo';
                 // Calcula o valor total baseado na quantidade e no valor unitário
                 valorTotal.value = (quantidadeValor * valorUnitarioValor).toFixed(2);
             } else {
-                valorTotal.value = ''; // Limpa o campo se os valores forem inválidos
+                valorTotal.value = '';  // Limpa o campo se os valores forem inválidos
             }
         }
 
@@ -442,14 +315,14 @@ $showNovCat = $novCat === 'Novo';
         }
 
         // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             toggleNovCat(document.getElementById('medida').value);
         });
 
         const produtos = <?php echo json_encode($produtos); ?>;
         const medidas = <?php echo json_encode($medidas); ?>;
 
-        document.getElementById('categoria').addEventListener('change', function() {
+        document.getElementById('categoria').addEventListener('change', function () {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
@@ -460,23 +333,13 @@ $showNovCat = $novCat === 'Novo';
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function(medida) {
+            medidasFiltradas.forEach(function (medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;
                 medidaSelect.appendChild(option);
             });
         });
-
-        function resetForm() {
-            document.getElementById("cadPed2Form").reset;
-        }
-
-        function editarRegistro() {
-            document.getElementById("cadPed2Form").reset;
-
-
-        }
     </script>
 </body>
 

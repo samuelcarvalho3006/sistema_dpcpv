@@ -1,40 +1,24 @@
 <?php
 session_start(); // Iniciar a sessão para armazenar os dados
-require_once('../conexao2.php');
+require_once('../conexao.php');
 $conexao = novaConexao();
 
 // Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
-    try {
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Armazenar os dados do formulário na sessão
+    $_SESSION['form_data'] = [
+        'funcionario' => $_POST['funcionario'],
+        'datPedido' => $_POST['datPedido'],
+        'dataPrev' => $_POST['datPrev'],
+        'nome' => $_POST['nome'],
+        'pessoa' => $_POST['pessoa'],
+        'contato' => $_POST['contato']
+    ];
 
-        // Preparar a SQL
-        $sql = "INSERT INTO pedidos (cod_func, tipoPessoa, nomeCli, contato, dataPed, dataPrev)
-            VALUES (:cod_func, :tipoPessoa, :nomeCli, :contato, :dataPed, :dataPrev)";
-        $stmt = $conexao->prepare($sql);
-
-        // Associar os valores aos placeholders
-        $stmt->bindValue(':cod_func', $_POST['funcionario']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':tipoPessoa', $_POST['pessoa']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':nomeCli', $_POST['nome']);
-        $stmt->bindValue(':contato', $_POST['contato']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':dataPed', $_POST['datPedido']); // Valor padrão vazio se não definido
-        $stmt->bindValue(':dataPrev', $_POST['datPrev']); // Valor padrão vazio se não definido
-
-        // Executar a SQL
-        $stmt->execute();
-
-
-        header("Location: ./cadPed2_teste.php");
-    } catch (PDOException $e) {
-        $error = true; // Configura erro se houver uma exceção
-        echo "Erro: " . $e->getMessage();
-    }
+    // Redireciona para a próxima página
+    header('Location: cadPed2.php');
+    exit;
 }
-
-$_SESSION['codPed'] = [
-    $conexao->lastInsertId()
-];
-
 
 // Consulta para buscar os funcionários
 $query = "SELECT * FROM funcionarios";
@@ -55,7 +39,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css?v=1.6">
+    <link rel="stylesheet" href="../style.css">
 </head>
 
 <body>
@@ -139,8 +123,8 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
-                        <label class="form-label">Funcionário:</label>
-                        <select class="form-select" name="funcionario" required>
+                        <label class="form-label">Responsável:</label>
+                        <select class="form-select" name="funcionario">
                             <option selected disabled>Selecione um funcionário</option>
                             <?php foreach ($funcionarios as $funcionario): ?>
                                 <option value="<?php echo htmlspecialchars($funcionario['nome']); ?>">
@@ -151,12 +135,12 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Data do pedido:</label>
-                        <input type="date" class="form-control data" name="datPedido" required>
+                        <input type="date" class="form-control data" name="datPedido">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Data prevista:</label>
-                        <input type="date" class="form-control data" name="datPrev" required>
+                        <input type="date" class="form-control data" name="datPrev">
                     </div>
                 </div>
 
@@ -165,7 +149,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Nome do cliente:</label>
-                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente" required>
+                        <input type="text" class="form-control" name="nome" placeholder="Nome do cliente">
                     </div>
                     <div class="form-group mb-3">
                         <label class="form-label">Tipo de pessoa</label>
@@ -181,7 +165,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 
                     <div class="form-group mb-3">
                         <label class="form-label">Contato:</label>
-                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc." required>
+                        <input type="text" class="form-control" name="contato" placeholder="Número, E-mail, etc.">
                     </div>
                 </div> <!-- FECHA COL -->
 
@@ -211,9 +195,9 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         var inputsData = document.querySelectorAll('.data');
 
         // Aplica o valor e o mínimo em todos os campos de data
-        inputsData.forEach(function(input) {
-            input.value = dataAtual; // Predefine a data atual
-            input.setAttribute('min', dataAtual); // Define o valor mínimo
+        inputsData.forEach(function (input) {
+            input.value = dataAtual;           // Predefine a data atual
+            input.setAttribute('min', dataAtual);  // Define o valor mínimo
         });
     </script>
 </body>

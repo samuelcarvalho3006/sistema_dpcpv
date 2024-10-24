@@ -4,41 +4,58 @@ session_start();
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$error = false;
-$form_data = $_SESSION['form_data'];
-// Verifica se o formulário foi enviado
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Verifica se já existe algum dado armazenado na sessão e preserva os dados anteriores
-    if (isset($_SESSION['form_data'])) {
-        // Mescla os dados existentes com os novos
-        $_SESSION['form_data'] = array_merge($_SESSION['form_data'], [
-            'valorTotal' => $_POST['valorTotal'],
-            'entrada' => $_POST['entrada'],
-            'formaPag' => $_POST['formaPag'],
-            'valorEnt' => $_POST['valorEnt'] ?? null,
-            'entrega' => $_POST['entrega'],
-            'logradouro' => $_POST['logradouro'] ?? null,
-            'numero' => $_POST['numero'] ?? null,
-            'bairro' => $_POST['bairro'] ?? null,
-        ]);
-    } else {
-        // Caso não existam dados anteriores, cria a sessão com os novos dados
-        $_SESSION['form_data'] = [
-            'valorTotal' => $_POST['valorTotal'],
-            'entrada' => $_POST['entrada'],
-            'formaPag' => $_POST['formaPag'],
-            'valorEnt' => $_POST['valorEnt'] ?? null,
-            'entrega' => $_POST['entrega'],
-            'logradouro' => $_POST['logradouro'] ?? null,
-            'numero' => $_POST['numero'] ?? null,
-            'bairro' => $_POST['bairro'] ?? null,
-        ];
-    }
+$sql_codItens = "SELECT cod_itensPed FROM itens_pedido ORDER BY cod_itensPed DESC LIMIT 1";
+$result_codItens = $conexao->query($sql_codItens);
+$codItens = $result_codItens->fetch(PDO::FETCH_ASSOC)['cod_itensPed'] ?? null;
 
-    // Redireciona para a página de confirmação
-    header('Location: confirmacao.php');
-    exit;
+// Pegar o último codPed da tabela pedidos
+$sql_codped = "SELECT codPed FROM pedidos ORDER BY codPed DESC LIMIT 1";
+$result_codped = $conexao->query($sql_codped);
+$codPed = $result_codped->fetch(PDO::FETCH_ASSOC)['codPed'] ?? null;
+
+if ($codPed !== null) { // Verifica se codPed foi encontrado
+    // Calcular o total usando o codPed
+    $sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE codPed = :codPed";
+    $stmt = $conexao->prepare($sql_vTot);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+    $stmt->execute(); // Executa a consulta
+    $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
+    try {
+
+        // Preparar a SQL
+        $sql = "INSERT INTO pagentg (codPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal)
+VALUES (:codPed, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
+        $stmt = $conexao->prepare($sql);
+
+        // Associar os valores aos placeholders
+        $stmt->bindValue(':codPed', $codPed);
+        $stmt->bindValue(':entrega', $_POST['entrega']);
+        $stmt->bindValue(':logr', $_POST['logradouro']);
+        $stmt->bindValue(':num', $_POST['numero']);
+        $stmt->bindValue(':bair', $_POST['bairro']);
+        $stmt->bindValue(':cid', $_POST['cidade']);
+        $stmt->bindValue(':est', $_POST['estado']);
+        $stmt->bindValue(':cep', $_POST['cep']);
+        $stmt->bindValue(':entr', $_POST['entrada']);
+        $stmt->bindValue(':forma', $_POST['formaPag']);
+        $stmt->bindValue(':vEnt', $_POST['valorEnt']);
+        $stmt->bindValue(':vTot', $vTot);
+
+        // Executar a SQL
+        $stmt->execute();
+
+        $sucesso = true;
+
+        header("Location: ./confirmacao.php");
+    } catch (PDOException $e) {
+        $error = true; // Configura erro se houver uma exceção
+        echo "Erro: " . $e->getMessage();
+    }
+}
+
 
 //-------------------------------------------------------------
 // Verifica o estado atual dos campos de entrada e entrega para exibição/ocultação dinâmica
@@ -54,7 +71,7 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="../style.css?v=1.6">
 </head>
 
 <body>
@@ -141,7 +158,7 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total:</label>
                         <input type="text" class="form-control" name="valorTotal"
-                            value="<?php echo htmlspecialchars($form_data['vTot']); ?>" readonly>
+                            value="R$ <?php echo htmlspecialchars($vTot); ?>" readonly>
                     </div>
 
                     <div class="form-group mb-3">
@@ -174,8 +191,7 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
 
                             <label class="form-label" for="valorEnt">R$</label>
                             <input type="text" class="form-control d-inline-block" id="valorEntrada" name="valorEnt"
-                                style="width: 100px;"
-                                value="<?php echo htmlspecialchars($form_data['valorEnt'] ?? '0,00'); ?>">
+                                style="width: 100px;">
                         </div>
                     </div>
 
@@ -194,21 +210,36 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
                         <div class="mt-2 <?= $showEndereco ? '' : 'd-none' ?>" id="enderecoDiv">
                             <label class="form-label" for="enderecoRua">R.</label>
                             <input type="text" class="form-control d-inline-block" id="enderecoRua" name="logradouro"
-                                style="width: 200px;"
-                                value="<?php echo htmlspecialchars($form_data['logradouro'] ?? ''); ?>">
+                                style="width: 200px;">
 
                             <div class="mt-2">
                                 <label class="form-label" for="enderecoNumero">Nº</label>
                                 <input type="text" class="form-control d-inline-block" id="enderecoNumero" name="numero"
-                                    style="width: 100px;"
-                                    value="<?php echo htmlspecialchars($form_data['numero'] ?? ''); ?>">
+                                    style="width: 100px;">
                             </div>
 
                             <div class="mt-2">
                                 <label class="form-label" for="enderecoBairro">Bairro</label>
                                 <input type="text" class="form-control d-inline-block" id="enderecoBairro" name="bairro"
-                                    style="width: 200px;"
-                                    value="<?php echo htmlspecialchars($form_data['bairro'] ?? ''); ?>">
+                                    style="width: 200px;">
+                            </div>
+
+                            <div class="mt-2">
+                                <label class="form-label" for="enderecoCidade">Cidade</label>
+                                <input type="text" class="form-control d-inline-block" id="enderecoCidade" name="cidade"
+                                    style="width: 200px;">
+                            </div>
+
+                            <div class="mt-2">
+                                <label class="form-label" for="enderecoEstado">Estado</label>
+                                <input type="text" class="form-control d-inline-block" id="enderecoEstado" name="estado"
+                                    style="width: 200px;">
+                            </div>
+
+                            <div class="mt-2">
+                                <label class="form-label" for="enderecoCep">CEP</label>
+                                <input type="text" class="form-control d-inline-block" id="enderecoCep" name="cep"
+                                    style="width: 200px;">
                             </div>
                         </div>
                     </div>

@@ -6,13 +6,18 @@ require_once('../conexao.php');
 $conexao = novaConexao();
 
 $registros = [];
+$vTot = [];
 $erro = false;
 
 try {
-    $sql = "SELECT * FROM pedidos";
+
+    // Realiza o JOIN entre pedidos e pagentg
+    $sql = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
-    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
+
+
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
@@ -42,21 +47,27 @@ if (isset($_POST['delete'])) {
 }
 
 if (isset($_POST['visuPedidos'])) {
-    $id = $_POST['codPed'];
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
 
     header("Location: itensPed.php");
     exit;
 }
 
 if (isset($_POST['visuPag'])) {
-    $id = $_POST['codPed'];
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
 
     header("Location: infoPag.php");
     exit;
 }
 
 if (isset($_POST['visuEntr'])) {
-    $id = $_POST['codPed'];
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
 
     header("Location: infoEntr.php");
     exit;
@@ -190,8 +201,8 @@ if (isset($_POST['visuEntr'])) {
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($registros as $registro): ?>
+                <?php foreach ($registros as $registro): ?>
+                    <tbody>
                         <td>
                             <div class="row justify-content-center registro">
                                 <?php echo ($registro['codPed']); ?>
@@ -236,7 +247,7 @@ if (isset($_POST['visuEntr'])) {
                             <div class="row justify-content-center btnVisu">
                                 <div class="col-6">
                                     <form method="POST">
-                                        <input type="hidden" name="codCat" value="<?php echo $registro['codPed']; ?>">
+                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="visuEntr" class="btn btn-primary">Visualizar</button>
                                     </form>
                                 </div>
@@ -244,7 +255,7 @@ if (isset($_POST['visuEntr'])) {
                         </td>
                         <td>
                             <div class="row justify-content-center registro">
-                                <?php echo ($registro['valorTotal']); ?>
+                                <?php echo isset($registro['valorTotal']) ? htmlspecialchars($registro['valorTotal']) : 'N/A'; ?>
                             </div>
                         </td>
                         <td>
@@ -276,7 +287,7 @@ if (isset($_POST['visuEntr'])) {
                                     </form>
                                 </div>
                                 <div class="col-3 oprBtn">
-                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $usuario['id']; ?>">
+                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $registro['codPed']; ?>">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                             class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                             <path
@@ -286,9 +297,9 @@ if (isset($_POST['visuEntr'])) {
                                 </div>
                             </div>
                         </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
+
+                    </tbody>
+                <?php endforeach; ?>
             </table>
         </div>
     <?php endif; ?>

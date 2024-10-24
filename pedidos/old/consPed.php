@@ -2,22 +2,17 @@
 session_start();
 
 include('../protect.php'); // Inclui a função de proteção ao acesso da página
-require_once('../conexao2.php');
+require_once('../conexao.php');
 $conexao = novaConexao();
 
 $registros = [];
-$vTot = [];
 $erro = false;
 
 try {
-
-    // Realiza o JOIN entre pedidos e pagentg
-    $sql = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed";
+    $sql = "SELECT * FROM pedidos";
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
-    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
-
-
+    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
@@ -249,7 +244,7 @@ if (isset($_POST['visuEntr'])) {
                         </td>
                         <td>
                             <div class="row justify-content-center registro">
-                                <?php echo isset($registro['valorTotal']) ? htmlspecialchars($registro['valorTotal']) : 'N/A'; ?>
+                                <?php echo ($registro['valorTotal']); ?>
                             </div>
                         </td>
                         <td>
@@ -281,7 +276,7 @@ if (isset($_POST['visuEntr'])) {
                                     </form>
                                 </div>
                                 <div class="col-3 oprBtn">
-                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $registro['codPed']; ?>">
+                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $usuario['id']; ?>">
                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                             class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                             <path

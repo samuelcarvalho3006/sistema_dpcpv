@@ -1,56 +1,18 @@
 <?php
 // Inicia a sessão para acessar os dados
 session_start();
-require_once('../conexao2.php');
+require_once('../conexao.php');
 $conexao = novaConexao();
 
-try {
-
-    $sql_pedido = "SELECT * FROM pedidos ORDER BY codPed DESC LIMIT 1"; // Supondo que você queira apenas um registro
-    $stmt = $conexao->prepare($sql_pedido);
-    $stmt->execute();
-    $pedido = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
-
-    $sql_itensPedido = "SELECT * FROM itens_pedido ORDER BY codPed DESC LIMIT 1"; // O mesmo aqui
-    $stmt = $conexao->prepare($sql_itensPedido);
-    $stmt->execute();
-    $itensPedido = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
-
-    $sql_pagEntg = "SELECT * FROM pagentg ORDER BY codPed DESC LIMIT 1"; // O mesmo aqui
-    $stmt = $conexao->prepare($sql_pagEntg);
-    $stmt->execute();
-    $pagEntg = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
-
-} catch (PDOException $e) {
-    $erro = true; // Configura erro se houver uma exceção
-    echo "Erro: " . $e->getMessage();
+// Verifica se os dados estão na sessão
+if (!isset($_SESSION['form_data'])) {
+    // Redireciona se não houver dados na sessão
+    header('Location: cadPed.php');
+    exit;
 }
 
-if (isset($_POST['cancelar'])) {
-
-    $sql = "DELETE FROM itens_pedido WHERE codPed = :pedido";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
-    $stmt->execute();
-
-    // Depois, exclua o registro do 'pedidos'
-    $sql = "DELETE FROM pedidos WHERE codPed = :pedido";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
-
-    $sql = "DELETE FROM pagentg WHERE codPed = :pedido";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
-}
+// Recuperar os dados da sessão
+$form_data = $_SESSION['form_data'];
 ?>
 
 <!DOCTYPE html>
@@ -145,92 +107,81 @@ if (isset($_POST['cancelar'])) {
             <div class="row row-custom">
                 <div class="col-custom"> <!-- Primeira Coluna -->
                     <div class="form-group mb-3">
-                        <p><strong>Responsável:</strong> <?php echo htmlspecialchars($pedido['cod_func']); ?></p>
+                        <p><strong>Responsável:</strong> <?php echo htmlspecialchars($form_data['funcionario']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Data do pedido:</strong> <?php echo htmlspecialchars($pedido['dataPed']); ?></p>
+                        <p><strong>Data do pedido:</strong> <?php echo htmlspecialchars($form_data['datPedido']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Data prevista:</strong> <?php echo htmlspecialchars($pedido['dataPrev']); ?></p>
+                        <p><strong>Data prevista:</strong> <?php echo htmlspecialchars($form_data['dataPrev']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Nome do cliente:</strong> <?php echo htmlspecialchars($pedido['nomeCli']); ?></p>
+                        <p><strong>Nome do cliente:</strong> <?php echo htmlspecialchars($form_data['nome']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Tipo de Pessoa:</strong> <?php echo htmlspecialchars($pedido['tipoPessoa']); ?></p>
+                        <p><strong>Tipo de Pessoa:</strong> <?php echo htmlspecialchars($form_data['pessoa']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Contato:</strong> <?php echo htmlspecialchars($pedido['contato']); ?></p>
+                        <p><strong>Contato:</strong> <?php echo htmlspecialchars($form_data['contato']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Produto:</strong> <?php echo htmlspecialchars($itensPedido['codPro']); ?></p>
+                        <p><strong>Número de itens:</strong> <?php echo htmlspecialchars($form_data['numItens']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Medida:</strong> <?php echo htmlspecialchars($itensPedido['medida']); ?></p>
+                        <p><strong>Produto:</strong> <?php echo htmlspecialchars($form_data['codPro']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Quantidade:</strong> <?php echo htmlspecialchars($itensPedido['quantidade']); ?></p>
-                    </div>
-
-                    <div class="form-group mb-3">
-                        <p><strong>Observação:</strong> <?php echo htmlspecialchars($itensPedido['descr']); ?></p>
+                        <p><strong>Medida:</strong> <?php echo htmlspecialchars($form_data['medida']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Valor unitário do produto:</strong>
-                            <?php echo htmlspecialchars($itensPedido['valorUnit']); ?>
-                        </p>
-                    </div>
-                    <div class="form-group mb-3">
-                        <p><strong>Valor total do produto:</strong>
-                            <?php echo htmlspecialchars($itensPedido['valorTotal']); ?>
-                        </p>
+                        <p><strong>Quantidade:</strong> <?php echo htmlspecialchars($form_data['quantidade']); ?></p>
                     </div>
                 </div>
 
                 <div class="col-custom2">
                     <div class="form-group mb-3">
+                        <p><strong>Observação:</strong> <?php echo htmlspecialchars($form_data['desc']); ?></p>
+                    </div>
+                    <div class="form-group mb-3">
+                        <p><strong>Valor unitário do produto:</strong>
+                            <?php echo htmlspecialchars($form_data['vUnit']); ?>
+                        </p>
+                    </div>
+                    <div class="form-group mb-3">
+                        <p><strong>Valor total do produto:</strong> <?php echo htmlspecialchars($form_data['vTot']); ?>
+                        </p>
+                    </div>
+                    <div class="form-group mb-3">
                         <p><strong>Valor total do pedido:</strong>
-                            <?php echo htmlspecialchars($pagEntg['valorTotal']); ?>
+                            <?php echo htmlspecialchars($form_data['valorTotal']); ?>
                         </p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Entrada:</strong> <?php echo htmlspecialchars($pagEntg['entrada']); ?></p>
+                        <p><strong>Entrada:</strong> <?php echo htmlspecialchars($form_data['entrada']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Forma de Pagamento:</strong> <?php echo htmlspecialchars($pagEntg['formaPag']); ?>
+                        <p><strong>Forma de Pagamento:</strong> <?php echo htmlspecialchars($form_data['formaPag']); ?></p>
+                    </div>
+                    <div class="form-group mb-3">
+                        <p><strong>Valor da entrada:</strong> <?php echo htmlspecialchars($form_data['valorEnt']); ?>
                         </p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Valor da entrada:</strong> <?php echo htmlspecialchars($pagEntg['valorEnt']); ?>
-                        </p>
+                        <p><strong>Entrega:</strong> <?php echo htmlspecialchars($form_data['entrega']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Entrega:</strong> <?php echo htmlspecialchars($pagEntg['entrega']); ?></p>
+                        <p><strong>Logradouro:</strong> <?php echo htmlspecialchars($form_data['logradouro']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Logradouro:</strong> <?php echo htmlspecialchars($pagEntg['logradouro']); ?></p>
+                        <p><strong>Número:</strong> <?php echo htmlspecialchars($form_data['numero']); ?></p>
                     </div>
                     <div class="form-group mb-3">
-                        <p><strong>Número:</strong> <?php echo htmlspecialchars($pagEntg['numero']); ?></p>
-                    </div>
-                    <div class="form-group mb-3">
-                        <p><strong>Bairro:</strong> <?php echo htmlspecialchars($pagEntg['bairro']); ?></p>
-                    </div>
-                    <div class="form-group mb-3">
-                        <p><strong>Cidade:</strong> <?php echo htmlspecialchars($pagEntg['cidade']); ?></p>
-                    </div>
-                    <div class="form-group mb-3">
-                        <p><strong>Estado:</strong> <?php echo htmlspecialchars($pagEntg['estado']); ?></p>
-                    </div>
-                    <div class="form-group mb-3">
-                        <p><strong>Cep:</strong> <?php echo htmlspecialchars($pagEntg['cep']); ?></p>
+                        <p><strong>Bairro:</strong> <?php echo htmlspecialchars($form_data['bairro']); ?></p>
                     </div>
                 </div>
                 <div class="row mt-4 btn-group-custom">
-                    <button type="button" class="btn btn-outline-dark btn-personalizado"
-                        onclick="window.location.href='consPed_teste.php';" name="cancelar">Cancelar Pedido</button>
-                    <button type="button" class="btn btn-success btn-personalizado"
-                        onclick="window.location.href='consPed_teste.php';">Finalizar Pedido</button>
+                    <a href="cadPed.php" class="btn btn-outline-dark btn-personalizado">Voltar ao Formulário</a>
+                    <button type="submit" class="btn btn-success btn-personalizado">Finalizar Pedido</button>
                 </div>
             </div>
         </form>

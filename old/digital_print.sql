@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 21/10/2024 às 19:14
+-- Tempo de geração: 14/10/2024 às 14:11
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Banco de dados: `digital_teste`
+-- Banco de dados: `digital_print`
 --
 
 -- --------------------------------------------------------
@@ -61,8 +61,7 @@ CREATE TABLE `categoria` (
 INSERT INTO `categoria` (`codCat`, `nome`) VALUES
 (4, 'Banner'),
 (5, 'Cartão de visita'),
-(6, 'Fachada'),
-(7, 'panfleto');
+(6, 'Fachada');
 
 -- --------------------------------------------------------
 
@@ -117,7 +116,6 @@ CREATE TABLE `itens_pedido` (
   `codPed` int(5) NOT NULL,
   `codPro` varchar(5) NOT NULL,
   `medida` varchar(50) NOT NULL,
-  `descr` varchar(255) NOT NULL,
   `quantidade` int(5) NOT NULL,
   `valorUnit` decimal(10,0) NOT NULL,
   `valorTotal` decimal(10,0) NOT NULL
@@ -127,40 +125,8 @@ CREATE TABLE `itens_pedido` (
 -- Despejando dados para a tabela `itens_pedido`
 --
 
-INSERT INTO `itens_pedido` (`cod_itensPed`, `codPed`, `codPro`, `medida`, `descr`, `quantidade`, `valorUnit`, `valorTotal`) VALUES
-(1, 1, 'Cartã', '9x5', '3fsdfsf', 1, 124, 124),
-(2, 2, 'Facha', '50x50', '123123', 2, 45, 90);
-
--- --------------------------------------------------------
-
---
--- Estrutura para tabela `pagentg`
---
-
-CREATE TABLE `pagentg` (
-  `codPagEnt` int(5) NOT NULL,
-  `codPed` int(5) NOT NULL,
-  `cod_itensPed` int(5) NOT NULL,
-  `entrega` varchar(50) NOT NULL,
-  `logradouro` varchar(50) NOT NULL,
-  `numero` int(5) NOT NULL,
-  `bairro` varchar(50) NOT NULL,
-  `cidade` varchar(25) NOT NULL,
-  `estado` varchar(2) NOT NULL,
-  `cep` varchar(13) NOT NULL,
-  `entrada` varchar(50) NOT NULL,
-  `formaPag` varchar(30) NOT NULL,
-  `valorEnt` decimal(10,0) NOT NULL,
-  `valorTotal` decimal(10,0) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `pagentg`
---
-
-INSERT INTO `pagentg` (`codPagEnt`, `codPed`, `cod_itensPed`, `entrega`, `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`, `entrada`, `formaPag`, `valorEnt`, `valorTotal`) VALUES
-(1, 1, 1, 'entrega', 'asdas', 82, 'terere', 'cidada', 'tt', '123123', 'sim', 'Pix', 500, 124),
-(2, 2, 2, 'entrega', 'asdas', 82, 'terere', 'cidada', 'tt', '1241414', 'sim', 'cartaoDebito', 130, 90);
+INSERT INTO `itens_pedido` (`cod_itensPed`, `codPed`, `codPro`, `medida`, `quantidade`, `valorUnit`, `valorTotal`) VALUES
+(10, 10, 'Banne', '50x50', 4, 45, 180);
 
 -- --------------------------------------------------------
 
@@ -174,17 +140,25 @@ CREATE TABLE `pedidos` (
   `tipoPessoa` varchar(50) NOT NULL,
   `nomeCli` varchar(50) NOT NULL,
   `contato` varchar(50) NOT NULL,
+  `descr` text NOT NULL,
   `dataPed` date NOT NULL,
-  `dataPrev` date NOT NULL
+  `dataPrev` date NOT NULL,
+  `entrega` varchar(50) NOT NULL,
+  `logradouro` varchar(50) NOT NULL,
+  `numero` int(5) NOT NULL,
+  `bairro` varchar(50) NOT NULL,
+  `entrada` varchar(50) NOT NULL,
+  `formaPag` varchar(30) NOT NULL,
+  `valorEnt` decimal(10,0) NOT NULL,
+  `valorTotal` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Despejando dados para a tabela `pedidos`
 --
 
-INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `dataPed`, `dataPrev`) VALUES
-(1, 'Jenifer Soares', 'Física', 'gabriel', '123123', '2024-10-21', '2024-10-23'),
-(2, 'Gabriel Roma', 'Jurídica', 'aaasdasd', '07680967', '2024-10-21', '2024-10-31');
+INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `descr`, `dataPed`, `dataPrev`, `entrega`, `logradouro`, `numero`, `bairro`, `entrada`, `formaPag`, `valorEnt`, `valorTotal`) VALUES
+(10, 'Matheus Coelho', 'Física', 'samuel', '13213213', 'gghgfjh', '2024-10-14', '2024-10-29', 'entrega', 'jaja', 82, 'terere', 'sim', 'cartaoCredito', 50, 180);
 
 -- --------------------------------------------------------
 
@@ -207,8 +181,7 @@ INSERT INTO `produtos` (`codPro`, `codCat`, `medida`, `valor`) VALUES
 (4, 'Banner', '50x50', 45),
 (5, 'Cartão de visita', '9x5', 124),
 (6, 'Fachada', '50x50', 46),
-(9, 'Banner', '75x75', 12313),
-(10, 'panfleto', '10x15', 3);
+(9, 'Banner', '75x75', 12313);
 
 --
 -- Índices para tabelas despejadas
@@ -245,12 +218,6 @@ ALTER TABLE `itens_pedido`
   ADD PRIMARY KEY (`cod_itensPed`);
 
 --
--- Índices de tabela `pagentg`
---
-ALTER TABLE `pagentg`
-  ADD PRIMARY KEY (`codPagEnt`);
-
---
 -- Índices de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
@@ -276,7 +243,7 @@ ALTER TABLE `agenda`
 -- AUTO_INCREMENT de tabela `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
+  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `dp_login`
@@ -294,25 +261,19 @@ ALTER TABLE `funcionarios`
 -- AUTO_INCREMENT de tabela `itens_pedido`
 --
 ALTER TABLE `itens_pedido`
-  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
-
---
--- AUTO_INCREMENT de tabela `pagentg`
---
-ALTER TABLE `pagentg`
-  MODIFY `codPagEnt` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

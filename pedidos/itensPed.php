@@ -8,9 +8,13 @@ $conexao = novaConexao();
 $registros = [];
 $erro = false;
 
+// Supondo que você queira o primeiro valor do array (ajuste conforme necessário)
+$codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
+
 try {
-    $sql = "SELECT * FROM itens_pedido";
+    $sql = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
     $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 } catch (PDOException $e) {
@@ -19,9 +23,9 @@ try {
 }
 
 if (isset($_POST['delete'])) {
-    $id = $_POST['codPed'];
+    $id = $_POST['cod_itensPed'];
 
-    $sql = "DELETE FROM itens_pedido WHERE codPed = :id";
+    $sql = "DELETE FROM itens_pedido WHERE cod_itensPed = :id";
     $stmt = $conexao->prepare($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
     $stmt->execute();
@@ -37,7 +41,9 @@ if (isset($_POST['delete'])) {
 }
 
 if (isset($_POST['inserirItens'])) {
-    $id = $_POST['codPed'];
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
 
     header("Location: inserirItens.php");
     exit;
@@ -140,7 +146,7 @@ if (isset($_POST['inserirItens'])) {
             </div>
             <div class="col-2">
                 <form method="POST">
-                    <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                    <input type="hidden" name="codPed" value="<?php echo $codPed ?>">
                     <button type="submit" name="inserirItens" class="btn btn-outline-primary">
                         Inserir Itens
                     </button>
@@ -156,7 +162,7 @@ if (isset($_POST['inserirItens'])) {
             Não foi possível carregar os dados.
         </div>
     <?php else: ?>
-        <div class="container consContainer">
+        <div class="container container-custom">
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -186,8 +192,8 @@ if (isset($_POST['inserirItens'])) {
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($registros as $registro): ?>
+                <?php foreach ($registros as $registro): ?>
+                    <tbody>
                         <td>
                             <div class="row justify-content-center registro">
                                 <?php echo ($registro['cod_itensPed']); ?>
@@ -227,7 +233,7 @@ if (isset($_POST['inserirItens'])) {
                             <div class="row text-center justify-content-center operacoes">
                                 <div class="col-3 oprBtn">
                                     <form method="POST">
-                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                        <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
                                         <button type="submit" name="delete" class="btn btn-outline-danger">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-trash-fill" viewBox="0 0 16 16">
@@ -239,7 +245,7 @@ if (isset($_POST['inserirItens'])) {
                                 </div>
                                 <div class="col-3 oprBtn">
                                     <form method="POST">
-                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                        <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
                                         <button type="submit" name="edit" class="btn btn-outline-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
@@ -251,19 +257,10 @@ if (isset($_POST['inserirItens'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3 oprBtn">
-                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $usuario['id']; ?>">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                    </a>
-                                </div>
                             </div>
                         </td>
-                    <?php endforeach; ?>
-                </tbody>
+                    </tbody>
+                <?php endforeach; ?>
             </table>
         </div>
     <?php endif; ?>
