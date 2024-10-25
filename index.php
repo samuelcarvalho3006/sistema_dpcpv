@@ -23,15 +23,16 @@ if (isset($_POST['login']) && isset($_POST['senha'])) {
 
         // Executar a consulta
         $stmt->execute();
+        $resultado_consulta = $stmt->fetch(PDO::FETCH_ASSOC); // Retorna um array associativo
 
         // Verificar se foi encontrado algum registro
         if ($stmt->rowCount() == 1) {
             // Se encontrado, obter os dados do usuário
-            $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
-
-            $_SESSION['cod_func'] = $usuario['cod_func'];
+            $usuario = $resultado_consulta; // Armazena o resultado da consulta como um array associativo
+            $_SESSION['cod_func'] = $usuario['cod_func']; // Usa o índice associativo 'cod_func'
 
             header("Location: admInicial.php");
+            exit(); // Garante que o script seja interrompido após o redirecionamento
         } else {
             // Se não encontrado, define $error como verdadeiro
             $error = true;

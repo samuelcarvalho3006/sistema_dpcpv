@@ -97,6 +97,13 @@ if (isset($_POST['editar'])) {
 }
 
 // Consulta todos os registros da tabela produtos
+$sql_categorias = "SELECT * FROM categoria";
+$stmt = $conexao->prepare($sql_categorias);
+$stmt->execute();
+$listaCat = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
+// Inicializa um array vazio para armazenar os produtos
+
+// Consulta todos os registros da tabela produtos
 $query = "SELECT * FROM produtos";
 $result = $conexao->query($query);
 // Inicializa um array vazio para armazenar os produtos
@@ -212,9 +219,9 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Produto:</label>
                         <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
                             <option selected disabled>Selecione um produto</option>
-                            <?php foreach ($produtos as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
-                                    <?php echo htmlspecialchars($produto['codCat']); ?>
+                            <?php foreach ($listaCat as $produto): ?>
+                                <option value="<?php echo htmlspecialchars($produto['nome']); ?>" id="catSelect">
+                                    <?php echo htmlspecialchars($produto['nome']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -335,7 +342,8 @@ $showNovCat = $novCat === 'Novo';
                                 <div class="row text-center justify-content-center text-center operacoes">
                                     <div class="col-4 oprBtn">
                                         <form method="POST">
-                                            <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
+                                            <input type="hidden" name="cod_itensPed"
+                                                value="<?php echo $registro['cod_itensPed']; ?>">
                                             <button type="submit" name="delete" class="btn btn-outline-danger">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
@@ -347,8 +355,10 @@ $showNovCat = $novCat === 'Novo';
                                     </div>
                                     <div class="col-4 oprBtn">
                                         <form method="POST">
-                                            <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
-                                            <button type="submit" name="editar" class="btn btn-outline-primary" onclick="editarRegistro()">
+                                            <input type="hidden" name="cod_itensPed"
+                                                value="<?php echo $registro['cod_itensPed']; ?>">
+                                            <button type="submit" name="editar" class="btn btn-outline-primary"
+                                                onclick="editarRegistro()">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path
@@ -386,7 +396,7 @@ $showNovCat = $novCat === 'Novo';
         <?php if ($error): ?>
             /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
             realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function() {
+            $(document).ready(function () {
                 $('#errorModal').modal('show');
                 /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
                 com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
@@ -442,14 +452,15 @@ $showNovCat = $novCat === 'Novo';
         }
 
         // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             toggleNovCat(document.getElementById('medida').value);
         });
 
         const produtos = <?php echo json_encode($produtos); ?>;
         const medidas = <?php echo json_encode($medidas); ?>;
 
-        document.getElementById('categoria').addEventListener('change', function() {
+
+        document.getElementById('categoria').addEventListener('change', function () {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
@@ -460,7 +471,7 @@ $showNovCat = $novCat === 'Novo';
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function(medida) {
+            medidasFiltradas.forEach(function (medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;

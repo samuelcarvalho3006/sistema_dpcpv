@@ -69,6 +69,10 @@ nav {
     /* Cor do texto dos itens do dropdown quando passa o mouse */
 }
 
+.ola{
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+}
+
 /*-----------------------------------------------------------------------------------------*/
 /* modal de itens */
 
@@ -210,11 +214,6 @@ h2 {
 .titleCons {
     margin-left: 15px;
     margin-right: 15px;
-}
-
-.oprBtn {
-    margin-left: 5px;
-    margin-right: 5px;
 }
 
 .registro {

@@ -4,7 +4,13 @@ require_once('./conexao.php');
 $conexao = novaConexao();
 $registrosAgenda = [];
 $registrosPedido = [];
+$nome = $_SESSION['cod_func'];
 $erro = false;
+
+$sql_usuario = "SELECT nome FROM funcionarios WHERE cod_func = $nome";
+$stmt = $conexao->prepare($sql_usuario);
+$stmt->execute();
+$usuario = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera todos os registros
 
 try {
     $sql = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
@@ -107,7 +113,7 @@ if (isset($_POST['deleteAgenda'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administração</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css?v=1.4">
+    <link rel="stylesheet" href="./style.css?v=1.5">
 </head>
 
 
@@ -187,7 +193,9 @@ if (isset($_POST['deleteAgenda'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <h3 class="text-center mb-5 mt-5">Pedidos Próximos do Prazo</h3>
+    <h2 class="text-center mb-5 mt-5">Olá <?php echo ($usuario['nome']) ?>, seja bem-vindo ao sistema!</h2>
+
+
 
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
@@ -195,6 +203,7 @@ if (isset($_POST['deleteAgenda'])) {
         </div>
     <?php else: ?>
         <div class="container consContainer">
+            <h4 class="text-center mb-5 mt-5">Pedidos Próximos do Prazo</h4>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -342,7 +351,7 @@ if (isset($_POST['deleteAgenda'])) {
     </div>
 
     <hr>
-    <h3 class="text-center mb-5 mt-5">Itens da Agenda a Expirar</h3>
+
 
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
@@ -350,6 +359,7 @@ if (isset($_POST['deleteAgenda'])) {
         </div>
     <?php else: ?>
         <div class="container consContainer">
+            <h3 class="text-center mb-5 mt-5">Registros da Agenda a Expirar</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -425,7 +435,7 @@ if (isset($_POST['deleteAgenda'])) {
                             </td>
                             <td>
                                 <div class="row text-center justify-content-center operacoes">
-                                    <div class="col-3 oprBtn">
+                                    <div class="col-3">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
                                             <button type="submit" name="deleteAgenda" class="btn btn-outline-danger">
@@ -437,7 +447,7 @@ if (isset($_POST['deleteAgenda'])) {
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-3 oprBtn">
+                                    <div class="col-3">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
                                             <button type="submit" name="editAgenda" class="btn btn-outline-primary">
@@ -451,8 +461,8 @@ if (isset($_POST['deleteAgenda'])) {
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-3 oprBtn">
-                                        <a class="btn btn-outline-success" href="editar.php?id=<?php echo $usuario['id']; ?>">
+                                    <div class="col-3">
+                                        <a class="btn btn-outline-success" href="editar.php?id=<?php echo $registro['codAgend']; ?>">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                                 <path

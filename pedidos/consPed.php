@@ -17,7 +17,6 @@ try {
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
 
-
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
@@ -35,6 +34,12 @@ if (isset($_POST['delete'])) {
     $sql = "DELETE FROM pedidos WHERE codPed = :id";
     $stmt = $conexao->prepare($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $sql = "DELETE FROM pagEntg WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
     if ($stmt->execute()) {
         echo "Linha excluída com sucesso!";
@@ -161,14 +166,13 @@ if (isset($_POST['visuEntr'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
-
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
             Não foi possível carregar os dados.
         </div>
     <?php else: ?>
         <div class="container-fluid consContainer">
+        <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
             <table class="table table-striped">
                 <thead>
                     <tr>
