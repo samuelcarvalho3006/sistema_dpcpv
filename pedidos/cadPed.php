@@ -7,8 +7,8 @@ $conexao = novaConexao();
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
     try {
 
-        $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
-        $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
+        $dataRegistro = date('Y-m-d', strtotime($_POST['datPedido']));
+        $dataPrazo = date('Y-m-d', strtotime($_POST['datPrev']));
 
         // Preparar a SQL
         $sql = "INSERT INTO pedidos (cod_func, tipoPessoa, nomeCli, contato, dataPed, dataPrev)
@@ -16,12 +16,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue(':cod_func', $_POST['funcionario']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':tipoPessoa', $_POST['pessoa']); // Valor padrão 0 se não definido
+        $stmt->bindValue(':cod_func', $_POST['funcionario']);
+        $stmt->bindValue(':tipoPessoa', $_POST['pessoa']);
         $stmt->bindValue(':nomeCli', $_POST['nome']);
-        $stmt->bindValue(':contato', $_POST['contato']); // Valor padrão 0 se não definido
-        $stmt->bindValue(':dataPed', $dataRegistro); // Valor padrão vazio se não definido
-        $stmt->bindValue(':dataPrev', $dataPrazo); // Valor padrão vazio se não definido
+        $stmt->bindValue(':contato', $_POST['contato']);
+        $stmt->bindValue(':dataPed', $dataRegistro);
+        $stmt->bindValue(':dataPrev', $dataPrazo);
 
         // Executar a SQL
         $stmt->execute();

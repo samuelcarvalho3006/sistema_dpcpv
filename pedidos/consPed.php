@@ -8,12 +8,79 @@ $conexao = novaConexao();
 $registros = [];
 $vTot = [];
 $erro = false;
+$statusFiltro = '';
+$dataFiltro = '';
+$valorFiltro = '';
 
 try {
-
     // Realiza o JOIN entre pedidos e pagentg
     $sql = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed";
+
+    // Variáveis para controlar os filtros
+    $conditions = []; // Array para armazenar as condições de filtro
+    $orderByConditions = []; // Array para armazenar as condições de ordenação
+
+    // Verifica se o formulário foi enviado para filtro de status
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraSTT'])) {
+        $statusFiltro = $_POST['filtraSTT']; // Captura o valor do botão de filtro
+
+        // Adiciona filtros baseados no botão clicado
+        if ($statusFiltro === 'pendente') {
+            $conditions[] = "pedidos.status = 'pendente'"; // Filtra por registros como pendentes
+        } else if ($statusFiltro === 'concluído') {
+            $conditions[] = "pedidos.status = 'concluído'"; // Filtra por registros como concluídos
+        }
+    }
+
+    // Verifica se o formulário foi enviado para filtro de data
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraDT'])) {
+        $dataFiltro = $_POST['filtraDT']; // Captura o valor do botão de filtro
+
+        // Adiciona ordenação baseada no botão clicado
+        if ($dataFiltro === 'menorPrazo') {
+            $orderByConditions[] = "pedidos.dataPrev ASC"; // Ordena por menor prazo
+        } else if ($dataFiltro === 'maiorPrazo') {
+            $orderByConditions[] = "pedidos.dataPrev DESC"; // Ordena por maior prazo
+        }
+    }
+
+    // Verifica se o formulário foi enviado para filtro de valor
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraV'])) {
+        $valorFiltro = $_POST['filtraV']; // Captura o valor do botão de filtro
+
+        // Adiciona ordenação baseada no botão clicado
+        if ($valorFiltro === 'menorValor') {
+            $orderByConditions[] = "pagentg.valorTotal ASC"; // Ordena por menor valor
+        } else if ($valorFiltro === 'maiorValor') {
+            $orderByConditions[] = "pagentg.valorTotal DESC"; // Ordena por maior valor
+        }
+    }
+
+    // Verifica se o formulário foi enviado para pesquisa
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
+        $searchTerm = $_POST['search'];
+        $conditions[] = "pedidos.nomeCli LIKE :searchTerm"; // Adiciona a pesquisa
+    }
+
+    // Se houver condições, adiciona ao SQL
+    if ($conditions) {
+        $sql .= " WHERE " . implode(" AND ", $conditions);
+    }
+
+    // Se houver ordenações, adiciona ao SQL
+    if ($orderByConditions) {
+        $sql .= " ORDER BY " . implode(", ", $orderByConditions); // Acumula as ordenações
+    }
+
+    // Prepara a consulta SQL
     $stmt = $conexao->prepare($sql);
+
+    // Se a pesquisa foi feita, bind do search term
+    if (isset($searchTerm)) {
+        $stmt->bindValue(':searchTerm', '%' . $searchTerm . '%'); // Adiciona os caracteres % para busca parcial
+    }
+
+    // Executa a consulta
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
 
@@ -21,6 +88,8 @@ try {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
 }
+
+// ----------------------------------------------------------------------------------------------------------------------------------
 
 if (isset($_POST['delete'])) {
     $id = $_POST['codPed'];
@@ -49,6 +118,17 @@ if (isset($_POST['delete'])) {
     } else {
         echo "Erro ao excluir linha: ";
     }
+}
+
+if (isset($_POST['concluida'])) {
+    $id = $_POST['codPed'];
+
+    $sql = "UPDATE pedidos SET status = 'concluído' WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    header('location: consPed.php');
 }
 
 if (isset($_POST['visuPedidos'])) {
@@ -88,7 +168,7 @@ if (isset($_POST['visuEntr'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Consultar Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="../style.css?v=1.4">
+    <link rel="stylesheet" href="../style.css?v=1.8">
 </head>
 
 <body>
@@ -172,7 +252,91 @@ if (isset($_POST['visuEntr'])) {
         </div>
     <?php else: ?>
         <div class="container-fluid consContainer">
-        <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
+            <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
+
+            <div class="container mt-5 mb-5">
+                <div class="row justify-content-center text-center">
+                    <h5 class="mb-3">PESQUISAR POR CLIENTE</h5>
+
+                    <div class="dropdown">
+                        <form method="POST">
+
+                            <div class="row justify-content-center text-center">
+                                <div class="col-4">
+                                    <input type="text" class="form-control" name="search"
+                                        placeholder="Digite o nome do cliente">
+                                </div>
+                                <div class="col-1">
+                                    <button type="submit" class="btn btn-primary">Pesquisar</button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Status
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <!-- Botão de filtro para pedidos "Pendente" -->
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="pendente">Pendentes</button>
+                                </li>
+                                <!-- Botão de filtro para pedidos "Concluído" -->
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="concluído">Concluídos</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="todos">Todos</button>
+                                </li>
+                            </ul>
+
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Data
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                        value="menorPrazo">Menor
+                                        Prazo</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                        value="maiorPrazo">Maior
+                                        Prazo</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                        value="todos">Todos</button>
+                                </li>
+                            </ul>
+
+                            <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Valor Total
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraV"
+                                        value="maiorValor">Maior</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraV"
+                                        value="menorValor">Menor</button>
+                                </li>
+                            </ul>
+    -->
+
+                            <button type="submit" class="btn btn-outline-danger" name="limpar"
+                                value="pendente">limpar</button>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -199,6 +363,9 @@ if (isset($_POST['visuEntr'])) {
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">Valor Total</div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">Status</div>
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">Operações</div>
@@ -257,11 +424,19 @@ if (isset($_POST['visuEntr'])) {
                                 </div>
                             </div>
                         </td>
+
                         <td>
                             <div class="row justify-content-center registro">
                                 <?php echo isset($registro['valorTotal']) ? htmlspecialchars($registro['valorTotal']) : 'N/A'; ?>
                             </div>
                         </td>
+
+                        <td>
+                            <div class="row justify-content-center registro">
+                                <?php echo ($registro['status']) ?>
+                            </div>
+                        </td>
+
                         <td>
                             <div class="row text-center justify-content-center operacoes">
                                 <div class="col-3 oprBtn">
@@ -291,13 +466,16 @@ if (isset($_POST['visuEntr'])) {
                                     </form>
                                 </div>
                                 <div class="col-3 oprBtn">
-                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $registro['codPed']; ?>">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                    </a>
+                                    <form method="POST">
+                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                        <button type="submit" name="concluida" class="btn btn-outline-success">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>

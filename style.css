@@ -74,78 +74,6 @@ nav {
 }
 
 /*-----------------------------------------------------------------------------------------*/
-/* modal de itens */
-
-.input-personalizado {
-    border-radius: 20px;
-    border: 2px solid #00BFFF;
-    padding: 10px;
-    text-align: center;
-    font-size: 16px;
-}
-
-.modal-dialog {
-    display: flex;
-    justify-content: center;
-}
-
-.modal-content {
-    background-color: #ffffff;
-    color: black;
-    border-radius: 20px;
-    padding: 20px;
-    width: 100%;
-    max-width: 1080px;
-}
-
-.modal-header,
-.modal-footer {
-    border: none;
-}
-
-.form-label {
-    font-size: 16px;
-    font-weight: bold;
-}
-
-.custom-modal-lg {
-    max-width: 100%;
-}
-
-.custom-modal-height {
-    height: 100%;
-    overflow-y: auto;
-}
-
-.numItens {
-    width: 100px;
-}
-
-.selec {
-    width: 100px;
-}
-
-.form-modal {
-    margin-bottom: 15px;
-}
-
-.form-modal label {
-    display: block;
-    font-size: 16px;
-    font-weight: bold;
-    margin-bottom: 5px;
-}
-
-.form-modal input,
-.form-modal select {
-    width: 100%;
-}
-
-.row {
-    margin-bottom: 20px;
-}
-
-/*----------------------------------------------------------------*/
 /* formularios */
 h2 {
     font-weight: bold;
@@ -204,7 +132,7 @@ h2 {
 /*----------------------------------------------------------------------------------------*/
 
 .consContainer {
-    max-width: 1520px;
+    max-width: 1580px;
     margin: auto;
     padding: 20px;
     border-radius: 10px;
@@ -219,4 +147,9 @@ h2 {
 .registro {
     margin-left: 10px;
     margin-right: 10px
+}
+
+.btnFiltro:hover{
+    background-color: #0d6efd;
+    color: white;
 }

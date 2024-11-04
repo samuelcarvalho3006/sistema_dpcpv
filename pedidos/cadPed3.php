@@ -30,11 +30,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
     try {
 
         // Preparar a SQL
-        $sql = "INSERT INTO pagentg (codPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal) VALUES (:codPed, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
+        $sql = "INSERT INTO pagentg (codPed, cod_itensPed, entrega, logradouro, numero, bairro, cidade, estado, cep, entrada, formaPag, valorEnt, valorTotal) VALUES (:codPed, :codItens, :entrega, :logr, :num, :bair, :cid, :est, :cep, :entr, :forma, :vEnt, :vTot)";
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
         $stmt->bindValue(':codPed', $codPed);
+        $stmt->bindValue(':codItens', $codItens);
         $stmt->bindValue(':entrega', $_POST['entrega']);
         $stmt->bindValue(':logr', $_POST['logradouro']);
         $stmt->bindValue(':num', $_POST['numero']);
@@ -186,10 +187,10 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
                             <input type="radio" name="formaPag" class="form-check-input" value="Pix">
                             <label class="form-check-label" for="Pix">Pix</label><br>
 
-                            <input type="radio" name="formaPag" class="form-check-input" value="cartaoCredito">
+                            <input type="radio" name="formaPag" class="form-check-input" value="Cartao de Crédito">
                             <label class="form-check-label" for="cartaoCredito">Cartão de Crédito</label><br>
 
-                            <input type="radio" name="formaPag" class="form-check-input" value="cartaoDebito">
+                            <input type="radio" name="formaPag" class="form-check-input" value="Cartao de Débito">
                             <label class="form-check-label" for="cartaoDebito">Cartão de Débito</label><br><br>
 
                             <label class="form-label" for="valorEnt">R$</label>

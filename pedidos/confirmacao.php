@@ -75,28 +75,7 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['editar'])) {
-    $id = $_POST['cod_itensPed'];
 
-    $sql = "UPDATE itens_pedido SET codPro, medida, descr, valorUnit, quantidade, valorTotal = :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal WHERE cod_itensPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindValue(':codPro', $_POST['codPro']);
-    $stmt->bindValue(':medida', $_POST['medida']);
-    $stmt->bindValue(':quantidade', $_POST['quantid']);
-    $stmt->bindValue(':descr', $_POST['desc']);
-    $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
-    $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
-}
 ?>
 
 <!DOCTYPE html>

@@ -9,7 +9,6 @@ $error = false;
 
 $codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
 
-// Continuar com a query
 $sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
 $stmt = $conexao->prepare($sql_listar);
 $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
@@ -108,6 +107,13 @@ if (isset($_POST['editar'])) {
         echo "Erro ao excluir linha: ";
     }
 }
+
+// Consulta todos os registros da tabela produtos
+$sql_categorias = "SELECT * FROM categoria";
+$stmt = $conexao->prepare($sql_categorias);
+$stmt->execute();
+$listaCat = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
+// Inicializa um array vazio para armazenar os produtos
 
 // Consulta todos os registros da tabela produtos
 $query = "SELECT * FROM produtos";
@@ -225,9 +231,9 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Produto:</label>
                         <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
                             <option selected disabled>Selecione um produto</option>
-                            <?php foreach ($produtos as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
-                                    <?php echo htmlspecialchars($produto['codCat']); ?>
+                            <?php foreach ($listaCat as $produto): ?>
+                                <option value="<?php echo htmlspecialchars($produto['nome']); ?>" id="catSelect">
+                                    <?php echo htmlspecialchars($produto['nome']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
@@ -400,16 +406,6 @@ $showNovCat = $novCat === 'Novo';
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-        <?php if ($error): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
-                $('#errorModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
-
         // Função para atualizar o valor unitário com base na medida selecionada
         function atualizarValor() {
             const selectProduto = document.getElementById('medida');
@@ -444,7 +440,7 @@ $showNovCat = $novCat === 'Novo';
                 // Calcula o valor total baseado na quantidade e no valor unitário
                 valorTotal.value = (quantidadeValor * valorUnitarioValor).toFixed(2);
             } else {
-                valorTotal.value = valorUnitarioValor.value; // Limpa o campo se os valores forem inválidos
+                valorTotal.value = ''; // Limpa o campo se os valores forem inválidos
             }
         }
 
@@ -465,6 +461,7 @@ $showNovCat = $novCat === 'Novo';
 
         const produtos = <?php echo json_encode($produtos); ?>;
         const medidas = <?php echo json_encode($medidas); ?>;
+
 
         document.getElementById('categoria').addEventListener('change', function () {
             const categoriaSelecionada = this.value;
@@ -491,8 +488,6 @@ $showNovCat = $novCat === 'Novo';
 
         function editarRegistro() {
             document.getElementById("cadPed2Form").reset;
-
-
         }
     </script>
 </body>

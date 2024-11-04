@@ -13,19 +13,17 @@ $stmt->execute();
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera todos os registros
 
 try {
-    $sql = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
-    $stmt = $conexao->prepare($sql);
+    $sqlAgenda = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
+    $stmt = $conexao->prepare($sqlAgenda);
     $stmt->execute();
     $registrosAgenda = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 
-    $sql = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
+    $sqlPedidos = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
     LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed 
     WHERE dataPrev BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) 
     ORDER BY dataPrev ASC LIMIT 0, 5";
-
-    $stmt = $conexao->prepare($sql);
+    $stmt = $conexao->prepare($sqlPedidos);
     $stmt->execute();
-
     $registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
 
 
@@ -34,7 +32,7 @@ try {
     echo "Erro: " . $e->getMessage();
 }
 
-if (isset($_POST['deletePedidos'])) {
+if (isset($_POST['delete'])) {
     $id = $_POST['codPed'];
 
     $sql = "DELETE FROM itens_pedido WHERE codPed = :id";
@@ -46,6 +44,12 @@ if (isset($_POST['deletePedidos'])) {
     $sql = "DELETE FROM pedidos WHERE codPed = :id";
     $stmt = $conexao->prepare($sql);
     $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
+
+    $sql = "DELETE FROM pagEntg WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
     if ($stmt->execute()) {
         echo "Linha excluída com sucesso!";
@@ -55,6 +59,17 @@ if (isset($_POST['deletePedidos'])) {
     } else {
         echo "Erro ao excluir linha: ";
     }
+}
+
+if (isset($_POST['concluida'])) {
+    $id = $_POST['codPed'];
+
+    $sql = "UPDATE pedidos SET status = 'concluído' WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    header('location: consPed.php');
 }
 
 if (isset($_POST['visuPedidos'])) {
@@ -211,11 +226,6 @@ if (isset($_POST['deleteAgenda'])) {
                             <div class="row justify-content-center text-center titleCons">ID</div>
                         </th>
                         <th>
-                            <div class="row justify-content-center text-center titleCons">
-                                Responsável
-                            </div>
-                        </th>
-                        <th>
                             <div class="row justify-content-center text-center titleCons">Cliente</div>
                         </th>
                         <th>
@@ -237,20 +247,18 @@ if (isset($_POST['deleteAgenda'])) {
                             <div class="row justify-content-center text-center titleCons">Valor Total</div>
                         </th>
                         <th>
+                            <div class="row justify-content-center text-center titleCons">Status</div>
+                        </th>
+                        <th>
                             <div class="row justify-content-center text-center titleCons">Operações</div>
                         </th>
                     </tr>
                 </thead>
-                <tbody>
-                    <?php foreach ($registrosPedido as $registro): ?>
+                <?php foreach ($registrosPedido as $registro): ?>
+                    <tbody>
                         <td>
                             <div class="row justify-content-center registro">
                                 <?php echo ($registro['codPed']); ?>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="row justify-content-center registro">
-                                <?php echo ($registro['cod_func']); ?>
                             </div>
                         </td>
                         <td>
@@ -283,7 +291,7 @@ if (isset($_POST['deleteAgenda'])) {
                                 <div class="col-6">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        <button type="submit" name="visuPag" class="btn btn-primary">Visualizar</button>
                                     </form>
                                 </div>
                             </div>
@@ -292,23 +300,31 @@ if (isset($_POST['deleteAgenda'])) {
                             <div class="row justify-content-center btnVisu">
                                 <div class="col-6">
                                     <form method="POST">
-                                        <input type="hidden" name="codCat" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="visuPedidos" class="btn btn-primary">Visualizar</button>
+                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                        <button type="submit" name="visuEntr" class="btn btn-primary">Visualizar</button>
                                     </form>
                                 </div>
                             </div>
                         </td>
+
                         <td>
                             <div class="row justify-content-center registro">
-                                <?php echo ($registro['valorTotal']); ?>
+                                <?php echo isset($registro['valorTotal']) ? htmlspecialchars($registro['valorTotal']) : 'N/A'; ?>
                             </div>
                         </td>
+
+                        <td>
+                            <div class="row justify-content-center registro">
+                                <?php echo ($registro['status']) ?>
+                            </div>
+                        </td>
+
                         <td>
                             <div class="row text-center justify-content-center operacoes">
-                                <div class="col-3 oprBtn">
+                                <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="deletePedidos" class="btn btn-outline-danger">
+                                        <button type="submit" name="delete" class="btn btn-outline-danger">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-trash-fill" viewBox="0 0 16 16">
                                                 <path
@@ -317,10 +333,10 @@ if (isset($_POST['deleteAgenda'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3 oprBtn">
+                                <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="editPedidos" class="btn btn-outline-primary">
+                                        <button type="submit" name="edit" class="btn btn-outline-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                 <path
@@ -331,20 +347,23 @@ if (isset($_POST['deleteAgenda'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3 oprBtn">
-                                    <a class="btn btn-outline-success" href="editar.php?id=<?php echo $usuario['id']; ?>">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                            class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                                            <path
-                                                d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                        </svg>
-                                    </a>
+                                <div class="col-3">
+                                    <form method="POST">
+                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                                        <button type="submit" name="concluida" class="btn btn-outline-success">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                            </svg>
+                                        </button>
+                                    </form>
                                 </div>
                             </div>
                         </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
+
+                    </tbody>
+                <?php endforeach; ?>
             </table>
         </div>
     <?php endif; ?>
@@ -462,7 +481,8 @@ if (isset($_POST['deleteAgenda'])) {
                                         </form>
                                     </div>
                                     <div class="col-3">
-                                        <a class="btn btn-outline-success" href="editar.php?id=<?php echo $registro['codAgend']; ?>">
+                                        <a class="btn btn-outline-success"
+                                            href="editar.php?id=<?php echo $registro['codAgend']; ?>">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                                 <path

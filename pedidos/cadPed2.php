@@ -73,29 +73,6 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['editar'])) {
-    $id = $_POST['cod_itensPed'];
-
-    $sql = "UPDATE itens_pedido SET codPro, medida, descr, valorUnit, quantidade, valorTotal = :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal WHERE cod_itensPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindValue(':codPro', $_POST['codPro']);
-    $stmt->bindValue(':medida', $_POST['medida']);
-    $stmt->bindValue(':quantidade', $_POST['quantid']);
-    $stmt->bindValue(':descr', $_POST['desc']);
-    $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
-    $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
-}
-
 // Consulta todos os registros da tabela produtos
 $sql_categorias = "SELECT * FROM categoria";
 $stmt = $conexao->prepare($sql_categorias);
@@ -243,7 +220,7 @@ $showNovCat = $novCat === 'Novo';
 
                     <div class="form-group mb-3" id="medidaPersonalizadaDiv"
                         style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
-                        <input type="text" class="form-control" id="novaCategoria">
+                        <input type="text" class="form-control" id="novaCategoria" name="medida">
                     </div>
 
                     <div class="form-group mb-3">
@@ -393,16 +370,6 @@ $showNovCat = $novCat === 'Novo';
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-        <?php if ($error): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
-                $('#errorModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
-
         // Função para atualizar o valor unitário com base na medida selecionada
         function atualizarValor() {
             const selectProduto = document.getElementById('medida');
