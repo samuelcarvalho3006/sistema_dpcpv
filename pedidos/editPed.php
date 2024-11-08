@@ -14,23 +14,21 @@ try {
     $stmt->execute();
     $pedido = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
 
+    //-----------------------------------------------------------------------------------------------------------------------------------------    
+
     $sql_itensPedido = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
     $stmt = $conexao->prepare($sql_itensPedido);
     $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
     $stmt->execute();
     $itensPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
     $sql_pagEntg = "SELECT * FROM pagentg WHERE codPed = :codPed";
     $stmt = $conexao->prepare($sql_pagEntg);
     $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
     $stmt->execute();
     $pagEntg = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
-
-    $sql_geralPagEntg = "SELECT * FROM pagentg WHERE codPed = :codPed";
-    $stmt = $conexao->prepare($sql_geralPagEntg);
-    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-    $stmt->execute();
-    $geralPagEntg = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
 
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
@@ -81,6 +79,37 @@ if (isset($_POST['delete'])) {
     }
 }
 
+
+//---------------------------------------------------------------------------------------------------------------
+
+if (isset($_POST['enviar'])) {
+    $sql_enviarPed = "UPDATE pedidos SET nomeCli = :nome, tipoPessoa = :tipoPess, contato = :ctt, dataPrev = :dtPrev WHERE codPed = :codPed";
+    $stmt = $conexao->prepare($sql_enviarPed);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+    $stmt->bindValue(':nome', $_POST['cliente']);
+    $stmt->bindValue(':tipoPess', $_POST['pessoa']);
+    $stmt->bindValue(':ctt', $_POST['contato']);
+    $stmt->bindValue(':dtPrev', $_POST['dataPrev']);
+    $stmt->execute();
+
+//---------------------------------------------------------------------------------------------------------------
+
+    $sql_enviarPag = "UPDATE pagentg SET entrada = :ent, formaPag = :forma, valorTotal = :vTot, valorEnt = :vEnt, entrega = :entr, logradouro = :logr, numero = :num, bairro = :bair, cidade = :cid, estado = :est, cep = :cep WHERE codPed = :codPed";
+    $stmt = $conexao->prepare($sql_enviarPag);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+    $stmt->bindValue(':ent', $_POST['entrada']);
+    $stmt->bindValue(':forma', $_POST['formaPag']);
+    $stmt->bindValue(':vTot', $_POST['vTotal']);
+    $stmt->bindValue(':vEnt', $_POST['vEntrada']);
+    $stmt->bindValue(':entr', $_POST['entrega']);
+    $stmt->bindValue(':logr', $_POST['logradouro']);
+    $stmt->bindValue(':num', $_POST['numero']);
+    $stmt->bindValue(':bair', $_POST['bairro']);
+    $stmt->bindValue(':cid', $_POST['cidade']);
+    $stmt->bindValue(':est', $_POST['estado']);
+    $stmt->bindValue(':cep', $_POST['cep']);
+    $stmt->execute();
+}
 
 ?>
 
@@ -178,21 +207,24 @@ if (isset($_POST['delete'])) {
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Responsável:</strong><br>
-                                <input type="text" name="responsavel" class="form-control" value="<?php echo htmlspecialchars($pedido['cod_func']); ?>" readonly>
+                                <input type="text" name="responsavel" class="form-control"
+                                    value="<?php echo htmlspecialchars($pedido['cod_func']); ?>" readonly>
                             </p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Data do pedido:</strong><br>
-                                <input type="date" class="form-control data" name="datPedido" value="<?php echo htmlspecialchars($pedido['dataPed']); ?>" readonly>
+                                <input type="date" class="form-control data" name="datPedido"
+                                    value="<?php echo htmlspecialchars($pedido['dataPed']); ?>" readonly>
                             </p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group mb-3 text-center">
                             <p><strong>Data prevista:</strong><br>
-                                <input type="date" class="form-control data" name="datPedido" value="<?php echo htmlspecialchars($pedido['dataPrev']); ?>">
+                                <input type="date" class="form-control data" name="dataPrev"
+                                    value="<?php echo htmlspecialchars($pedido['dataPrev']); ?>">
                             </p>
                         </div>
                     </div>
@@ -201,14 +233,16 @@ if (isset($_POST['delete'])) {
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Nome do cliente:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pedido['nomeCli']); ?>">
+                                <input type="text" name="cliente" class="form-control"
+                                    value="<?php echo htmlspecialchars($pedido['nomeCli']); ?>">
                             </p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Tipo de Pessoa:</strong><br>
-                                <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input" value="Física" <?php echo ($pedido['tipoPessoa'] == 'Física') ? 'checked' : ''; ?>>
+                                <input type="radio" id="pessoaFis" name="pessoa" class="form-check-input" value="Física"
+                                    <?php echo ($pedido['tipoPessoa'] == 'Física') ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="pessoaFis">Física</label>
 
                                 <input type="radio" id="pessoaJur" name="pessoa" class="form-check-input ms-3"
@@ -220,7 +254,8 @@ if (isset($_POST['delete'])) {
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Contato:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pedido['contato']); ?>">
+                                <input type="text" name="contato" class="form-control"
+                                    value="<?php echo htmlspecialchars($pedido['contato']); ?>">
                             </p>
                         </div>
                     </div>
@@ -334,17 +369,20 @@ if (isset($_POST['delete'])) {
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Valor total do pedido:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['valorTotal']); ?>" readonly>
+                                <input type="text" name="vTotal" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['valorTotal']); ?>" readonly>
                             </p>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Entrada:</strong><br>
-                                <input type="radio" id="entradaNao" name="entrada" value="nao" class="form-check-input" <?php echo ($pagEntg['entrada'] == 'nao') ? 'checked' : ''; ?>>
+                                <input type="radio" id="entradaNao" name="entrada" value="nao" class="form-check-input"
+                                    <?php echo ($pagEntg['entrada'] == 'nao') ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="entradaNao">Não</label>
 
-                                <input type="radio" id="entradaSim" name="entrada" value="sim" class="form-check-input ms-3" <?php echo ($pagEntg['entrada'] == 'sim') ? 'checked' : ''; ?>>
+                                <input type="radio" id="entradaSim" name="entrada" value="sim"
+                                    class="form-check-input ms-3" <?php echo ($pagEntg['entrada'] == 'sim') ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="entradaSim">Sim</label>
                             </p>
                         </div>
@@ -364,11 +402,13 @@ if (isset($_POST['delete'])) {
                             </div>
                             <div class="row">
                                 <div class="col-6">
-                                    <input type="radio" name="formaPag" class="form-check-input" value="Cartao de Crédito" <?php echo ($pagEntg['formaPag'] == 'Cartao de Crédito') ? 'checked' : ''; ?>>
+                                    <input type="radio" name="formaPag" class="form-check-input"
+                                        value="Cartao de Crédito" <?php echo ($pagEntg['formaPag'] == 'Cartao de Crédito') ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="cartaoCredito">Crédito</label><br>
                                 </div>
                                 <div class="col-6">
-                                    <input type="radio" name="formaPag" class="form-check-input" value="Cartao de Débito" <?php echo ($pagEntg['formaPag'] == 'Cartao de Débito') ? 'checked' : ''; ?>>
+                                    <input type="radio" name="formaPag" class="form-check-input"
+                                        value="Cartao de Débito" <?php echo ($pagEntg['formaPag'] == 'Cartao de Débito') ? 'checked' : ''; ?>>
                                     <label class="form-check-label" for="cartaoDebito">Débito</label><br><br>
                                 </div>
                             </div>
@@ -379,7 +419,8 @@ if (isset($_POST['delete'])) {
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Valor da entrada:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['valorEnt']); ?>">
+                                <input type="text" name="vEntrada" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['valorEnt']); ?>">
                             </p>
                         </div>
                     </div>
@@ -389,10 +430,12 @@ if (isset($_POST['delete'])) {
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Entrega:</strong><br>
-                                <input type="radio" id="retirada" name="entrega" value="retirada" class="form-check-input" <?php echo ($pagEntg['entrega'] == 'retirada') ? 'checked' : ''; ?>>
+                                <input type="radio" id="retirada" name="entrega" value="retirada"
+                                    class="form-check-input" <?php echo ($pagEntg['entrega'] == 'retirada') ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="retirada">Retirada</label>
 
-                                <input type="radio" id="entrega" name="entrega" value="entrega" class="form-check-input ms-3" <?php echo ($pagEntg['entrega'] == 'entrega') ? 'checked' : ''; ?>>
+                                <input type="radio" id="entrega" name="entrega" value="entrega"
+                                    class="form-check-input ms-3" <?php echo ($pagEntg['entrega'] == 'entrega') ? 'checked' : ''; ?>>
                                 <label class="form-check-label" for="entrega">Entrega</label>
                             </p>
                         </div>
@@ -400,21 +443,24 @@ if (isset($_POST['delete'])) {
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Logradouro:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['logradouro']); ?>">
+                                <input type="text" name="logradouro" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['logradouro']); ?>">
                             </p>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Número:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['numero']); ?>">
+                                <input type="text" name="numero" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['numero']); ?>">
                             </p>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="form-group mb-3">
                             <p><strong>Bairro:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['bairro']); ?>">
+                                <input type="text" name="bairro" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['bairro']); ?>">
                             </p>
                         </div>
                     </div>
@@ -423,21 +469,24 @@ if (isset($_POST['delete'])) {
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Cidade:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['cidade']); ?>">
+                                <input type="text" name="cidade" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['cidade']); ?>">
                             </p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Estado:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['estado']); ?>">
+                                <input type="text" name="estado" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['estado']); ?>">
                             </p>
                         </div>
                     </div>
                     <div class="col-4">
                         <div class="form-group mb-3">
                             <p><strong>Cep:</strong><br>
-                                <input type="text" name="cliente" class="form-control" value="<?php echo htmlspecialchars($pagEntg['cep']); ?>">
+                                <input type="text" name="cep" class="form-control"
+                                    value="<?php echo htmlspecialchars($pagEntg['cep']); ?>">
                             </p>
                         </div>
                     </div>
@@ -449,8 +498,7 @@ if (isset($_POST['delete'])) {
     <div class="row mt-4 btn-group-custom">
         <button type="button" class="btn btn-outline-dark btn-personalizado"
             onclick="window.location.href='consPed.php';" name="cancelar">Cancelar Pedido</button>
-        <button type="button" class="btn btn-success btn-personalizado"
-            onclick="window.location.href='consPed.php';">Finalizar Pedido</button>
+        <button type="submit" class="btn btn-success btn-personalizado">Finalizar Pedido</button>
     </div>
     </div>
     </form>
