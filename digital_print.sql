@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 25/10/2024 às 20:42
+-- Tempo de geração: 08/11/2024 às 02:57
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -33,15 +33,9 @@ CREATE TABLE `agenda` (
   `titulo` varchar(50) NOT NULL,
   `dataRegistro` date NOT NULL,
   `dataPrazo` date NOT NULL,
-  `informacao` varchar(250) NOT NULL
+  `informacao` varchar(250) NOT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'pendente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `agenda`
---
-
-INSERT INTO `agenda` (`codAgend`, `cod_func`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`) VALUES
-(1, 'Davi', 'arrumar o tcc', '2024-10-25', '2024-11-08', 'solar o tcc');
 
 -- --------------------------------------------------------
 
@@ -103,6 +97,17 @@ CREATE TABLE `itens_pedido` (
   `valorTotal` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `itens_pedido`
+--
+
+INSERT INTO `itens_pedido` (`cod_itensPed`, `codPed`, `codPro`, `medida`, `descr`, `quantidade`, `valorUnit`, `valorTotal`) VALUES
+(4, 5, 'teste', '', '', 3, 1, 3),
+(6, 5, 'teste2', '', '', 4, 2, 8),
+(7, 5, 'teste2', '', '', 1, 2, 2),
+(8, 5, 'teste2', '', '', 2, 1, 2),
+(9, 6, 'teste2', '', '', 3, 1, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -126,6 +131,14 @@ CREATE TABLE `pagentg` (
   `valorTotal` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Despejando dados para a tabela `pagentg`
+--
+
+INSERT INTO `pagentg` (`codPagEnt`, `codPed`, `cod_itensPed`, `entrega`, `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`, `entrada`, `formaPag`, `valorEnt`, `valorTotal`) VALUES
+(2, 5, 8, 'retirada', '', 0, '', '', '', '', 'sim', 'Pix', 7, 15),
+(3, 6, 9, 'retirada', '', 0, '', '', '', '', 'nao', NULL, 0, 3);
+
 -- --------------------------------------------------------
 
 --
@@ -139,8 +152,17 @@ CREATE TABLE `pedidos` (
   `nomeCli` varchar(50) NOT NULL,
   `contato` varchar(50) NOT NULL,
   `dataPed` date NOT NULL,
-  `dataPrev` date NOT NULL
+  `dataPrev` date NOT NULL,
+  `status` varchar(30) NOT NULL DEFAULT 'pendente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Despejando dados para a tabela `pedidos`
+--
+
+INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `dataPed`, `dataPrev`, `status`) VALUES
+(5, 'Samuel', 'Física', 'yasmin soares', '12992560838', '2024-11-07', '2024-11-22', 'pendente'),
+(6, 'Davi', 'Física', 'aaaaaaaa', '12992560838', '2024-11-07', '2024-11-29', 'concluído');
 
 -- --------------------------------------------------------
 
@@ -239,19 +261,19 @@ ALTER TABLE `funcionarios`
 -- AUTO_INCREMENT de tabela `itens_pedido`
 --
 ALTER TABLE `itens_pedido`
-  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `pagentg`
 --
 ALTER TABLE `pagentg`
-  MODIFY `codPagEnt` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codPagEnt` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`

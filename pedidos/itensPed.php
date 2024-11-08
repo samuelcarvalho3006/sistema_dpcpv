@@ -137,7 +137,7 @@ if (isset($_POST['inserirItens'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <div class="container">
+    <div class="container mb-5">
         <div class="row text-center justify-content-center">
             <div class="col-2">
                 <a href="consPed.php" class="btn btn-outline-danger">
@@ -231,8 +231,8 @@ if (isset($_POST['inserirItens'])) {
                                 </div>
                             </td>
                             <td>
-                                <div class="row text-center justify-content-center operacoes">
-                                    <div class="col-3 oprBtn">
+                                <div class="row text-center justify-content-center">
+                                    <div class="col-6">
                                         <form method="POST">
                                             <input type="hidden" name="cod_itensPed"
                                                 value="<?php echo $registro['cod_itensPed']; ?>">
@@ -245,7 +245,7 @@ if (isset($_POST['inserirItens'])) {
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-3 oprBtn">
+                                    <div class="col-6">
                                         <form method="POST">
                                             <input type="hidden" name="cod_itensPed"
                                                 value="<?php echo $registro['cod_itensPed']; ?>">

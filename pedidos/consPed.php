@@ -89,7 +89,7 @@ try {
     echo "Erro: " . $e->getMessage();
 }
 
-// ----------------------------------------------------------------------------------------------------------------------------------
+//--------------------------------------------- OPERAÇÕES --------------------------------------
 
 if (isset($_POST['delete'])) {
     $id = $_POST['codPed'];
@@ -120,6 +120,14 @@ if (isset($_POST['delete'])) {
     }
 }
 
+if (isset($_POST['edit'])){
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+    header("Location: editPed.php");
+    exit;
+}
+
 if (isset($_POST['concluida'])) {
     $id = $_POST['codPed'];
 
@@ -130,6 +138,9 @@ if (isset($_POST['concluida'])) {
 
     header('location: consPed.php');
 }
+
+
+//--------------------------------------------- VISUALIZAÇÕES --------------------------------------
 
 if (isset($_POST['visuPedidos'])) {
     $_SESSION['codPed'] = [
@@ -261,7 +272,7 @@ if (isset($_POST['visuEntr'])) {
                     <div class="dropdown">
                         <form method="POST">
 
-                            <div class="row justify-content-center text-center">
+                            <div class="row justify-content-center text-center mb-3">
                                 <div class="col-4">
                                     <input type="text" class="form-control" name="search"
                                         placeholder="Digite o nome do cliente">
@@ -438,8 +449,8 @@ if (isset($_POST['visuEntr'])) {
                         </td>
 
                         <td>
-                            <div class="row text-center justify-content-center operacoes">
-                                <div class="col-3 oprBtn">
+                            <div class="row text-center justify-content-center">
+                                <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="delete" class="btn btn-outline-danger">
@@ -451,7 +462,7 @@ if (isset($_POST['visuEntr'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3 oprBtn">
+                                <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="edit" class="btn btn-outline-primary">
@@ -465,7 +476,7 @@ if (isset($_POST['visuEntr'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3 oprBtn">
+                                <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="concluida" class="btn btn-outline-success">

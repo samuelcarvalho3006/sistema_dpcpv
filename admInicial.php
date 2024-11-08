@@ -7,30 +7,62 @@ $registrosPedido = [];
 $nome = $_SESSION['cod_func'];
 $erro = false;
 
+//---------------------------- FUNCIONARIOS ---------------------------------------
+
 $sql_usuario = "SELECT nome FROM funcionarios WHERE cod_func = $nome";
 $stmt = $conexao->prepare($sql_usuario);
 $stmt->execute();
 $usuario = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera todos os registros
 
-try {
-    $sqlAgenda = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
-    $stmt = $conexao->prepare($sqlAgenda);
-    $stmt->execute();
-    $registrosAgenda = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 
-    $sqlPedidos = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
-    LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed 
-    WHERE dataPrev BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) 
-    ORDER BY dataPrev ASC LIMIT 0, 5";
-    $stmt = $conexao->prepare($sqlPedidos);
-    $stmt->execute();
-    $registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
+//---------------------------- AGENDA ---------------------------------------
 
+$sqlAgenda = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) AND status = 'pendente' ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
+$stmt = $conexao->prepare($sqlAgenda);
+$stmt->execute();
+$registrosAgenda = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 
-} catch (PDOException $e) {
-    $erro = true; // Configura erro se houver uma exceção
-    echo "Erro: " . $e->getMessage();
+if (isset($_POST['deleteAgenda'])) {
+    $id = $_POST['codAgend'];
+
+    // SQL para excluir a linha com base no ID
+    $sql = "DELETE FROM agenda WHERE codAgend = :id";
+
+    // Prepara a declaração SQL
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: " . $_SERVER['PHP_SELF']);
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
 }
+
+if (isset($_POST['concluidaAgend'])) {
+    $id = $_POST['codAgend'];
+
+    $sql = "UPDATE agenda SET status = 'concluído' WHERE codAgend = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    header('location: admInicial.php');
+}
+
+//---------------------------- PEDIDOS ---------------------------------------
+
+$sqlPedidos = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
+    LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed 
+    WHERE dataPrev BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 31 DAY) AND status = 'pendente'
+    ORDER BY dataPrev ASC LIMIT 0, 5";
+$stmt = $conexao->prepare($sqlPedidos);
+$stmt->execute();
+$registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
+
 
 if (isset($_POST['delete'])) {
     $id = $_POST['codPed'];
@@ -61,7 +93,7 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['concluida'])) {
+if (isset($_POST['concluidaPed'])) {
     $id = $_POST['codPed'];
 
     $sql = "UPDATE pedidos SET status = 'concluído' WHERE codPed = :id";
@@ -69,7 +101,7 @@ if (isset($_POST['concluida'])) {
     $stmt->bindValue(':id', $id);
     $stmt->execute();
 
-    header('location: consPed.php');
+    header('location: admInicial.php');
 }
 
 if (isset($_POST['visuPedidos'])) {
@@ -97,26 +129,6 @@ if (isset($_POST['visuEntr'])) {
 
     header("Location: ./pedidos/infoEntr.php");
     exit;
-}
-
-if (isset($_POST['deleteAgenda'])) {
-    $id = $_POST['codAgend'];
-
-    // SQL para excluir a linha com base no ID
-    $sql = "DELETE FROM agenda WHERE codAgend = :id";
-
-    // Prepara a declaração SQL
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
 }
 
 ?>
@@ -350,7 +362,7 @@ if (isset($_POST['deleteAgenda'])) {
                                 <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="concluida" class="btn btn-outline-success">
+                                        <button type="submit" name="concluidaPed" class="btn btn-outline-success">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                                 <path
@@ -413,6 +425,9 @@ if (isset($_POST['deleteAgenda'])) {
                             </div>
                         </th>
                         <th>
+                            <div class="row justify-content-center text-center titleCons">Status</div>
+                        </th>
+                        <th>
                             <div class="row justify-content-center text-center titleCons">
                                 Operações
                             </div>
@@ -449,12 +464,17 @@ if (isset($_POST['deleteAgenda'])) {
                             </td>
                             <td>
                                 <div class="row justify-content-center registro">
-                                    <?php echo ($registro['informacao']); ?>
+                                    <?php echo ($registro['informacao']) ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['status']); ?>
                                 </div>
                             </td>
                             <td>
                                 <div class="row text-center justify-content-center operacoes">
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
                                             <button type="submit" name="deleteAgenda" class="btn btn-outline-danger">
@@ -466,7 +486,7 @@ if (isset($_POST['deleteAgenda'])) {
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-3">
+                                    <div class="col-2">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
                                             <button type="submit" name="editAgenda" class="btn btn-outline-primary">
@@ -480,15 +500,17 @@ if (isset($_POST['deleteAgenda'])) {
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-3">
-                                        <a class="btn btn-outline-success"
-                                            href="editar.php?id=<?php echo $registro['codAgend']; ?>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                            </svg>
-                                        </a>
+                                    <div class="col-2">
+                                        <form method="POST">
+                                            <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
+                                            <button type="submit" name="concluidaAgend" class="btn btn-outline-success">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
+                                                    class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </td>
