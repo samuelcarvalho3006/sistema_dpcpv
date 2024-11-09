@@ -131,6 +131,13 @@ if (isset($_POST['visuEntr'])) {
     exit;
 }
 
+if (isset($_POST['edit'])){
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+    header("Location: ./pedidos/editPed.php");
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">

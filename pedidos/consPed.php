@@ -67,9 +67,10 @@ try {
         $sql .= " WHERE " . implode(" AND ", $conditions);
     }
 
-    // Se houver ordenações, adiciona ao SQL
+    // Adiciona ou substitui a cláusula ORDER BY
     if ($orderByConditions) {
-        $sql .= " ORDER BY " . implode(", ", $orderByConditions); // Acumula as ordenações
+        $sql = preg_replace('/ORDER BY .*$/', '', $sql); // Remove qualquer ORDER BY existente
+        $sql .= " ORDER BY " . implode(", ", $orderByConditions);
     }
 
     // Prepara a consulta SQL
@@ -120,7 +121,7 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['edit'])){
+if (isset($_POST['edit'])) {
     $_SESSION['codPed'] = [
         $_POST['codPed']
     ];

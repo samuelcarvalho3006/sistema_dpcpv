@@ -4,13 +4,71 @@ require_once('../conexao.php');
 $conexao = novaConexao();
 $erro = false;
 
-$registros = [];
+$sql_listaFunc = "SELECT * FROM funcionarios";
+$stmt = $conexao->prepare($sql_listaFunc);
+$stmt->execute();
+$registroFunc = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 try {
-    $sql = "SELECT * FROM agenda ORDER BY dataPrazo ASC";
+    $sql = "SELECT * FROM agenda";
+
+    // Verifica se o formulário foi enviado para filtro de status
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraFunc'])) {
+        $id = $_POST['filtraFunc']; // Captura o valor do botão de filtro
+
+        $sql = "SELECT * FROM agenda WHERE cod_func = :id";
+        $stmt = $conexao->prepare($sql);
+        $stmt->execute(); // Executa a consulta
+        $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+    }
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraSTT'])) {
+        $statusFiltro = $_POST['filtraSTT']; // Captura o valor do botão de filtro
+
+        // Adiciona filtros baseados no botão clicado
+        if ($statusFiltro === 'pendente') {
+
+            $sql = "SELECT * FROM agenda WHERE status = 'pendente'";
+            $stmt = $conexao->prepare($sql);
+            $stmt->execute();
+            $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else if ($statusFiltro === 'concluído') {
+
+            $sql = "SELECT * FROM agenda WHERE status = 'concluído'";
+            $stmt = $conexao->prepare($sql);
+            $stmt->execute();
+            $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+    // Verifica se o formulário foi enviado para filtro de data
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraDT'])) {
+        $dataFiltro = $_POST['filtraDT']; // Captura o valor do botão de filtro
+
+        // Adiciona ordenação baseada no botão clicado
+        if ($dataFiltro === 'menorPrazo') {
+
+            $sql = "SELECT * FROM agenda ORDER BY dataPrazo ASC";
+            $stmt = $conexao->prepare($sql);
+            $stmt->execute();
+            $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } else if ($dataFiltro === 'maiorPrazo') {
+
+            $sql = "SELECT * FROM agenda ORDER BY dataPrazo DESC";
+            $stmt = $conexao->prepare($sql);
+            $stmt->execute();
+            $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
+    }
+
+
+    // Prepara a consulta SQL
     $stmt = $conexao->prepare($sql);
+
+    // Executa a consulta
     $stmt->execute();
-    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+    $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
+
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
@@ -36,29 +94,24 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['delete'])) {
-    $id = $_POST['codPed'];
-
-    $sql = "DELETE FROM itens_pedido WHERE codPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-
-    // Depois, exclua o registro do 'pedidos'
-    $sql = "DELETE FROM pedidos WHERE codPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
+if (isset($_POST['edit'])) {
+    $_SESSION['codAgend'] = [
+        $_POST['codAgend']
+    ];
+    header("Location: editAgend.php");
+    exit;
 }
 
+if (isset($_POST['concluida'])) {
+    $id = $_POST['codAgend'];
+
+    $sql = "UPDATE agenda SET status = 'concluído' WHERE codAgend = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    header('location: consAgend.php');
+}
 ?>
 
 <!DOCTYPE html>
@@ -150,6 +203,79 @@ if (isset($_POST['delete'])) {
 
     <h3 class="text-center mb-5">Registros Cadastrados</h3>
 
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center text-center">
+            <h5 class="mb-3">FILTRAR POR:</h5>
+
+            <div class="dropdown">
+                <form method="POST">
+                    <?php echo "Consulta SQL: " . $stmt->queryString; // Exibe a consulta SQL gerada
+                    var_dump($id) ?>
+
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Funcionário
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <?php foreach ($registroFunc as $registro): ?>
+                            <li>
+                                <!-- Botão de envio que envia o cod_func como valor -->
+                                <button type="submit" class="dropdown-item btnFiltro" name="filtraFunc" value="<?php echo htmlspecialchars($registro['nome']); ?>">
+                                    <?php echo htmlspecialchars($registro['nome']); ?>
+                                </button>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Status
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <!-- Botão de filtro para pedidos "Pendente" -->
+                        <li>
+                            <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                value="pendente">Pendentes</button>
+                        </li>
+                        <!-- Botão de filtro para pedidos "Concluído" -->
+                        <li>
+                            <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                value="concluído">Concluídos</button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                value="todos">Todos</button>
+                        </li>
+                    </ul>
+
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Data
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <li>
+                            <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                value="menorPrazo">Menor
+                                Prazo</button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                value="maiorPrazo">Maior
+                                Prazo</button>
+                        </li>
+                        <li>
+                            <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                value="todos">Todos</button>
+                        </li>
+                    </ul>
+
+                    <button type="submit" class="btn btn-outline-danger" name="limpar"
+                        value="pendente">limpar</button>
+
+                </form>
+            </div>
+        </div>
+    </div>
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
             Não foi possível carregar os dados.
@@ -191,6 +317,11 @@ if (isset($_POST['delete'])) {
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">
+                                Status
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
                                 Operações
                             </div>
                         </th>
@@ -227,6 +358,11 @@ if (isset($_POST['delete'])) {
                             <td>
                                 <div class="row justify-content-center registro">
                                     <?php echo ($registro['informacao']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['status']); ?>
                                 </div>
                             </td>
                             <td>
