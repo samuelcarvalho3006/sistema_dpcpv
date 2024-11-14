@@ -8,9 +8,6 @@ $conexao = novaConexao();
 $registros = [];
 $vTot = [];
 $erro = false;
-$statusFiltro = '';
-$dataFiltro = '';
-$valorFiltro = '';
 
 try {
     // Realiza o JOIN entre pedidos e pagentg
@@ -59,7 +56,12 @@ try {
     // Verifica se o formulário foi enviado para pesquisa
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         $searchTerm = $_POST['search'];
-        $conditions[] = "pedidos.nomeCli LIKE :searchTerm LIMIT 5"; // Adiciona a pesquisa
+
+        if (is_numeric($searchTerm)) {
+            $numero = intval($searchTerm);
+            $conditions[] = "pedidos.codPed LIKE :searchTerm"; // Adiciona a pesquisa
+        } else
+            $conditions[] = "pedidos.nomeCli LIKE :searchTerm"; // Adiciona a pesquisa
     }
 
     // Se houver condições, adiciona ao SQL
@@ -267,6 +269,7 @@ if (isset($_POST['visuEntr'])) {
             <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
 
             <div class="container mt-5 mb-5">
+
                 <div class="row justify-content-center text-center">
                     <h5 class="mb-3">PESQUISAR POR CLIENTE</h5>
 
@@ -276,7 +279,7 @@ if (isset($_POST['visuEntr'])) {
                             <div class="row justify-content-center text-center mb-3">
                                 <div class="col-4">
                                     <input type="text" class="form-control" name="search"
-                                        placeholder="Digite o nome do cliente">
+                                        placeholder="Digite o nome do cliente ou id do pedido...">
                                 </div>
                                 <div class="col-1">
                                     <button type="submit" class="btn btn-primary">Pesquisar</button>
@@ -324,22 +327,6 @@ if (isset($_POST['visuEntr'])) {
                                         value="todos">Todos</button>
                                 </li>
                             </ul>
-
-                            <!-- <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
-                                data-bs-toggle="dropdown" aria-expanded="false">
-                                Valor Total
-                            </button>
-                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                                <li>
-                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraV"
-                                        value="maiorValor">Maior</button>
-                                </li>
-                                <li>
-                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraV"
-                                        value="menorValor">Menor</button>
-                                </li>
-                            </ul>
-    -->
 
                             <button type="submit" class="btn btn-outline-danger" name="limpar"
                                 value="pendente">limpar</button>

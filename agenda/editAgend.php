@@ -134,7 +134,7 @@ if (isset($_POST['enviar'])) {
                 <div class="form-group mb-3">
                     <label class="form-label">Responsável:</label>
                     <input type="text" name="responsavel" class="form-control"
-                        value="<?php echo htmlspecialchars($agenda['cod_func']); ?>" readonly>
+                        value="<?php echo htmlspecialchars($agenda['responsavel']); ?>" readonly>
                     </p>
                 </div>
             </div>

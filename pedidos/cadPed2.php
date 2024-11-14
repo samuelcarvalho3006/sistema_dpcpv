@@ -21,6 +21,12 @@ $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros r
 if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
     try {
 
+        $codCat = $_POST['codPro'];
+        $sql_nomeCat = "SELECT nome FROM categoria WHERE codCat = $codCat";
+        $stmt = $conexao->prepare($sql_nomeCat);
+        $stmt->execute();
+        $nomeCat = $stmt->fetch(PDO::FETCH_ASSOC);
+
         // Preparar a SQL
         $sql = "INSERT INTO itens_pedido (codPed, codPro, medida, descr, quantidade, valorUnit, valorTotal)
             VALUES (:codPed, :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal)";
@@ -28,7 +34,7 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
 
         // Associar os valores aos placeholders
         $stmt->bindValue(':codPed', $codPed);
-        $stmt->bindValue(':codPro', $_POST['codPro']);
+        $stmt->bindValue(':codPro', $nomeCat['nome']);
         $stmt->bindValue(':medida', $_POST['medida']);
         $stmt->bindValue(':quantidade', $_POST['quantid']);
         $stmt->bindValue(':descr', $_POST['desc']);
@@ -81,12 +87,35 @@ if (isset($_POST['salvarEdicao'])) {
     $stmt->execute();
 }
 
-// Consulta todos os registros da tabela produtos
+if (isset($_POST['cancelar'])) {
+
+    $sql = "DELETE FROM itens_pedido WHERE codPed = $codPed";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+
+    $sql = "DELETE FROM pedidos WHERE codPed = $codPed";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+
+    $sql = "DELETE FROM pagentg WHERE codPed = $codPed";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: consPed.php");
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
+
+
 $sql_categorias = "SELECT * FROM categoria";
 $stmt = $conexao->prepare($sql_categorias);
 $stmt->execute();
-$listaCat = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
-// Inicializa um array vazio para armazenar os produtos
+$listaCat = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Consulta todos os registros da tabela produtos
 $query = "SELECT * FROM produtos";
@@ -205,7 +234,7 @@ $showNovCat = $novCat === 'Novo';
                         <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
                             <option selected disabled>Selecione um produto</option>
                             <?php foreach ($listaCat as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['nome']); ?>" id="catSelect">
+                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
                                     <?php echo htmlspecialchars($produto['nome']); ?>
                                 </option>
                             <?php endforeach; ?>
@@ -214,7 +243,8 @@ $showNovCat = $novCat === 'Novo';
 
                     <div class="form-group mb-3" id="medidaDiv" style="display: none;">
                         <label class="form-label">Medida:</label>
-                        <select class="form-select" id="medida" name="medida" onchange="toggleMedPers(this.value); atualizarValor()">
+                        <select class="form-select" id="medida" name="medida"
+                            onchange="toggleMedPers(this.value); atualizarValor()">
                             <option selected disabled>Selecione a medida</option>
                             <option value="personalizado">Personalizado...</option>
                             <?php foreach ($medidas as $medida): ?>
@@ -226,7 +256,7 @@ $showNovCat = $novCat === 'Novo';
                     </div>
 
                     <div class="form-group mb-3" id="medidaPersonalizadaDiv" style="display: none;">
-                        <input type="text" class="form-control" id="novaCategoria" name="medida">
+                        <input type="text" class="form-control" id="novaCategoria">
                     </div>
 
                     <div class="form-group mb-3">
@@ -337,11 +367,15 @@ $showNovCat = $novCat === 'Novo';
                                         </form>
                                     </div>
                                     <div class="col-4 oprBtn">
-                                        <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
+                                        <input type="hidden" name="cod_itensPed"
+                                            value="<?php echo $registro['cod_itensPed']; ?>">
                                         <button type="button" class="btn btn-outline-primary" onclick="editarRegistro()">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                <path
+                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                <path fill-rule="evenodd"
+                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
                                             </svg>
                                         </button>
                                     </div>
@@ -352,15 +386,19 @@ $showNovCat = $novCat === 'Novo';
                     </tbody>
                 </table>
             </div>
+
+
+            <!-- Botões centralizados abaixo das colunas -->
+            <div class="row mt-4 btn-group-custom">
+                <button type="button" class="btn btn-outline-danger btn-personalizado"
+                    onclick="window.location.href='cadPed.php';">Voltar</button>
+                <button type="submit" name="cancelar" class="btn btn-outline-dark btn-personalizado">Cancelar
+                    Pedido</button>
+                <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
+            </div>
         </div>
     </form>
 
-    <!-- Botões centralizados abaixo das colunas -->
-    <div class="row mt-4 btn-group-custom">
-        <button type="button" class="btn btn-outline-danger btn-personalizado"
-            onclick="window.location.href='cadPed.php';">Voltar</button>
-        <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
-    </div>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -420,7 +458,7 @@ $showNovCat = $novCat === 'Novo';
                 const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
                 // Adiciona as medidas filtradas
-                medidasFiltradas.forEach(function(medida) {
+                medidasFiltradas.forEach(function (medida) {
                     const option = document.createElement('option');
                     option.value = medida.medida;
                     option.textContent = medida.medida;
@@ -436,22 +474,19 @@ $showNovCat = $novCat === 'Novo';
             const medidaPersonalizadaDiv = document.getElementById('medidaPersonalizadaDiv');
             if (value === 'personalizado') {
                 medidaPersonalizadaDiv.style.display = 'block';
+
+                const novaCat = document.getElementById('novaCategoria');
+                novaCat.name = 'medida';
             } else {
                 medidaPersonalizadaDiv.style.display = 'none';
             }
         }
 
-
-        // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function() {
-            toggleNovCat(document.getElementById('medida').value);
-        });
-
         const produtos = <?php echo json_encode($produtos); ?>;
         const medidas = <?php echo json_encode($medidas); ?>;
 
 
-        document.getElementById('categoria').addEventListener('change', function() {
+        document.getElementById('categoria').addEventListener('change', function () {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
@@ -468,7 +503,7 @@ $showNovCat = $novCat === 'Novo';
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function(medida) {
+            medidasFiltradas.forEach(function (medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;

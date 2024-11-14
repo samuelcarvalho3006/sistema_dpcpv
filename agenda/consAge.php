@@ -102,7 +102,7 @@ if (isset($_POST['edit'])) {
     exit;
 }
 
-if (isset($_POST['concluida'])) {
+if (isset($_POST['concluidaAgend'])) {
     $id = $_POST['codAgend'];
 
     $sql = "UPDATE agenda SET status = 'concluído' WHERE codAgend = :id";
@@ -110,7 +110,7 @@ if (isset($_POST['concluida'])) {
     $stmt->bindValue(':id', $id);
     $stmt->execute();
 
-    header('location: consAgend.php');
+    header('location: consAge.php');
 }
 ?>
 
@@ -217,7 +217,8 @@ if (isset($_POST['concluida'])) {
                         <?php foreach ($registroFunc as $registro): ?>
                             <li>
                                 <!-- Botão de envio que envia o cod_func como valor -->
-                                <button type="submit" class="dropdown-item btnFiltro" name="filtraFunc" value="<?php echo htmlspecialchars($registro['cod_func']); ?>">
+                                <button type="submit" class="dropdown-item btnFiltro" name="filtraFunc"
+                                    value="<?php echo htmlspecialchars($registro['cod_func']); ?>">
                                     <?php echo htmlspecialchars($registro['nome']); ?>
                                 </button>
                             </li>
@@ -266,8 +267,7 @@ if (isset($_POST['concluida'])) {
                         </li>
                     </ul>
 
-                    <button type="submit" class="btn btn-outline-danger" name="limpar"
-                        value="pendente">limpar</button>
+                    <button type="submit" class="btn btn-outline-danger" name="limpar" value="pendente">limpar</button>
 
                 </form>
             </div>
@@ -391,13 +391,16 @@ if (isset($_POST['concluida'])) {
                                         </form>
                                     </div>
                                     <div class="col-3 oprBtn">
-                                        <a class="btn btn-outline-success" href="editar.php?id=<?php echo $usuario['id']; ?>">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                class="bi bi-check-circle-fill" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
-                                            </svg>
-                                        </a>
+                                        <form method="POST">
+                                            <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
+                                            <button type="submit" name="concluidaAgend" class="btn btn-outline-success">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
                                 </div>
                             </td>

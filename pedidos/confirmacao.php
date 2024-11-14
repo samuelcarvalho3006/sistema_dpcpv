@@ -34,24 +34,22 @@ try {
 
 if (isset($_POST['cancelar'])) {
 
-    $sql = "DELETE FROM itens_pedido WHERE codPed = :pedido";
+    $sql = "DELETE FROM itens_pedido WHERE codPed = $codPed";
     $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
     $stmt->execute();
 
-    // Depois, exclua o registro do 'pedidos'
-    $sql = "DELETE FROM pedidos WHERE codPed = :pedido";
+    $sql = "DELETE FROM pedidos WHERE codPed = $codPed";
     $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
-    $sql = "DELETE FROM pagentg WHERE codPed = :pedido";
+    $sql = "DELETE FROM pagentg WHERE codPed = $codPed";
     $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':pedido', $id, PDO::PARAM_INT);
+    $stmt->execute();
 
     if ($stmt->execute()) {
         echo "Linha excluída com sucesso!";
         // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
+        header("Location: consPed.php");
         exit;
     } else {
         echo "Erro ao excluir linha: ";
@@ -166,7 +164,7 @@ if (isset($_POST['delete'])) {
     <div class="container container-custom">
         <h1 class="text-center mb-5">Confirmação de Dados</h1>
 
-        <form action="finalizarDados.php" method="POST">
+        <form method="POST">
 
             <div class="row row-custom justify-content-center text-center">
                 <div class="row">
@@ -391,17 +389,16 @@ if (isset($_POST['delete'])) {
                     </div>
                 </div>
             </div>
-        </form>
-    </div>
 
-    <div class="row mt-4 btn-group-custom">
-        <button type="button" class="btn btn-outline-dark btn-personalizado"
-            onclick="window.location.href='consPed.php';" name="cancelar">Cancelar Pedido</button>
-        <button type="button" class="btn btn-success btn-personalizado"
-            onclick="window.location.href='consPed.php';">Finalizar Pedido</button>
-    </div>
-    </div>
-    </form>
+            <div class="row mt-4 btn-group-custom">
+
+                <button type="submit" name="cancelar" class="btn btn-outline-dark btn-personalizado">Cancelar
+                    Pedido</button>
+
+                <button type="button" class="btn btn-success btn-personalizado"
+                    onclick="window.location.href='consPed.php';">Finalizar Pedido</button>
+            </div>
+        </form>
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

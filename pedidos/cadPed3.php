@@ -61,6 +61,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
     }
 }
 
+if (isset($_POST['cancelar'])) {
+
+    $sql = "DELETE FROM itens_pedido WHERE codPed = $codPed";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+
+    $sql = "DELETE FROM pedidos WHERE codPed = $codPed";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+
+    $sql = "DELETE FROM pagentg WHERE codPed = $codPed";
+    $stmt = $conexao->prepare($sql);
+    $stmt->execute();
+
+    if ($stmt->execute()) {
+        echo "Linha excluída com sucesso!";
+        // Redireciona para evitar reenviar o formulário
+        header("Location: consPed.php");
+        exit;
+    } else {
+        echo "Erro ao excluir linha: ";
+    }
+}
 
 //-------------------------------------------------------------
 // Verifica o estado atual dos campos de entrada e entrega para exibição/ocultação dinâmica
@@ -255,10 +278,13 @@ $showEndereco = isset($_POST['entrega']) && $_POST['entrega'] === 'entrega';
             <div class="row mt-4 btn-group-custom">
                 <button type="button" class="btn btn-outline-danger btn-personalizado"
                     onclick="window.location.href='cadPed2.php';">Voltar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Finalizar</button>
+                <button type="submit" name="cancelar" class="btn btn-outline-dark btn-personalizado">Cancelar
+                    Pedido</button>
+                <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
             </div>
         </form>
     </div>
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>

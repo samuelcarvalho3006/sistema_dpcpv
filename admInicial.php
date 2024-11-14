@@ -42,6 +42,14 @@ if (isset($_POST['deleteAgenda'])) {
     }
 }
 
+if (isset($_POST['editAgen'])) {
+    $_SESSION['codAgend'] = [
+        $_POST['codAgend']
+    ];
+    header("Location: ./agenda/editAgend.php");
+    exit;
+}
+
 if (isset($_POST['concluidaAgend'])) {
     $id = $_POST['codAgend'];
 
@@ -53,6 +61,23 @@ if (isset($_POST['concluidaAgend'])) {
     header('location: admInicial.php');
 }
 
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchAgend'])) {
+    $searchTermAgen = $_POST['searchAgend'];
+
+    if (is_numeric($searchTermAgen)) {
+        $intervaloDiasAgend = intval($searchTermAgen);
+
+        if ($intervaloDiasAgend == 0) {
+            $intervaloDiasAgend = 31;
+        }
+
+        $sqlAgenda = "SELECT * FROM agenda WHERE dataPrazo BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :intervaloDiasAgend DAY) AND status = 'pendente' ORDER BY dataPrazo ASC LIMIT 0, 5"; //filtra registros por data mais próxima
+        $stmt = $conexao->prepare($sqlAgenda);
+        $stmt->bindValue(':intervaloDiasAgend', $intervaloDiasAgend, PDO::PARAM_INT);
+        $stmt->execute();
+        $registrosAgenda = $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+}
 //---------------------------- PEDIDOS ---------------------------------------
 
 $sqlPedidos = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
@@ -63,6 +88,28 @@ $stmt = $conexao->prepare($sqlPedidos);
 $stmt->execute();
 $registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros com valor total
 
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['searchPedidos'])) {
+    $searchTermPed = $_POST['searchPedidos'];
+
+    if (is_numeric($searchTermPed)) {
+        $intervaloDiasPed = intval($searchTermPed);
+
+        if ($intervaloDiasPed == 0) {
+            $intervaloDiasPed = 31;
+        }
+
+        $sqlPedidos = "SELECT pedidos.*, pagentg.valorTotal FROM pedidos 
+    LEFT JOIN pagentg ON pedidos.codPed = pagentg.codPed 
+    WHERE dataPrev BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL :intervaloDias DAY) AND status = 'pendente'
+    ORDER BY dataPrev ASC LIMIT 0, 5";
+        $stmt = $conexao->prepare($sqlPedidos);
+        $stmt->bindValue(':intervaloDias', $intervaloDiasPed, PDO::PARAM_INT);
+        $stmt->execute();
+        $registrosPedido = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+    }
+}
 
 if (isset($_POST['delete'])) {
     $id = $_POST['codPed'];
@@ -131,13 +178,14 @@ if (isset($_POST['visuEntr'])) {
     exit;
 }
 
-if (isset($_POST['edit'])){
+if (isset($_POST['editPed'])) {
     $_SESSION['codPed'] = [
         $_POST['codPed']
     ];
     header("Location: ./pedidos/editPed.php");
     exit;
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -147,7 +195,7 @@ if (isset($_POST['edit'])){
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administração</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="./style.css?v=1.5">
+    <link rel="stylesheet" href="./style.css?v=2.0">
 </head>
 
 
@@ -230,7 +278,6 @@ if (isset($_POST['edit'])){
     <h2 class="text-center mb-5 mt-5">Olá <?php echo ($usuario['nome']) ?>, seja bem-vindo ao sistema!</h2>
 
 
-
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
             Não foi possível carregar os dados.
@@ -238,6 +285,23 @@ if (isset($_POST['edit'])){
     <?php else: ?>
         <div class="container consContainer">
             <h4 class="text-center mb-5 mt-5">Pedidos Próximos do Prazo</h4>
+
+            <div class="row justify-content-center text-center">
+                <h5 class="mb-3">INTERVALO DE DIAS</h5>
+
+                <form method="POST">
+                    <div class="row justify-content-center text-center mb-3">
+                        <div class="col-3">
+                            <input type="text" class="form-control" name="searchPedidos"
+                                placeholder="Digite o intervalo de dias">
+                        </div>
+                        <div class="col-1">
+                            <button type="submit" class="btn btn-primary">Pesquisar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -257,7 +321,8 @@ if (isset($_POST['edit'])){
                             <div class="row justify-content-center text-center titleCons">Itens do Pedido</div>
                         </th>
                         <th>
-                            <div class="row justify-content-center text-center titleCons">Informações de Pagamento</div>
+                            <div class="row justify-content-center text-center titleCons">Informações de
+                                Pagamento</div>
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">Forma de entrega</div>
@@ -355,7 +420,7 @@ if (isset($_POST['edit'])){
                                 <div class="col-3">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="edit" class="btn btn-outline-primary">
+                                        <button type="submit" name="editPed" class="btn btn-outline-primary">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                 <path
@@ -388,8 +453,7 @@ if (isset($_POST['edit'])){
     <?php endif; ?>
     </div>
 
-    <hr>
-
+    <hr class="mt-5 mb-5">
 
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
@@ -397,7 +461,24 @@ if (isset($_POST['edit'])){
         </div>
     <?php else: ?>
         <div class="container consContainer">
-            <h3 class="text-center mb-5 mt-5">Registros da Agenda a Expirar</h3>
+            <h4 class="text-center mb-5 mt-5">Registros a Expirar</h4>
+
+            <div class="row justify-content-center text-center">
+                <h5 class="mb-3">INTERVALO DE DIAS</h5>
+
+                <form method="POST">
+                    <div class="row justify-content-center text-center mb-3">
+                        <div class="col-3">
+                            <input type="text" class="form-control" name="searchAgend"
+                                placeholder="Digite o intervalo de dias">
+                        </div>
+                        <div class="col-1">
+                            <button type="submit" class="btn btn-primary">Pesquisar</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -493,10 +574,10 @@ if (isset($_POST['edit'])){
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-2 oprBtn">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
-                                            <button type="submit" name="editAgenda" class="btn btn-outline-primary">
+                                            <button type="submit" name="editAgen" class="btn btn-outline-primary">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                     fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
                                                     <path
@@ -507,12 +588,12 @@ if (isset($_POST['edit'])){
                                             </button>
                                         </form>
                                     </div>
-                                    <div class="col-2">
+                                    <div class="col-2 oprBtn">
                                         <form method="POST">
                                             <input type="hidden" name="codAgend" value="<?php echo $registro['codAgend']; ?>">
                                             <button type="submit" name="concluidaAgend" class="btn btn-outline-success">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                    class="bi bi-check-circle-fill" viewBox="0 0 16 16">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                                     <path
                                                         d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0m-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z" />
                                                 </svg>
