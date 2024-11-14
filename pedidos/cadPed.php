@@ -65,7 +65,7 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
 <body>
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="..//admInicial.php">
+            <a class="navbar-brand m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 

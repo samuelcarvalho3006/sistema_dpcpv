@@ -55,7 +55,7 @@ if (isset($_POST['enviar'])) {
 <body>
     <div class="container-fluid cabecalho"> <!-- CABECALHO -->
         <nav class="navbar navbar-light navbar-expand-md" style="background-color: #FFFF;">
-            <a class="navbar-brand m-2" href="..//admInicial.php">
+            <a class="navbar-brand m-2" href="../admInicial.php">
                 <img src="../img/back.png">
             </a>
 
@@ -74,8 +74,8 @@ if (isset($_POST['enviar'])) {
                             Pedidos
                         </a>
                         <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                            <a class="dropdown-item" href="#">Cadastro</a>
-                            <a class="dropdown-item" href="./consPed.php">Consulta</a>
+                            <a class="dropdown-item" href="../pedidos/cadPed.php">Cadastro</a>
+                            <a class="dropdown-item" href="../pedidos/consPed.php">Consulta</a>
                         </div>
                     </li> <!-- FECHA O DROPDOWN MENU-->
 
@@ -140,38 +140,41 @@ if (isset($_POST['enviar'])) {
             </div>
             <div class="form-group mb-3">
                 <label class="form-label">Título da Agenda:</label>
-                <input type="text" class="form-control" name="title" placeholder="Título da Agenda" value="<?php echo htmlspecialchars($agenda['titulo']); ?>">
+                <input type="text" class="form-control" name="title" placeholder="Título da Agenda"
+                    value="<?php echo htmlspecialchars($agenda['titulo']); ?>">
             </div>
 
             <div class="row">
                 <div class="col-6">
                     <div class="form-group mb-3">
                         <label class="form-label">Data de registro:</label>
-                        <input type="date" class="form-control data" name="dataRegistro" value="<?php echo ($agenda['dataRegistro']); ?>" readonly>
+                        <input type="date" class="form-control data" name="dataRegistro"
+                            value="<?php echo ($agenda['dataRegistro']); ?>" readonly>
                     </div>
                 </div>
 
                 <div class="col-6">
                     <div class="form-group mb-3">
                         <label class="form-label">Data de Prazo:</label>
-                        <input type="date" class="form-control data" name="dtPrazo" value="<?php echo ($agenda['dataPrazo']); ?>">
+                        <input type="date" class="form-control data" name="dtPrazo"
+                            value="<?php echo ($agenda['dataPrazo']); ?>">
                     </div>
                 </div>
             </div>
 
             <div class="form-group mb-3">
                 <label class="form-label">Informações:</label>
-                <textarea class="form-control" name="info"
-                    placeholder="Digite as informações sobre o registro..." rows="5"><?php echo ($agenda['informacao']); ?></textarea>
+                <textarea class="form-control" name="info" placeholder="Digite as informações sobre o registro..."
+                    rows="5"><?php echo ($agenda['informacao']); ?></textarea>
             </div>
+            <div class="row mt-4 btn-group-custom">
 
-        </div>
-        <div class="row mt-4 btn-group-custom">
+                <button type="button" class="btn btn-outline-dark btn-personalizado"
+                    onclick="window.location.href='consPed.php';" name="cancelar">Cancelar Alterações</button>
 
-            <button type="button" class="btn btn-outline-dark btn-personalizado"
-                onclick="window.location.href='consPed.php';" name="cancelar">Cancelar Alterações</button>
-
-            <button type="submit" class="btn btn-success btn-personalizado" name="enviar">Finalizar Alterações</button>
+                <button type="submit" class="btn btn-success btn-personalizado" name="enviar">Finalizar
+                    Alterações</button>
+            </div>
         </div>
     </form>
 
