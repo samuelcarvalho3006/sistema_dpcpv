@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Tempo de geração: 14/11/2024 às 13:02
+-- Tempo de geração: 08/11/2024 às 02:57
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
@@ -29,21 +29,13 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `agenda` (
   `codAgend` int(5) NOT NULL,
-  `cod_func` int(5) NOT NULL,
-  `responsavel` varchar(50) NOT NULL,
+  `cod_func` varchar(50) NOT NULL,
   `titulo` varchar(50) NOT NULL,
   `dataRegistro` date NOT NULL,
   `dataPrazo` date NOT NULL,
   `informacao` varchar(250) NOT NULL,
   `status` varchar(30) NOT NULL DEFAULT 'pendente'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Despejando dados para a tabela `agenda`
---
-
-INSERT INTO `agenda` (`codAgend`, `cod_func`, `responsavel`, `titulo`, `dataRegistro`, `dataPrazo`, `informacao`, `status`) VALUES
-(1, 7, 'Samuel', 'Terminar o TCC', '2024-11-14', '2024-11-20', 'quase', 'pendente');
 
 -- --------------------------------------------------------
 
@@ -63,8 +55,7 @@ CREATE TABLE `categoria` (
 INSERT INTO `categoria` (`codCat`, `nome`) VALUES
 (1, 'teste'),
 (2, 'teste2'),
-(3, 'teste3'),
-(4, 'testante');
+(3, 'teste3');
 
 -- --------------------------------------------------------
 
@@ -111,8 +102,11 @@ CREATE TABLE `itens_pedido` (
 --
 
 INSERT INTO `itens_pedido` (`cod_itensPed`, `codPed`, `codPro`, `medida`, `descr`, `quantidade`, `valorUnit`, `valorTotal`) VALUES
-(1, 1, 'teste', '50x50', 'TCC', 1, 2, 2),
-(2, 1, 'testante', '50x50', 'tcc', 1, 2, 2);
+(4, 5, 'teste', '', '', 3, 1, 3),
+(6, 5, 'teste2', '', '', 4, 2, 8),
+(7, 5, 'teste2', '', '', 1, 2, 2),
+(8, 5, 'teste2', '', '', 2, 1, 2),
+(9, 6, 'teste2', '', '', 3, 1, 3);
 
 -- --------------------------------------------------------
 
@@ -142,7 +136,8 @@ CREATE TABLE `pagentg` (
 --
 
 INSERT INTO `pagentg` (`codPagEnt`, `codPed`, `cod_itensPed`, `entrega`, `logradouro`, `numero`, `bairro`, `cidade`, `estado`, `cep`, `entrada`, `formaPag`, `valorEnt`, `valorTotal`) VALUES
-(1, 1, 2, 'retirada', '', 0, '', '', '', '', 'sim', 'Cartao de Débito', 2, 4);
+(2, 5, 8, 'retirada', '', 0, '', '', '', '', 'sim', 'Pix', 7, 15),
+(3, 6, 9, 'retirada', '', 0, '', '', '', '', 'nao', NULL, 0, 3);
 
 -- --------------------------------------------------------
 
@@ -166,7 +161,8 @@ CREATE TABLE `pedidos` (
 --
 
 INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`, `dataPed`, `dataPrev`, `status`) VALUES
-(1, 'Samuel', 'Física', 'Andresa', '0000000000000', '2024-11-14', '2024-11-21', 'pendente');
+(5, 'Samuel', 'Física', 'yasmin soares', '12992560838', '2024-11-07', '2024-11-22', 'pendente'),
+(6, 'Davi', 'Física', 'aaaaaaaa', '12992560838', '2024-11-07', '2024-11-29', 'concluído');
 
 -- --------------------------------------------------------
 
@@ -176,8 +172,7 @@ INSERT INTO `pedidos` (`codPed`, `cod_func`, `tipoPessoa`, `nomeCli`, `contato`,
 
 CREATE TABLE `produtos` (
   `codPro` int(5) NOT NULL,
-  `codCat` int(5) NOT NULL,
-  `nomeCat` varchar(50) NOT NULL,
+  `codCat` varchar(50) NOT NULL,
   `medida` varchar(50) NOT NULL,
   `valor` decimal(10,0) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -186,11 +181,13 @@ CREATE TABLE `produtos` (
 -- Despejando dados para a tabela `produtos`
 --
 
-INSERT INTO `produtos` (`codPro`, `codCat`, `nomeCat`, `medida`, `valor`) VALUES
-(1, 1, 'teste', '50x50', 2),
-(2, 1, 'teste', '75x75', 1),
-(3, 2, 'teste2', '10x15', 1),
-(4, 4, 'testante', '10x15', 2);
+INSERT INTO `produtos` (`codPro`, `codCat`, `medida`, `valor`) VALUES
+(1, 'teste', 'teste', 1),
+(2, 'teste', 'teste2', 2),
+(3, 'teste', 'teste3', 3),
+(4, 'teste2', 'teste', 6),
+(5, 'teste2', 'teste2', 3),
+(6, 'teste3', 'teste', 8);
 
 --
 -- Índices para tabelas despejadas
@@ -252,7 +249,7 @@ ALTER TABLE `agenda`
 -- AUTO_INCREMENT de tabela `categoria`
 --
 ALTER TABLE `categoria`
-  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `codCat` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `funcionarios`
@@ -264,25 +261,25 @@ ALTER TABLE `funcionarios`
 -- AUTO_INCREMENT de tabela `itens_pedido`
 --
 ALTER TABLE `itens_pedido`
-  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `cod_itensPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT de tabela `pagentg`
 --
 ALTER TABLE `pagentg`
-  MODIFY `codPagEnt` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codPagEnt` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de tabela `pedidos`
 --
 ALTER TABLE `pedidos`
-  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `codPed` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de tabela `produtos`
 --
 ALTER TABLE `produtos`
-  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `codPro` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

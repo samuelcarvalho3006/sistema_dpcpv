@@ -127,7 +127,7 @@ if (isset($_POST['enviar'])) {
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
     <form method="POST">
         <div class="container container-custom">
-            <h1 class="text-center mb-5">Edição de Dados do Pedido</h1>
+            <h1 class="text-center mb-5">Edição de Dados de Registro</h1>
 
 
             <div class="row row-custom">
