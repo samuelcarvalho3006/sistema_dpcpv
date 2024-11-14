@@ -3,51 +3,6 @@ include('../protect.php'); // Inclui a função de proteção ao acesso da pági
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$sucesso = false;
-$error = false;
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
-    try {
-        // Verificar se todos os campos obrigatórios estão preenchidos
-        if (
-            isset(
-            $_POST['func'],
-            $_POST['titulo'],
-            $_POST['dataRegistro'],
-            $_POST['dataPrazo'],
-            $_POST['informacao']
-        )
-        ) {
-
-            // Converter datas para o formato YYYY-MM-DD
-            $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
-            $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
-
-
-            // Preparar a SQL
-            $sql = "INSERT INTO agenda (cod_func, titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_cf, :a_t, :a_dR, :a_dP, :a_I)";
-            $stmt = $conexao->prepare($sql);
-
-            // Associar os valores aos placeholders
-            $stmt->bindValue(':a_cf', $_POST['func']);
-            $stmt->bindValue(':a_t', $_POST['titulo']);
-            $stmt->bindValue(':a_dR', $dataRegistro);
-            $stmt->bindValue(':a_dP', $dataPrazo);
-            $stmt->bindValue(':a_I', $_POST['informacao']);
-
-            // Executar a SQL
-            $stmt->execute();
-
-            $sucesso = true;
-
-            header("Location: ./consAge.php");
-        } else {
-            $error = true;
-        }
-    } catch (PDOException $e) {
-        $error = true; // Configura erro se houver uma exceção
-        echo "Erro: " . $e->getMessage();
-    }
-}
 
 $query = "SELECT * FROM funcionarios";
 $resultado = $conexao->query($query);
@@ -56,6 +11,53 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
     // Adiciona cada (registro) ao array $funcionarios como um array associativo
     $funcionarios[] = $row;
 }
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
+    try {
+        // Verificar se todos os campos obrigatórios estão preenchidos
+        if (
+            isset(
+                $_POST['resp'],
+                $_POST['titulo'],
+                $_POST['dataRegistro'],
+                $_POST['dataPrazo'],
+                $_POST['informacao']
+            )
+        ) {
+
+            // Converter datas para o formato YYYY-MM-DD
+            $dataRegistro = date('Y-m-d', strtotime($_POST['dataRegistro']));
+            $dataPrazo = date('Y-m-d', strtotime($_POST['dataPrazo']));
+
+            $codFunc = $_POST['resp'];
+            $sql_resp = "SELECT nome FROM funcionarios WHERE cod_func = :codFunc";
+            $stmt = $conexao->prepare($sql_resp);
+            $stmt->bindValue(':codFunc', $codFunc);
+            $stmt->execute();
+            $resp = $stmt->fetch(PDO::FETCH_ASSOC)['nome'];
+
+            // Preparar a SQL
+            $sql = "INSERT INTO agenda (cod_func, responsavel, titulo, dataRegistro, dataPrazo, informacao) VALUES (:a_cf, :a_rs, :a_t, :a_dR, :a_dP, :a_I)";
+            $stmt = $conexao->prepare($sql);
+
+            // Associar os valores aos placeholders
+            $stmt->bindValue(':a_cf', $_POST['resp']);
+            $stmt->bindValue(':a_rs', $resp);
+            $stmt->bindValue(':a_t', $_POST['titulo']);
+            $stmt->bindValue(':a_dR', $dataRegistro);
+            $stmt->bindValue(':a_dP', $dataPrazo);
+            $stmt->bindValue(':a_I', $_POST['informacao']);
+
+            // Executar a SQL
+            $stmt->execute();
+
+            header("Location: ./consAge.php");
+        }
+    } catch (PDOException $e) {
+        echo "Erro: " . $e->getMessage();
+    }
+}
+
 ?>
 
 <!DOCTYPE html>
@@ -152,10 +154,10 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
             <div class="row row-custom">
                 <div class="form-group mb-3">
                     <label class="form-label">Responsável:</label>
-                    <select class="form-select" name="func">
+                    <select class="form-select" name="resp">
                         <option selected disabled>Selecione um funcionário</option>
                         <?php foreach ($funcionarios as $funcionario): ?>
-                            <option value="<?php echo htmlspecialchars($funcionario['nome']); ?>">
+                            <option value="<?php echo htmlspecialchars($funcionario['cod_func']); ?>">
                                 <?php echo htmlspecialchars($funcionario['nome']); ?>
                             </option>
                         <?php endforeach; ?>
@@ -166,14 +168,20 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                     <input type="text" class="form-control" name="titulo" placeholder="Título da Agenda">
                 </div>
 
-                <div class="form-group mb-3">
-                    <label class="form-label">Data de registro:</label>
-                    <input type="date" class="form-control data" name="dataRegistro">
-                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Data de registro:</label>
+                            <input type="date" class="form-control data" name="dataRegistro">
+                        </div>
+                    </div>
 
-                <div class="form-group mb-3">
-                    <label class="form-label">Data de Prazo:</label>
-                    <input type="date" class="form-control data" name="dataPrazo">
+                    <div class="col-6">
+                        <div class="form-group mb-3">
+                            <label class="form-label">Data de Prazo:</label>
+                            <input type="date" class="form-control data" name="dataPrazo">
+                        </div>
+                    </div>
                 </div>
 
                 <div class="form-group mb-3">
@@ -190,84 +198,11 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
                 <button type="submit" class="btn btn-success btn-personalizado">Confirmar</button>
             </div>
     </div>
-    </div>
-
-    <!-- PopUp de sucesso -->
-    <div class="modal fade" id="successModal" tabindex="-1" aria-labelledby="successModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup success -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                    <h5 class="modal-title" id="successModalLabel">sucesso</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        -->
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    O registro foi inserido com sucesso!
-                </div>
-                <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- fim do popup de sucesso -->
-
-    <!-- PopUp de Erro -->
-    <div class="modal fade" id="errorModal" tabindex="-1" aria-labelledby="errorModalLabel" aria-hidden="true">
-        <div class="modal-dialog"> <!-- chama classe JS de popup error -->
-            <div class="modal-content"> <!-- cria estrutura do pop up -->
-                <div class="modal-header"> <!-- cabecalho do popup, notifcação em destaque -->
-                    <h5 class="modal-title" id="errorModalLabel">Erro</h5>
-                    <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-                        <!-- cria botão de fechar em forma de "x" 
-                            data-dismiss: faz o botão fecha o popup
-                        -->
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body"> <!--corpo do popup, exibe qual foi o erro -->
-                    Não foi possível inserir o registro.<br>
-                    Por favor, tente novamente.
-                </div>
-                <div class="modal-footer">
-                    <!-- parte de baixo do popup, cria botão fechar -->
-                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Fechar</button>
-                    <!-- data-dismiss: faz o botão fecha o popup -->
-                </div>
-            </div>
-        </div>
-    </div>
-    <!-- fim do popup de erro -->
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-        <?php if ($sucesso): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
-                $('#successModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
-        <?php if ($error): ?>
-            /* linha que chama variável $error caso seu valor seja alterado de "false" para "true"
-            realiza a ação de chamar o popup Modal e exibe o erro */
-            $(document).ready(function () {
-                $('#errorModal').modal('show');
-                /* chama o documento e inicia a função de chamar o popup Modal, #errorModal comunica
-                com html referente ao ID "errorModal" e chama a classe "modal" para exibir o popup */
-            });
-        <?php endif; ?>
-
         var hoje = new Date();
 
         var dia = String(hoje.getDate()).padStart(2, '0');
@@ -281,11 +216,10 @@ while ($row = $resultado->fetch(PDO::FETCH_ASSOC)) {
         var inputsData = document.querySelectorAll('.data');
 
         // Aplica o valor e o mínimo em todos os campos de data
-        inputsData.forEach(function (input) {
-            input.value = dataAtual;           // Predefine a data atual
-            input.setAttribute('min', dataAtual);  // Define o valor mínimo
+        inputsData.forEach(function(input) {
+            input.value = dataAtual; // Predefine a data atual
+            input.setAttribute('min', dataAtual); // Define o valor mínimo
         });
-
     </script>
 </body>
 

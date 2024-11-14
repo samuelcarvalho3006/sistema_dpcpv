@@ -1,6 +1,7 @@
 <?php
 // Inicia a sessão para continuar a armazenar os dados
 session_start();
+include('../protect.php');
 require_once('../conexao.php');
 $conexao = novaConexao();
 
@@ -71,6 +72,13 @@ if (isset($_POST['delete'])) {
     } else {
         echo "Erro ao excluir linha: ";
     }
+}
+
+if (isset($_POST['salvarEdicao'])) {
+    $sql_editado = "UPDATE itens_pedido SET codPro = :prod, medida = :med, descr = :desc, quantidade = :quantid, valorUnit = :vUnit, valorTotal = :vTot WHERE cod_itensPed = :id";
+    $stmt = $conexao->prepare($sql_editado);
+    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+    $stmt->execute();
 }
 
 // Consulta todos os registros da tabela produtos
@@ -202,24 +210,22 @@ $showNovCat = $novCat === 'Novo';
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
                     </div>
-                    <div class="form-group mb-3">
+
+                    <div class="form-group mb-3" id="medidaDiv" style="display: none;">
                         <label class="form-label">Medida:</label>
-                        <select class="form-select" id="medida" name="medida"
-                            onchange="toggleMedPers(this.value); atualizarValor()">
+                        <select class="form-select" id="medida" name="medida" onchange="toggleMedPers(this.value); atualizarValor()">
                             <option selected disabled>Selecione a medida</option>
+                            <option value="personalizado">Personalizado...</option>
                             <?php foreach ($medidas as $medida): ?>
                                 <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
                                     <?php echo htmlspecialchars($medida['medida']); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="personalizado">Personalizado...</option>
                         </select>
                     </div>
 
-                    <div class="form-group mb-3" id="medidaPersonalizadaDiv"
-                        style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
+                    <div class="form-group mb-3" id="medidaPersonalizadaDiv" style="display: none;">
                         <input type="text" class="form-control" id="novaCategoria" name="medida">
                     </div>
 
@@ -245,7 +251,7 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Valor Total</label>
                         <input type="text" class="form-control" id="vTot" name="valorTotal">
                     </div>
-                    <div class="row justify-content-end mt-4">
+                    <div class="row justify-content-end mt-4 mb-5">
                         <div class="col-2">
                             <button type="submit" name="reset" class="btn btn-outline-danger">limpar</button>
                         </div>
@@ -331,20 +337,13 @@ $showNovCat = $novCat === 'Novo';
                                         </form>
                                     </div>
                                     <div class="col-4 oprBtn">
-                                        <form method="POST">
-                                            <input type="hidden" name="cod_itensPed"
-                                                value="<?php echo $registro['cod_itensPed']; ?>">
-                                            <button type="submit" name="editar" class="btn btn-outline-primary"
-                                                onclick="editarRegistro()">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                    <path fill-rule="evenodd"
-                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        <input type="hidden" name="cod_itensPed" value="<?php echo $registro['cod_itensPed']; ?>">
+                                        <button type="button" class="btn btn-outline-primary" onclick="editarRegistro()">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                            </svg>
+                                        </button>
                                     </div>
                                 </div>
                             </td>
@@ -361,8 +360,6 @@ $showNovCat = $novCat === 'Novo';
         <button type="button" class="btn btn-outline-danger btn-personalizado"
             onclick="window.location.href='cadPed.php';">Voltar</button>
         <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
-    </div>
-
     </div>
 
 
@@ -409,6 +406,32 @@ $showNovCat = $novCat === 'Novo';
         }
 
 
+        function listaMedidas() {
+            const categoriaSelecionada = document.getElementById('categoria').value;
+            const medidaDiv = document.getElementById('medidaDiv');
+            const medidaSelect = document.getElementById('medida');
+
+            if (categoriaSelecionada) {
+                // Exibe o select de medidas e limpa as opções anteriores
+                medidaDiv.style.display = 'block';
+                medidaSelect.innerHTML = '<option selected disabled>Selecione a medida</option>';
+
+                // Filtra as medidas com base na categoria
+                const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
+
+                // Adiciona as medidas filtradas
+                medidasFiltradas.forEach(function(medida) {
+                    const option = document.createElement('option');
+                    option.value = medida.medida;
+                    option.textContent = medida.medida;
+                    medidaSelect.appendChild(option);
+                });
+            } else {
+                // Caso não haja categoria selecionada, esconde o select de medidas
+                medidaDiv.style.display = 'none';
+            }
+        }
+
         function toggleMedPers(value) {
             const medidaPersonalizadaDiv = document.getElementById('medidaPersonalizadaDiv');
             if (value === 'personalizado') {
@@ -418,8 +441,9 @@ $showNovCat = $novCat === 'Novo';
             }
         }
 
+
         // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function () {
+        document.addEventListener('DOMContentLoaded', function() {
             toggleNovCat(document.getElementById('medida').value);
         });
 
@@ -427,34 +451,30 @@ $showNovCat = $novCat === 'Novo';
         const medidas = <?php echo json_encode($medidas); ?>;
 
 
-        document.getElementById('categoria').addEventListener('change', function () {
+        document.getElementById('categoria').addEventListener('change', function() {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
             // Limpar as opções anteriores de medida
             medidaSelect.innerHTML = '<option selected disabled>Selecione a medida</option>';
 
+            // Adicionar a opção "Personalizado..."
+            const optionPersonalizado = document.createElement('option');
+            optionPersonalizado.value = 'personalizado';
+            optionPersonalizado.textContent = 'Personalizado...';
+            medidaSelect.appendChild(optionPersonalizado);
+
             // Filtrar as medidas de acordo com a categoria selecionada
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function (medida) {
+            medidasFiltradas.forEach(function(medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;
                 medidaSelect.appendChild(option);
             });
         });
-
-        function resetForm() {
-            document.getElementById("cadPed2Form").reset;
-        }
-
-        function editarRegistro() {
-            document.getElementById("cadPed2Form").reset;
-
-
-        }
     </script>
 </body>
 

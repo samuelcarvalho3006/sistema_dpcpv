@@ -25,8 +25,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 // Executar a SQL
                 $stmt->execute();
 
-                // Pegando o ID da nova categoria inserida
-                $codCat = $nomeCategoria;
+                // Recuperando o código da categoria recém inserida
+                $codCat = $conexao->lastInsertId();
+
+                // Inserindo o produto na tabela 'produtos'
+                $sql_insertProd = "INSERT INTO produtos (codCat, nomeCat, medida, valor) VALUES (:p_p, :p_n, :p_m, :p_v)";
+                $stmt = $conexao->prepare($sql_insertProd);
+
+                // Associar os valores aos placeholders
+                $stmt->bindValue(':p_p', $codCat);
+                $stmt->bindValue(':p_n', $nomeCategoria);
+                $stmt->bindValue(':p_m', $_POST['medida']);
+                $stmt->bindValue(':p_v', $_POST['valor']);
+
+                // Executar a SQL
+                $stmt->execute();
+
+                header("Location: ./editProd.php");
+                exit; // Para garantir que o código pare de executar após o redirecionamento
             }
         } else {
             // Se uma categoria existente foi selecionada, usamos o ID dela
@@ -35,22 +51,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
 
         // Verificar se todos os campos obrigatórios estão preenchidos
         if ($codCat && isset($_POST['medida'], $_POST['valor'])) {
-            // Preparar a SQL
-            $sql = "INSERT INTO produtos (codCat, medida, valor) VALUES (:p_p, :p_m, :p_v)";
+
+            $id = $_POST['codCat'];
+            $sql_selectNome = "SELECT nome FROM categoria WHERE codCat = :id";
+            $stmt = $conexao->prepare($sql_selectNome);
+            $stmt->bindValue(':id', $id); // Usando bindValue para evitar SQL injection
+            $stmt->execute();
+            $nome = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            if ($nome) {
+                $nomeCat = $nome['nome']; // Acessa o valor 'nome' do array associativo
+            }
+
+            $sql = "INSERT INTO produtos (codCat, nomeCat, medida, valor) VALUES (:p_p, :p_n, :p_m, :p_v)";
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
             $stmt->bindValue(':p_p', $codCat);
+            $stmt->bindValue(':p_n', $nomeCat ?? $nomeCategoria); // Usando o nome da nova categoria ou existente
             $stmt->bindValue(':p_m', $_POST['medida']);
             $stmt->bindValue(':p_v', $_POST['valor']);
 
             // Executar a SQL
             $stmt->execute();
-            $sucesso = true;
 
             header("Location: ./editProd.php");
-        } else {
-            $error = true;
+            exit; // Para garantir que o código pare de executar após o redirecionamento
         }
     } catch (PDOException $e) {
         // Adiciona log do erro para depuração
@@ -62,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
 // Consulta todos os registros da tabela categoria
 $query = "SELECT * FROM categoria";
 $result = $conexao->query($query);
+
 // Inicializa um array vazio para armazenar as categorias
 $categorias = [];
 while ($row = $result->fetch(PDO::FETCH_ASSOC)) {
@@ -165,12 +192,12 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Categoria:</label>
                         <select class="form-select" id="categoria" name="codCat" onchange="toggleNovCat(this.value)">
                             <option selected disabled>Selecione a categoria</option>
+                            <option value="Novo">Nova</option>
                             <?php foreach ($categorias as $categoria): ?>
-                                <option value="<?= htmlspecialchars($categoria['nome']) ?>">
+                                <option value="<?= htmlspecialchars($categoria['codCat']) ?>">
                                     <?= htmlspecialchars($categoria['nome']) ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="Novo">Nova</option>
                         </select>
                     </div>
 

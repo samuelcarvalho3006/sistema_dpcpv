@@ -2,6 +2,7 @@
 // Inicia a sessão para acessar os dados
 session_start();
 require_once('../conexao.php');
+include('../protect.php');
 $conexao = novaConexao();
 
 $codAgend = is_array($_SESSION['codAgend']) ? $_SESSION['codAgend'][0] : $_SESSION['codAgend'];

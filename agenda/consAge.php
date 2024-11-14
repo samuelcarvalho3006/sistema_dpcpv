@@ -14,11 +14,10 @@ try {
 
     // Verifica se o formulário foi enviado para filtro de status
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraFunc'])) {
-        $id = $_POST['filtraFunc']; // Captura o valor do botão de filtro
+        $id = (int) $_POST['filtraFunc']; // Captura o valor do botão de filtro
 
-        $sql = "SELECT * FROM agenda WHERE cod_func = :id";
-        $stmt = $conexao->prepare($sql);
-        $stmt->execute(); // Executa a consulta
+        $sql = "SELECT * FROM agenda WHERE cod_func = $id";
+        $stmt = $conexao->prepare($sql); // Passa o parâmetro corretamente
         $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
     }
 
@@ -32,6 +31,7 @@ try {
             $stmt = $conexao->prepare($sql);
             $stmt->execute();
             $registros = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
         } else if ($statusFiltro === 'concluído') {
 
             $sql = "SELECT * FROM agenda WHERE status = 'concluído'";
@@ -201,7 +201,7 @@ if (isset($_POST['concluida'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <h3 class="text-center mb-5">Registros Cadastrados</h3>
+    <h3 class="text-center mb-5">Consulta da Agenda</h3>
 
     <div class="container mt-5 mb-5">
         <div class="row justify-content-center text-center">
@@ -209,9 +209,6 @@ if (isset($_POST['concluida'])) {
 
             <div class="dropdown">
                 <form method="POST">
-                    <?php echo "Consulta SQL: " . $stmt->queryString; // Exibe a consulta SQL gerada
-                    var_dump($id) ?>
-
                     <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
                         data-bs-toggle="dropdown" aria-expanded="false">
                         Funcionário
@@ -220,7 +217,7 @@ if (isset($_POST['concluida'])) {
                         <?php foreach ($registroFunc as $registro): ?>
                             <li>
                                 <!-- Botão de envio que envia o cod_func como valor -->
-                                <button type="submit" class="dropdown-item btnFiltro" name="filtraFunc" value="<?php echo htmlspecialchars($registro['nome']); ?>">
+                                <button type="submit" class="dropdown-item btnFiltro" name="filtraFunc" value="<?php echo htmlspecialchars($registro['cod_func']); ?>">
                                     <?php echo htmlspecialchars($registro['nome']); ?>
                                 </button>
                             </li>
@@ -337,7 +334,7 @@ if (isset($_POST['concluida'])) {
                             </td>
                             <td>
                                 <div class="row justify-content-center registro">
-                                    <?php echo ($registro['cod_func']); ?>
+                                    <?php echo ($registro['responsavel']); ?>
                                 </div>
                             </td>
                             <td>

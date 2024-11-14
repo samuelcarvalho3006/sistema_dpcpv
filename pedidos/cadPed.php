@@ -1,5 +1,6 @@
 <?php
 session_start(); // Iniciar a sessão para armazenar os dados
+include('../protect.php');
 require_once('../conexao.php');
 $conexao = novaConexao();
 

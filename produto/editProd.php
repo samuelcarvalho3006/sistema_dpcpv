@@ -11,6 +11,24 @@ try {
     $stmt = $conexao->prepare($sql);
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+
+    $sql_cat = "SELECT * FROM categoria";
+    $stmt = $conexao->prepare($sql_cat);
+    $stmt->execute();
+    $registroCat = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['filtraCat'])) {
+        $id = $_POST['filtraCat']; // Captura o valor do botão de filtro
+
+        // A consulta SQL agora utiliza um parâmetro para evitar injeção SQL
+        $sql = "SELECT * FROM produtos WHERE nomeCat = :id";
+        $stmt = $conexao->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_STR); // Binding do parâmetro
+        $stmt->execute(); // Executa a consulta
+
+        $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+    }
+
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
@@ -43,7 +61,7 @@ if (isset($_POST['delete'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Consultar Agenda</title>
+    <title>Consultar Produtos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
     <link rel="stylesheet" href="../style.css">
@@ -127,6 +145,34 @@ if (isset($_POST['delete'])) {
 
     <h3 class="text-center mb-5">Lista de Produtos</h3>
 
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center text-center">
+            <h5 class="mb-3">FILTRAR POR:</h5>
+            <div class="dropdown">
+                <form method="POST">
+                    <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                        data-bs-toggle="dropdown" aria-expanded="false">
+                        Categoria
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <?php foreach ($registroCat as $registro): ?>
+                            <li>
+                                <!-- Botão de envio que envia o cod_func como valor -->
+                                <button type="submit" class="dropdown-item btnFiltro" name="filtraCat" value="<?php echo htmlspecialchars($registro['nome']); ?>">
+                                    <?php echo htmlspecialchars($registro['nome']); ?>
+                                </button>
+                            </li>
+                        <?php endforeach; ?>
+                    </ul>
+
+                    <button type="submit" class="btn btn-outline-danger" name="limpar"
+                        value="pendente">limpar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <?php if ($erro): ?> <!-- Se a variável $erro for true, exibe uma mensagem de erro. -->
         <div class="alert alert-danger" role="alert">
             Não foi possível carregar os dados.
@@ -173,7 +219,7 @@ if (isset($_POST['delete'])) {
                             </td>
                             <td>
                                 <div class="row justify-content-center registro">
-                                    <?php echo ($registro['codCat']); ?>
+                                    <?php echo ($registro['nomeCat']); ?>
                                 </div>
                             </td>
                             <td>

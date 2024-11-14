@@ -59,7 +59,7 @@ try {
     // Verifica se o formulário foi enviado para pesquisa
     if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['search'])) {
         $searchTerm = $_POST['search'];
-        $conditions[] = "pedidos.nomeCli LIKE :searchTerm"; // Adiciona a pesquisa
+        $conditions[] = "pedidos.nomeCli LIKE :searchTerm LIMIT 5"; // Adiciona a pesquisa
     }
 
     // Se houver condições, adiciona ao SQL

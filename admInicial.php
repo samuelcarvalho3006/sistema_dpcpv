@@ -451,7 +451,7 @@ if (isset($_POST['edit'])){
                             </td>
                             <td>
                                 <div class="row justify-content-center registro">
-                                    <?php echo ($registro['cod_func']); ?>
+                                    <?php echo ($registro['responsavel']); ?>
                                 </div>
                             </td>
                             <td>

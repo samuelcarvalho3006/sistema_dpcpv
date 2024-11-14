@@ -124,7 +124,7 @@ if (isset($_POST['delete'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <h3 class="text-center mb-5">Registros Cadastrados</h3>
+    <h3 class="text-center mb-5">Tipos de Produtos</h3>
 
     <?php if ($erro): ?>
         <div class="alert alert-danger" role="alert">
