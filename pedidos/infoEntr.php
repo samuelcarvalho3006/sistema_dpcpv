@@ -23,6 +23,13 @@ try {
     echo "Erro: " . $e->getMessage();
 }
 
+if (isset($_POST['edit'])) {
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+    header("Location: editEntg.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>
@@ -111,7 +118,7 @@ try {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <div class="container">
+    <div class="container mb-5">
         <div class="row text-center justify-content-center">
             <div class="col-2">
                 <a href="consPed.php" class="btn btn-outline-danger">
@@ -158,6 +165,18 @@ try {
                         </div>
                     </div>
                 </div>
+
+
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-auto">
+                            <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                            <button type="submit" name="edit" class="btn btn-outline-primary">
+                                Editar
+                            </button>
+                        </div>
+                    </div>
+                </form>
             </div>
         <?php endforeach; ?>
     <?php endif; ?>

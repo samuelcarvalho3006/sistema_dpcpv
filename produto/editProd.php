@@ -53,6 +53,14 @@ if (isset($_POST['delete'])) {
         echo "Erro ao excluir linha: ";
     }
 }
+
+if (isset($_POST['edit'])) {
+    $_SESSION['codPro'] = [
+        $_POST['codPro']
+    ];
+    header("Location: edicaoProd.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

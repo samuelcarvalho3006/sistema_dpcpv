@@ -39,6 +39,35 @@ try {
     echo "Erro: " . $e->getMessage();
 }
 
+if (isset($_POST['edit'])) {
+    $_SESSION['codPed'] = [
+        $_POST['codPed']
+    ];
+    header("Location: editPag.php");
+    exit;
+}
+
+if (isset($_POST['pago'])) {
+    $id = $_POST['codPed'];
+
+    $sql = "UPDATE pedidos SET status = 'pago' WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    header('location: consPed.php');
+}
+
+if (isset($_POST['pendente'])) {
+    $id = $_POST['codPed'];
+
+    $sql = "UPDATE pedidos SET status = 'pendente' WHERE codPed = :id";
+    $stmt = $conexao->prepare($sql);
+    $stmt->bindValue(':id', $id);
+    $stmt->execute();
+
+    header('location: consPed.php');
+}
 ?>
 
 <!DOCTYPE html>
@@ -130,7 +159,7 @@ try {
     <div class="container">
         <div class="row text-center justify-content-center">
             <div class="col-2">
-                <a href="consPed.php" class="btn btn-outline-danger">
+                <a href="consPed.php" class="btn btn-outline-danger mb-4">
                     Voltar
                 </a>
             </div>
@@ -171,8 +200,34 @@ try {
                         </div>
                     </div>
                 </div>
-            </div>
-        <?php endforeach; ?>
+            <?php endforeach; ?>
+
+
+            <form method="POST">
+                <div class="row">
+                    <div class="col-auto">
+                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                        <button type="submit" name="pago" class="btn btn-outline-success">
+                            Marcar Pago
+                        </button>
+                    </div>
+                    <div class="col-auto">
+                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                        <button type="submit" name="pendente" class="btn btn-outline-dark">
+                            Marcar Pendente
+                        </button>
+                    </div>
+
+                    <div class="col-auto">
+                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
+                        <button type="submit" name="edit" class="btn btn-outline-primary">
+                            Editar
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
     <?php endif; ?>
 
 

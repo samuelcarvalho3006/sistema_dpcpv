@@ -49,6 +49,14 @@ if (isset($_POST['inserirItens'])) {
     exit;
 }
 
+if (isset($_POST['edit'])) {
+    $_SESSION['cod_itensPed'] = [
+        $_POST['cod_itensPed']
+    ];
+    $_SESSION['origem'] = ["itensPed.php"];
+    header("Location: editItensPed.php");
+    exit;
+}
 ?>
 
 <!DOCTYPE html>

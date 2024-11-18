@@ -5,18 +5,23 @@ include('../protect.php');
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$registros = [];
 $error = false;
 
 // Supondo que você queira o primeiro valor do array (ajuste conforme necessário)
-$codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
+$cod_itensPed = is_array($_SESSION['cod_itensPed']) ? $_SESSION['cod_itensPed'][0] : $_SESSION['cod_itensPed'];
 
 // Continuar com a query
-$sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
+$sql_listar = "SELECT * FROM itens_pedido WHERE cod_itensPed = :cod_itensPed";
 $stmt = $conexao->prepare($sql_listar);
-$stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+$stmt->bindParam(':cod_itensPed', $cod_itensPed, PDO::PARAM_INT); // Vincula o valor de codPed
 $stmt->execute();
-$registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
+$registros = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
+
+$sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE cod_itensPed = :cod_itensPed";
+$stmt = $conexao->prepare($sql_vTot);
+$stmt->bindParam(':cod_itensPed', $cod_itensPed, PDO::PARAM_INT); // Vincula o valor de codPed
+$stmt->execute(); // Executa a consulta
+$vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
 
 if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
     try {
@@ -28,12 +33,11 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
         $nomeCat = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Preparar a SQL
-        $sql = "INSERT INTO itens_pedido (codPed, codPro, medida, descr, quantidade, valorUnit, valorTotal)
-            VALUES (:codPed, :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal)";
+        $sql = "UPDATE itens_pedido SET codPro = :codPro, medida = :medida, descr = :descr, quantidade = :quantidade, valorUnit = :valorUnit, valorTotal = :valorTotal WHERE cod_itensPed = :cod_itensPed";
         $stmt = $conexao->prepare($sql);
 
         // Associar os valores aos placeholders
-        $stmt->bindValue(':codPed', $codPed);
+        $stmt->bindValue(':cod_itensPed', $cod_itensPed);
         $stmt->bindValue(':codPro', $nomeCat['nome']);
         $stmt->bindValue(':medida', $_POST['medida']);
         $stmt->bindValue(':quantidade', $_POST['quantid']);
@@ -44,9 +48,13 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
         // Executar a SQL
         $stmt->execute();
 
-        $sucesso = true;
+        $sql = "UPDATE pagentg SET valorTotal = :vTot WHERE cod_itensPed = :cod_itensPed";
+        $stmt = $conexao->prepare($sql);
+        $stmt->bindValue(':cod_itensPed', $cod_itensPed);
+        $stmt->bindValue(':vTot', $vTot);
+        $stmt->execute();
 
-        header("Location: " . $_SERVER['PHP_SELF']);
+        header("Location: " . $_SESSION['origem'][0]);
         exit();
     } catch (PDOException $e) {
         $error = true; // Configura erro se houver uma exceção
@@ -54,70 +62,10 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
     }
 }
 
-if (isset($_POST['proximo'])) {
-
-    if ($_SESSION['origem']) {
-        header("Location: confirmacao.php");
-        exit;
-    } else {
-        header('location: cadPed3.php');
-    }
-}
-
-if (isset($_POST['reset'])) {
-    header("Location: " . $_SERVER['PHP_SELF']);
-}
-
-if (isset($_POST['delete'])) {
-    $id = $_POST['cod_itensPed'];
-
-    $sql = "DELETE FROM itens_pedido WHERE cod_itensPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindParam(':id', $id, PDO::PARAM_INT);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
-}
-
-if (isset($_POST['edit'])) {
-    $_SESSION['cod_itensPed'] = [
-        $_POST['cod_itensPed']
-    ];
-
-    $_SESSION['origem'] = ["cadped2.php"];
-    header("Location: editItensPed.php");
-    exit;
-}
-
 if (isset($_POST['cancelar'])) {
 
-    $sql = "DELETE FROM itens_pedido WHERE codPed = $codPed";
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute();
-
-    $sql = "DELETE FROM pedidos WHERE codPed = $codPed";
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute();
-
-    $sql = "DELETE FROM pagentg WHERE codPed = $codPed";
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: consPed.php");
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
+    header("Location: " . $_SESSION['origem'][0]);
+    exit;
 }
 
 
@@ -229,9 +177,9 @@ $showNovCat = $novCat === 'Novo';
             </a>
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
-
-    <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
-    <form method="POST" id="cadPed2Form" onsubmit="resetForm()">
+    <?php var_dump($cod_itensPed) ?>
+    <h1 class="text-center mb-4">Edição de Item do Pedido</h1>
+    <form method="POST" onsubmit="resetForm()">
         <div class="container container-custom">
 
             <div class="row row-custom">
@@ -241,26 +189,38 @@ $showNovCat = $novCat === 'Novo';
                     <div class="form-group mb-3">
                         <label class="form-label">Produto:</label>
                         <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
-                            <option selected disabled>Selecione um produto</option>
+
+                            <option selected value="<?php echo ($registros['codPro']); ?>">
+                                <?php echo ($registros['codPro']); ?>
+                            </option>
+
                             <?php foreach ($listaCat as $produto): ?>
+
                                 <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
                                     <?php echo htmlspecialchars($produto['nome']); ?>
                                 </option>
+
                             <?php endforeach; ?>
                         </select>
                     </div>
 
-                    <div class="form-group mb-3" id="medidaDiv" style="display: none;">
+                    <div class="form-group mb-3" id="medidaDiv">
                         <label class="form-label">Medida:</label>
                         <select class="form-select" id="medida" name="medida"
                             onchange="toggleMedPers(this.value); atualizarValor()">
-                            <option selected disabled>Selecione a medida</option>
+
+                            <option selected value="<?php echo ($registros['medida']); ?>">
+                                <?php echo ($registros['medida']); ?>
+                            </option>
+
                             <option value="personalizado">Personalizado...</option>
+
                             <?php foreach ($medidas as $medida): ?>
                                 <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
                                     <?php echo htmlspecialchars($medida['medida']); ?>
                                 </option>
                             <?php endforeach; ?>
+
                         </select>
                     </div>
 
@@ -270,142 +230,37 @@ $showNovCat = $novCat === 'Novo';
 
                     <div class="form-group mb-3">
                         <label class="form-label">Observação</label>
-                        <textarea name="desc" class="form-control" cols="1" rows="5"></textarea>
+                        <textarea name="desc" class="form-control" cols="1" rows="5"
+                            value="<?php echo ($registros['descr']); ?>"><?php echo ($registros['descr']); ?></textarea>
                     </div>
                 </div>
 
                 <div class="col-custom2">
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Unitário</label>
-                        <input type="text" class="form-control" id="vUnit" name="valorUnit">
+                        <input type="text" class="form-control" id="vUnit" name="valorUnit"
+                            value="<?php echo ($registros['valorUnit']); ?>">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Quantidade</label>
                         <input type="number" class="form-control numItens" name="quantid" id="quantidade"
-                            onchange="atualizarValorTotal()">
+                            onchange="atualizarValorTotal()" placeholder="<?php echo ($registros['quantidade']); ?>"
+                            value="<?php echo ($registros['quantidade']); ?>">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Valor Total</label>
-                        <input type="text" class="form-control" id="vTot" name="valorTotal">
-                    </div>
-                    <div class="row justify-content-end mt-4 mb-5">
-                        <div class="col-2">
-                            <button type="submit" name="reset" class="btn btn-outline-danger">limpar</button>
-                        </div>
-                        <div class="col-3">
-                            <button type="submit" name="salvar" class="btn btn-outline-primary">salvar</button>
-                        </div>
+                        <input type="text" class="form-control" id="vTot" name="valorTotal"
+                            value="<?php echo ($registros['valorTotal']); ?>">
                     </div>
                 </div>
             </div>
 
-            <div class="container" style="border-top: 1px solid rgba(0, 0, 0, 0.2)">
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Produto</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Medida</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Observação</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Valor Unitário</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Quantidade</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Valor Total</div>
-                            </th>
-                            <th>
-                                <div class="row justify-content-center text-center titleCons">Operações</div>
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php foreach ($registros as $registro): ?>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['codPro']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['medida']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['descr']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['valorUnit']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['quantidade']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row justify-content-center text-center registro">
-                                    <?php echo ($registro['valorTotal']); ?>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="row text-center justify-content-center text-center operacoes">
-                                    <div class="col-4 oprBtn">
-                                        <form method="POST">
-                                            <input type="hidden" name="cod_itensPed"
-                                                value="<?php echo $registro['cod_itensPed']; ?>">
-                                            <button type="submit" name="delete" class="btn btn-outline-danger">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                    <div class="col-4 oprBtn">
-                                        <form method="POST">
-                                            <input type="hidden" name="cod_itensPed"
-                                                value="<?php echo $registro['cod_itensPed']; ?>">
-                                            <button type="submit" class="btn btn-outline-primary" name="edit">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                    <path
-                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                    <path fill-rule="evenodd"
-                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                </svg>
-                                            </button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </td>
-                            </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-
-
             <!-- Botões centralizados abaixo das colunas -->
             <div class="row mt-4 btn-group-custom">
-                <button type="button" class="btn btn-outline-danger btn-personalizado"
-                    onclick="window.location.href='cadPed.php';">Voltar</button>
-                <button type="submit" name="cancelar" class="btn btn-outline-dark btn-personalizado">Cancelar
-                    Pedido</button>
-                <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
+                <button type="submit" class="btn btn-outline-danger btn-personalizado" name="cancelar">Cancelar</button>
+                <button type="submit" name="salvar" class="btn btn-success btn-personalizado">Salvar Alterações</button>
             </div>
         </div>
     </form>
@@ -502,7 +357,7 @@ $showNovCat = $novCat === 'Novo';
             const medidaSelect = document.getElementById('medida');
 
             // Limpar as opções anteriores de medida
-            medidaSelect.innerHTML = '<option selected disabled>Selecione a medida</option>';
+            medidaSelect.innerHTML = '<option selected ><?php echo ($registros["medida"]); ?></option>';
 
             // Adicionar a opção "Personalizado..."
             const optionPersonalizado = document.createElement('option');

@@ -26,6 +26,8 @@ try {
             $conditions[] = "pedidos.status = 'pendente'"; // Filtra por registros como pendentes
         } else if ($statusFiltro === 'concluído') {
             $conditions[] = "pedidos.status = 'concluído'"; // Filtra por registros como concluídos
+        }else if ($statusFiltro === 'pago') {
+            $conditions[] = "pedidos.status = 'pago'"; // Filtra por registros como concluídos
         }
     }
 
@@ -303,6 +305,10 @@ if (isset($_POST['visuEntr'])) {
                                 </li>
                                 <li>
                                     <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="pago">Pago</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
                                         value="todos">Todos</button>
                                 </li>
                             </ul>
@@ -346,6 +352,9 @@ if (isset($_POST['visuEntr'])) {
                             <div class="row justify-content-center text-center titleCons">Cliente</div>
                         </th>
                         <th>
+                            <div class="row justify-content-center text-center titleCons">Tipo Pess.</div>
+                        </th>
+                        <th>
                             <div class="row justify-content-center text-center titleCons">Data de Registro</div>
                         </th>
                         <th>
@@ -381,6 +390,11 @@ if (isset($_POST['visuEntr'])) {
                         <td>
                             <div class="row justify-content-center registro">
                                 <?php echo ($registro['nomeCli']); ?>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row justify-content-center registro">
+                                <?php echo ($registro['tipoPessoa']); ?>
                             </div>
                         </td>
                         <td>
@@ -438,7 +452,7 @@ if (isset($_POST['visuEntr'])) {
 
                         <td>
                             <div class="row text-center justify-content-center">
-                                <div class="col-3">
+                                <div class="col-4">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="delete" class="btn btn-outline-danger">
@@ -450,21 +464,7 @@ if (isset($_POST['visuEntr'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3">
-                                    <form method="POST">
-                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="edit" class="btn btn-outline-primary">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="concluida" class="btn btn-outline-success">

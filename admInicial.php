@@ -283,23 +283,79 @@ if (isset($_POST['editPed'])) {
             Não foi possível carregar os dados.
         </div>
     <?php else: ?>
-        <div class="container consContainer">
-            <h4 class="text-center mb-5 mt-5">Pedidos Próximos do Prazo</h4>
+        <div class="container-fluid consContainer">
+            <h3 class="text-center mb-5">Pedidos Cadastrados</h3>
 
-            <div class="row justify-content-center text-center">
-                <h5 class="mb-3">INTERVALO DE DIAS</h5>
+            <div class="container mt-5 mb-5">
 
-                <form method="POST">
-                    <div class="row justify-content-center text-center mb-3">
-                        <div class="col-3">
-                            <input type="text" class="form-control" name="searchPedidos"
-                                placeholder="Digite o intervalo de dias">
-                        </div>
-                        <div class="col-1">
-                            <button type="submit" class="btn btn-primary">Pesquisar</button>
-                        </div>
+                <div class="row justify-content-center text-center">
+                    <h5 class="mb-3">PESQUISAR POR CLIENTE</h5>
+
+                    <div class="dropdown">
+                        <form method="POST">
+
+                            <div class="row justify-content-center text-center mb-3">
+                                <div class="col-4">
+                                    <input type="text" class="form-control" name="search"
+                                        placeholder="Digite o nome do cliente ou id do pedido...">
+                                </div>
+                                <div class="col-1">
+                                    <button type="submit" class="btn btn-primary">Pesquisar</button>
+                                </div>
+                            </div>
+
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Status
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <!-- Botão de filtro para pedidos "Pendente" -->
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="pendente">Pendentes</button>
+                                </li>
+                                <!-- Botão de filtro para pedidos "Concluído" -->
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="concluído">Concluídos</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="pago">Pago</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraSTT"
+                                        value="todos">Todos</button>
+                                </li>
+                            </ul>
+
+                            <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="dropdownMenuButton"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                Data
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                        value="menorPrazo">Menor
+                                        Prazo</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                        value="maiorPrazo">Maior
+                                        Prazo</button>
+                                </li>
+                                <li>
+                                    <button type="submit" class="dropdown-item btnFiltro" name="filtraDT"
+                                        value="todos">Todos</button>
+                                </li>
+                            </ul>
+
+                            <button type="submit" class="btn btn-outline-danger" name="limpar"
+                                value="pendente">limpar</button>
+
+                        </form>
                     </div>
-                </form>
+                </div>
             </div>
 
             <table class="table table-striped">
@@ -312,6 +368,9 @@ if (isset($_POST['editPed'])) {
                             <div class="row justify-content-center text-center titleCons">Cliente</div>
                         </th>
                         <th>
+                            <div class="row justify-content-center text-center titleCons">Tipo Pess.</div>
+                        </th>
+                        <th>
                             <div class="row justify-content-center text-center titleCons">Data de Registro</div>
                         </th>
                         <th>
@@ -321,8 +380,7 @@ if (isset($_POST['editPed'])) {
                             <div class="row justify-content-center text-center titleCons">Itens do Pedido</div>
                         </th>
                         <th>
-                            <div class="row justify-content-center text-center titleCons">Informações de
-                                Pagamento</div>
+                            <div class="row justify-content-center text-center titleCons">Informações de Pagamento</div>
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">Forma de entrega</div>
@@ -348,6 +406,11 @@ if (isset($_POST['editPed'])) {
                         <td>
                             <div class="row justify-content-center registro">
                                 <?php echo ($registro['nomeCli']); ?>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="row justify-content-center registro">
+                                <?php echo ($registro['tipoPessoa']); ?>
                             </div>
                         </td>
                         <td>
@@ -404,8 +467,8 @@ if (isset($_POST['editPed'])) {
                         </td>
 
                         <td>
-                            <div class="row text-center justify-content-center operacoes">
-                                <div class="col-3">
+                            <div class="row text-center justify-content-center">
+                                <div class="col-4">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
                                         <button type="submit" name="delete" class="btn btn-outline-danger">
@@ -417,24 +480,10 @@ if (isset($_POST['editPed'])) {
                                         </button>
                                     </form>
                                 </div>
-                                <div class="col-3">
+                                <div class="col-4">
                                     <form method="POST">
                                         <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="editPed" class="btn btn-outline-primary">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
-                                                class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                <path
-                                                    d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                <path fill-rule="evenodd"
-                                                    d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                            </svg>
-                                        </button>
-                                    </form>
-                                </div>
-                                <div class="col-3">
-                                    <form method="POST">
-                                        <input type="hidden" name="codPed" value="<?php echo $registro['codPed']; ?>">
-                                        <button type="submit" name="concluidaPed" class="btn btn-outline-success">
+                                        <button type="submit" name="concluida" class="btn btn-outline-success">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                                                 class="bi bi-check-circle-fill" viewBox="0 0 16 16">
                                                 <path
@@ -451,7 +500,6 @@ if (isset($_POST['editPed'])) {
             </table>
         </div>
     <?php endif; ?>
-    </div>
 
     <hr class="mt-5 mb-5">
 

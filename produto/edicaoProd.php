@@ -3,7 +3,12 @@ include('../protect.php'); // Inclui a função de proteção ao acesso da pági
 require_once('../conexao.php');
 $conexao = novaConexao();
 
-$error = false;
+$codPro = is_array($_SESSION['codPro']) ? $_SESSION['codPro'][0] : $_SESSION['codPro'];
+
+$sql_lista = "SELECT * FROM produtos WHERE codPro = $codPro";
+$stmt = $conexao->prepare($sql_lista);
+$stmt->execute();
+$lista = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera todos os registros
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
     try {
@@ -18,17 +23,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 // Inserindo a nova categoria na tabela 'categoria'
                 $sql = "INSERT INTO categoria (nome) VALUES (:c_n)";
                 $stmt = $conexao->prepare($sql);
-
-                // Associar os valores aos placeholders
                 $stmt->bindValue(':c_n', $nomeCategoria);
-                // Executar a SQL
                 $stmt->execute();
 
                 // Recuperando o código da categoria recém inserida
                 $codCat = $conexao->lastInsertId();
 
                 // Inserindo o produto na tabela 'produtos'
-                $sql_insertProd = "INSERT INTO produtos (codCat, nomeCat, medida, valor) VALUES (:p_p, :p_n, :p_m, :p_v)";
+                $sql_insertProd = "UPDATE produtos SET codCat = :p_p, nomeCat = :p_n, medida = :p_m, valor = :p_v WHERE codPro = :codPro";
                 $stmt = $conexao->prepare($sql_insertProd);
 
                 // Associar os valores aos placeholders
@@ -36,6 +38,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 $stmt->bindValue(':p_n', $nomeCategoria);
                 $stmt->bindValue(':p_m', $_POST['medida']);
                 $stmt->bindValue(':p_v', $_POST['valor']);
+                $stmt->bindValue(':codPro', $codPro);
 
                 // Executar a SQL
                 $stmt->execute();
@@ -62,7 +65,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 $nomeCat = $nome['nome']; // Acessa o valor 'nome' do array associativo
             }
 
-            $sql = "INSERT INTO produtos (codCat, nomeCat, medida, valor) VALUES (:p_p, :p_n, :p_m, :p_v)";
+            $sql = "UPDATE produtos SET codCat = :p_p, nomeCat = :p_n, medida = :p_m, valor = :p_v WHERE codPro = :codPro";
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
@@ -70,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
             $stmt->bindValue(':p_n', $nomeCat ?? $nomeCategoria); // Usando o nome da nova categoria ou existente
             $stmt->bindValue(':p_m', $_POST['medida']);
             $stmt->bindValue(':p_v', $_POST['valor']);
+            $stmt->bindValue(':codPro', $codPro);
 
             // Executar a SQL
             $stmt->execute();
@@ -182,15 +186,18 @@ $showNovCat = $novCat === 'Novo';
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
+
     <div class="container container-custom">
-        <h3 class="text-center mb-4">Cadastro de Produtos</h3>
+        <h3 class="text-center mb-4">Edição de Produto</h3>
         <form method="POST">
             <div class="row row-custom">
                 <div class="col-custom">
                     <div class="form-group mb-3">
                         <label class="form-label">Categoria:</label>
                         <select class="form-select" id="categoria" name="codCat" onchange="toggleNovCat(this.value)">
-                            <option selected disabled>Selecione a categoria</option>
+                            <option selected value="<?php echo ($lista['codCat']); ?>">
+                                <?php echo ($lista['nomeCat']); ?>
+                            </option>
                             <option value="Novo">Nova</option>
                             <?php foreach ($categorias as $categoria): ?>
                                 <option value="<?= htmlspecialchars($categoria['codCat']) ?>">
@@ -200,27 +207,30 @@ $showNovCat = $novCat === 'Novo';
                         </select>
                     </div>
 
-                    <div class="form-group mb-3" id="novaCategoriaDiv" style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
+                    <div class="form-group mb-3" id="novaCategoriaDiv"
+                        style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
                         <label class="form-label">Nova Categoria:</label>
                         <input type="text" class="form-control" id="novaCategoria" name="nome">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Medida:</label>
-                        <input type="text" class="form-control" name="medida" placeholder="Altura x Largura" required>
+                        <input type="text" class="form-control" name="medida" placeholder="Altura x Largura" required
+                            value="<?php echo ($lista['medida']); ?>">
                     </div>
 
                     <div class="form-group mb-3">
                         <label class="form-label">Valor:</label>
-                        <input type="text" class="form-control" name="valor" placeholder="R$ 0,00" required>
+                        <input type="text" class="form-control" name="valor" placeholder="R$ 0,00" required
+                            value="<?php echo ($lista['valor']); ?>">
                         <span class="aviso">Utilize ponto ao invés de vírgula</span>
                     </div>
                 </div>
             </div>
 
             <div class="row mt-4 btn-group-custom">
-                <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Cadastrar produto</button>
+                <button class="btn btn-outline-danger btn-personalizado" onclick="window.location.href='editProd.php';">Cancelar</button>
+                <button type="submit" class="btn btn-success btn-personalizado">Atualizar produto</button>
             </div>
         </form>
     </div>
@@ -241,7 +251,7 @@ $showNovCat = $novCat === 'Novo';
         }
 
         // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             toggleNovCat(document.getElementById('codCat').value);
         });
     </script>

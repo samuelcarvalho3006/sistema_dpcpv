@@ -9,20 +9,13 @@ $codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['co
 
 try {
 
-    if ($codPed !== null) { // Verifica se codPed foi encontrado
-        // Calcular o total usando o codPed
-        $sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE codPed = :codPed";
-        $stmt = $conexao->prepare($sql_vTot);
-        $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-        $stmt->execute(); // Executa a consulta
-        $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
-    }
-
     $sql_pedido = "SELECT * FROM pedidos WHERE codPed = :codPed";
     $stmt = $conexao->prepare($sql_pedido);
     $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
     $stmt->execute();
     $pedido = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
+
+    //-----------------------------------------------------------------------------------------------------------------------------------------    
 
     $sql_itensPedido = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
     $stmt = $conexao->prepare($sql_itensPedido);
@@ -30,84 +23,17 @@ try {
     $stmt->execute();
     $itensPedido = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
 
+    //-----------------------------------------------------------------------------------------------------------------------------------------
+
     $sql_pagEntg = "SELECT * FROM pagentg WHERE codPed = :codPed";
     $stmt = $conexao->prepare($sql_pagEntg);
     $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
     $stmt->execute();
     $pagEntg = $stmt->fetch(PDO::FETCH_ASSOC); // Recupera apenas o primeiro registro
 
-    if (isset($_POST['salvarEditado'])) {
-        try {
-            $sql_enviarPed = "UPDATE pedidos SET nomeCli = :nome, tipoPessoa = :tipoPess, contato = :ctt, dataPrev = :dtPrev, status = 'pendente' WHERE codPed = :codPed";
-            $stmt = $conexao->prepare($sql_enviarPed);
-            $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-            $stmt->bindValue(':nome', $_POST['cliente']);
-            $stmt->bindValue(':tipoPess', $_POST['pessoa']);
-            $stmt->bindValue(':ctt', $_POST['contato']);
-            $stmt->bindValue(':dtPrev', $_POST['dataPrev']);
-            $stmt->execute();
-
-            // Atualiza a tabela pagentg
-            $sql_enviarPag = "UPDATE pagentg SET entrada = :ent, formaPag = :forma, valorTotal = :vTot, valorEnt = :vEnt, entrega = :entr, logradouro = :logr, numero = :num, bairro = :bair, cidade = :cid, estado = :est, cep = :cep WHERE codPed = :codPed";
-            $stmt = $conexao->prepare($sql_enviarPag);
-            $stmt->bindValue(':ent', $_POST['entrada']);
-            $stmt->bindValue(':forma', isset($_POST['formaPag']) ? $_POST['formaPag'] : ''); // Verifica se a chave existe
-            $stmt->bindValue(':vTot', $vTot);
-            $stmt->bindValue(':vEnt', isset($_POST['vEntrada']) ? $_POST['vEntrada'] : '');
-            $stmt->bindValue(':entr', isset($_POST['entrega']) ? $_POST['entrega'] : '');
-            $stmt->bindValue(':logr', isset($_POST['logradouro']) ? $_POST['logradouro'] : '');
-            $stmt->bindValue(':num', isset($_POST['numero']) ? $_POST['numero'] : '');
-            $stmt->bindValue(':bair', isset($_POST['bairro']) ? $_POST['bairro'] : '');
-            $stmt->bindValue(':cid', isset($_POST['cidade']) ? $_POST['cidade'] : '');
-            $stmt->bindValue(':est', isset($_POST['estado']) ? $_POST['estado'] : '');
-            $stmt->bindValue(':cep', isset($_POST['cep']) ? $_POST['cep'] : '');
-            $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed novamente
-            $stmt->execute();
-
-            header('location: confirmacao.php');
-        } catch (PDOException $e) {
-            $erro = true; // Configura erro se houver
-            echo "Erro: " . $e->getMessage();
-        }
-    }
-
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();
-}
-
-if (isset($_POST['cancelar'])) {
-
-    $sql = "DELETE FROM itens_pedido WHERE codPed = $codPed";
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute();
-
-    $sql = "DELETE FROM pedidos WHERE codPed = $codPed";
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute();
-
-    $sql = "DELETE FROM pagentg WHERE codPed = $codPed";
-    $stmt = $conexao->prepare($sql);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: consPed.php");
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
-}
-
-if (isset($_POST['edit'])) {
-    $_SESSION['cod_itensPed'] = [
-        $_POST['cod_itensPed']
-    ];
-
-    $_SESSION['origem'] = ["confirmacao.php"];
-    header("Location: editItensPed.php");
-    exit;
 }
 
 if (isset($_POST['delete'])) {
@@ -128,10 +54,34 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['adicionar'])) {
-    $_SESSION['origem'] = ["confirmacao.php"];
-    header("Location: cadPed2.php");
-    exit;
+
+//---------------------------------------------------------------------------------------------------------------
+
+if (isset($_POST['enviar'])) {
+    try {
+        $sql_enviarPed = "UPDATE pedidos SET nomeCli = :nome, tipoPessoa = :tipoPess, contato = :ctt, dataPrev = :dtPrev, status = 'pendente' WHERE codPed = :codPed";
+        $stmt = $conexao->prepare($sql_enviarPed);
+        $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+        $stmt->bindValue(':nome', $_POST['cliente']);
+        $stmt->bindValue(':tipoPess', $_POST['pessoa']);
+        $stmt->bindValue(':ctt', $_POST['contato']);
+        $stmt->bindValue(':dtPrev', $_POST['dataPrev']);
+        $stmt->execute();
+
+        // Atualiza a tabela pagentg
+        $sql_enviarPag = "UPDATE pagentg SET entrada = :ent, formaPag = :forma, valorEnt = :vEnt WHERE codPed = :codPed";
+        $stmt = $conexao->prepare($sql_enviarPag);
+        $stmt->bindValue(':ent', $_POST['entrada']);
+        $stmt->bindValue(':forma', isset($_POST['formaPag']) ? $_POST['formaPag'] : '');
+        $stmt->bindValue(':vEnt', isset($_POST['vEntrada']) ? $_POST['vEntrada'] : '');
+        $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed novamente
+        $stmt->execute();
+
+        header('location: consPed.php');
+    } catch (PDOException $e) {
+        $erro = true; // Configura erro se houver
+        echo "Erro: " . $e->getMessage();
+    }
 }
 ?>
 
@@ -141,7 +91,7 @@ if (isset($_POST['adicionar'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Confirmar Pedido</title>
+    <title>Edição de Dados</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../style.css?v=1.6">
 </head>
@@ -220,7 +170,7 @@ if (isset($_POST['adicionar'])) {
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
     <div class="container container-custom">
-        <h1 class="text-center mb-5">Confirmação de Dados</h1>
+        <h1 class="text-center mb-5">Edição de Dados do Pedido</h1>
 
         <form method="POST">
 
@@ -283,8 +233,8 @@ if (isset($_POST['adicionar'])) {
                     </div>
                 </div>
 
-
-                <div class="container mb-5" style="border-top: 1px solid rgba(0, 0, 0, 0.2)">
+                <!--
+                <div class="container" style="border-top: 1px solid rgba(0, 0, 0, 0.2)">
                     <h4 class="text-center mb-4 mt-5">Itens do Pedido</h4>
                     <table class="table table-striped">
                         <thead>
@@ -366,7 +316,8 @@ if (isset($_POST['adicionar'])) {
                                                 <form method="POST">
                                                     <input type="hidden" name="cod_itensPed"
                                                         value="<?php echo htmlspecialchars($itens['cod_itensPed']); ?>">
-                                                    <button type="submit" name="edit" class="btn btn-outline-primary">
+                                                    <button type="submit" name="editar" class="btn btn-outline-primary"
+                                                        onclick="editarRegistro()">
                                                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
                                                             fill="currentColor" class="bi bi-pencil-square"
                                                             viewBox="0 0 16 16">
@@ -380,22 +331,12 @@ if (isset($_POST['adicionar'])) {
                                             </div>
                                         </div>
                                     </td>
-                                </tr> <!-- A tag <tr> é fechada aqui -->
+                                </tr>  A tag <tr> é fechada aqui
                             <?php endforeach; ?>
                         </tbody>
                     </table>
-                    <button type="submit" name="adicionar" class="btn btn-outline-primary">Adicionar Mais</button>
                 </div>
-
-                <hr>
-
-                <div class="row m-3 justify-content-center">
-                    <p><strong>Valor Total:</p></strong>
-                    <div class="col-auto">
-                        <input type="text" name="vEntrada" class="form-control text-center"
-                            value="<?php echo htmlspecialchars($vTot); ?>" readonly>
-                    </div>
-                </div>
+-->
 
                 <div class="row m-3">
                     <div class="col-4">
@@ -449,87 +390,20 @@ if (isset($_POST['adicionar'])) {
                         </div>
                     </div>
                 </div>
-
-                <div class="row">
-                    <div class="col-3">
-                        <div class="form-group mb-3">
-                            <p><strong>Entrega:</strong><br>
-                                <input type="radio" id="retirada" name="entrega" value="retirada"
-                                    class="form-check-input" <?php echo ($pagEntg['entrega'] == 'retirada') ? 'checked' : ''; ?>>
-                                <label class="form-check-label" for="retirada">Retirada</label>
-
-                                <input type="radio" id="entrega" name="entrega" value="entrega"
-                                    class="form-check-input ms-3" <?php echo ($pagEntg['entrega'] == 'entrega') ? 'checked' : ''; ?>>
-                                <label class="form-check-label" for="entrega">Entrega</label>
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="form-group mb-3">
-                            <p><strong>Logradouro:</strong><br>
-                                <input type="text" name="logradouro" class="form-control"
-                                    value="<?php echo htmlspecialchars($pagEntg['logradouro']); ?>">
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="form-group mb-3">
-                            <p><strong>Número:</strong><br>
-                                <input type="text" name="numero" class="form-control"
-                                    value="<?php echo htmlspecialchars($pagEntg['numero']); ?>">
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-3">
-                        <div class="form-group mb-3">
-                            <p><strong>Bairro:</strong><br>
-                                <input type="text" name="bairro" class="form-control"
-                                    value="<?php echo htmlspecialchars($pagEntg['bairro']); ?>">
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="row m-3">
-                    <div class="col-4">
-                        <div class="form-group mb-3">
-                            <p><strong>Cidade:</strong><br>
-                                <input type="text" name="cidade" class="form-control"
-                                    value="<?php echo htmlspecialchars($pagEntg['cidade']); ?>">
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group mb-3">
-                            <p><strong>Estado:</strong><br>
-                                <input type="text" name="estado" class="form-control"
-                                    value="<?php echo htmlspecialchars($pagEntg['estado']); ?>">
-                            </p>
-                        </div>
-                    </div>
-                    <div class="col-4">
-                        <div class="form-group mb-3">
-                            <p><strong>Cep:</strong><br>
-                                <input type="text" name="cep" class="form-control"
-                                    value="<?php echo htmlspecialchars($pagEntg['cep']); ?>">
-                            </p>
-                        </div>
-                    </div>
-                </div>
             </div>
-
             <div class="row mt-4 btn-group-custom">
 
-                <button type="submit" name="cancelar" class="btn btn-outline-dark btn-personalizado">Cancelar
-                    Pedido</button>
+                <button type="button" class="btn btn-outline-dark btn-personalizado"
+                    onclick="window.location.href='infoPag.php';" name="cancelar">Cancelar Alterações</button>
 
-                <button type="submit" name="salvarEditado" class="btn btn-outline-primary btn-personalizado">Salvar
-                    Edição</button>
+                <button type="submit" class="btn btn-success btn-personalizado" name="enviar">Finalizar
+                    Alterações</button>
 
-                <button type="button" class="btn btn-success btn-personalizado"
-                    onclick="window.location.href='consPed.php';">Finalizar Pedido</button>
             </div>
         </form>
     </div>
+
+
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
