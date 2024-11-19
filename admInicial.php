@@ -296,8 +296,8 @@ if (isset($_POST['editPed'])) {
 
                             <div class="row justify-content-center text-center mb-3">
                                 <div class="col-4">
-                                    <input type="text" class="form-control" name="search"
-                                        placeholder="Digite o nome do cliente ou id do pedido...">
+                                    <input type="text" class="form-control" name="searchPedidos"
+                                        placeholder="Digite o intervalo de dias">
                                 </div>
                                 <div class="col-1">
                                     <button type="submit" class="btn btn-primary">Pesquisar</button>

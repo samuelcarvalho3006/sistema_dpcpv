@@ -212,6 +212,11 @@ if (isset($_POST['edit'])) {
                         </th>
                         <th>
                             <div class="row justify-content-center text-center titleCons">
+                                Img Dir.
+                            </div>
+                        </th>
+                        <th>
+                            <div class="row justify-content-center text-center titleCons">
                                 Operações
                             </div>
                         </th>
@@ -238,6 +243,11 @@ if (isset($_POST['edit'])) {
                             <td>
                                 <div class="row justify-content-center registro">
                                     <?php echo ($registro['valor']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center registro">
+                                    <?php echo ($registro['imagem']); ?>
                                 </div>
                             </td>
                             <td>
@@ -275,6 +285,7 @@ if (isset($_POST['edit'])) {
                 </tbody>
             </table>
         </div>
+        <img src="<?php echo ($registro['imagem']);?>">
     <?php endif; ?>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

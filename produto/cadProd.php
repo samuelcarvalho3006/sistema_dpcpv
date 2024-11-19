@@ -7,6 +7,27 @@ $error = false;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi enviado
     try {
+
+        $post = filter_input_array(INPUT_POST, FILTER_DEFAULT);
+
+        if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
+            // Código para processar o upload do arquivo
+            $ext = strtolower(substr($_FILES['file']['name'], -4)); // Obtém a extensão do arquivo
+            $name = strtolower(substr($_FILES['file']['name'], 0, -4)); // Obtém o nome do arquivo sem a extensão
+            $new_name = $name . '' . date("YmdHis") . $ext; // Cria um novo nome único para o arquivo
+            $dir = 'img1/'; // Diretório para salvar as imagens
+
+            if (!file_exists($dir)) {
+                if (!mkdir($dir, 0777, true)) {
+                    die('Falha ao criar o diretório.');
+                }
+            }
+
+            if (!move_uploaded_file($_FILES['file']['tmp_name'], $dir . $new_name)) {
+                die('Erro ao mover o arquivo para o diretório.');
+            }
+        }
+
         $codCat = null;
         $nomeCategoria = null;
 
@@ -28,7 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 $codCat = $conexao->lastInsertId();
 
                 // Inserindo o produto na tabela 'produtos'
-                $sql_insertProd = "INSERT INTO produtos (codCat, nomeCat, medida, valor) VALUES (:p_p, :p_n, :p_m, :p_v)";
+                $sql_insertProd = "INSERT INTO produtos (codCat, nomeCat, medida, valor, imagem) VALUES (:p_p, :p_n, :p_m, :p_v, :p_img)";
                 $stmt = $conexao->prepare($sql_insertProd);
 
                 // Associar os valores aos placeholders
@@ -36,6 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 $stmt->bindValue(':p_n', $nomeCategoria);
                 $stmt->bindValue(':p_m', $_POST['medida']);
                 $stmt->bindValue(':p_v', $_POST['valor']);
+                $stmt->bindValue(':p_img', $dir . $new_name);
 
                 // Executar a SQL
                 $stmt->execute();
@@ -62,7 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
                 $nomeCat = $nome['nome']; // Acessa o valor 'nome' do array associativo
             }
 
-            $sql = "INSERT INTO produtos (codCat, nomeCat, medida, valor) VALUES (:p_p, :p_n, :p_m, :p_v)";
+            $sql = "INSERT INTO produtos (codCat, nomeCat, medida, valor, imagem) VALUES (:p_p, :p_n, :p_m, :p_v, :p_img)";
             $stmt = $conexao->prepare($sql);
 
             // Associar os valores aos placeholders
@@ -70,6 +92,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {  // Verifica se o formulário foi e
             $stmt->bindValue(':p_n', $nomeCat ?? $nomeCategoria); // Usando o nome da nova categoria ou existente
             $stmt->bindValue(':p_m', $_POST['medida']);
             $stmt->bindValue(':p_v', $_POST['valor']);
+            $stmt->bindValue(':p_img', $dir . $new_name);
 
             // Executar a SQL
             $stmt->execute();
@@ -184,7 +207,7 @@ $showNovCat = $novCat === 'Novo';
 
     <div class="container container-custom">
         <h3 class="text-center mb-4">Cadastro de Produtos</h3>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="row row-custom">
                 <div class="col-custom">
                     <div class="form-group mb-3">
@@ -215,12 +238,12 @@ $showNovCat = $novCat === 'Novo';
                         <input type="text" class="form-control" name="valor" placeholder="R$ 0,00" required>
                         <span class="aviso">Utilize ponto ao invés de vírgula</span>
                     </div>
-                </div>
-            </div>
 
-            <div class="row mt-4 btn-group-custom">
-                <button type="reset" class="btn btn-outline-danger btn-personalizado">Cancelar</button>
-                <button type="submit" class="btn btn-success btn-personalizado">Cadastrar produto</button>
+                    <div class="form-group mb-3">
+                        <label class="form-label">Imagem:</label>
+                        <input class="form-control" type="file" name="file" required>
+                    </div>
+                </div>
             </div>
         </form>
     </div>
@@ -230,7 +253,6 @@ $showNovCat = $novCat === 'Novo';
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
     <script>
-
         function toggleNovCat(value) {
             const novaCategoriaDiv = document.getElementById('novaCategoriaDiv');
             if (value === 'Novo') {
