@@ -17,6 +17,19 @@ try {
     $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
     $stmt->execute();
     $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros
+
+    $sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE codPed = :codPed";
+    $stmt = $conexao->prepare($sql_vTot);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
+    $stmt->execute(); // Executa a consulta
+    $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
+
+    $sql_updateVTot = "UPDATE pagentg SET valorTotal = :vTot WHERE codPed = :codPed";
+    $stmt = $conexao->prepare($sql_updateVTot);
+    $stmt->bindValue(':vTot', $vTot);
+    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed novamente
+    $stmt->execute();
+    
 } catch (PDOException $e) {
     $erro = true; // Configura erro se houver uma exceção
     echo "Erro: " . $e->getMessage();

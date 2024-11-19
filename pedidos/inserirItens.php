@@ -8,16 +8,27 @@ $conexao = novaConexao();
 $registros = [];
 $error = false;
 
+// Supondo que você queira o primeiro valor do array (ajuste conforme necessário)
 $codPed = is_array($_SESSION['codPed']) ? $_SESSION['codPed'][0] : $_SESSION['codPed'];
 
+// Continuar com a query
 $sql_listar = "SELECT * FROM itens_pedido WHERE codPed = :codPed";
 $stmt = $conexao->prepare($sql_listar);
 $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
 $stmt->execute();
 $registros = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
 
+
+
+
 if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
     try {
+
+        $codCat = $_POST['codPro'];
+        $sql_nomeCat = "SELECT nome FROM categoria WHERE codCat = $codCat";
+        $stmt = $conexao->prepare($sql_nomeCat);
+        $stmt->execute();
+        $nomeCat = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Preparar a SQL
         $sql = "INSERT INTO itens_pedido (codPed, codPro, medida, descr, quantidade, valorUnit, valorTotal)
@@ -26,7 +37,7 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
 
         // Associar os valores aos placeholders
         $stmt->bindValue(':codPed', $codPed);
-        $stmt->bindValue(':codPro', $_POST['codPro']);
+        $stmt->bindValue(':codPro', $nomeCat['nome']);
         $stmt->bindValue(':medida', $_POST['medida']);
         $stmt->bindValue(':quantidade', $_POST['quantid']);
         $stmt->bindValue(':descr', $_POST['desc']);
@@ -47,21 +58,9 @@ if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
 }
 
 if (isset($_POST['proximo'])) {
-    // Calcular o total usando o codPed
-    $sql_vTot = "SELECT SUM(valorTotal) AS total FROM itens_pedido WHERE codPed = :codPed";
-    $stmt = $conexao->prepare($sql_vTot);
-    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-    $stmt->execute(); // Executa a consulta
-    $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
 
-    $sql_updateTotal = "UPDATE pagEntg SET valorTotal = :vTot WHERE codPed = :codPed";
-    $stmt = $conexao->prepare($sql_updateTotal);
-    $stmt->bindParam(':codPed', $codPed, PDO::PARAM_INT); // Vincula o valor de codPed
-    $stmt->bindValue(':vTot', $vTot);
-    $stmt->execute();
-
-
-    header('location: itensPed.php');
+    header("Location: itensPed.php");
+    exit;
 }
 
 if (isset($_POST['reset'])) {
@@ -86,35 +85,22 @@ if (isset($_POST['delete'])) {
     }
 }
 
-if (isset($_POST['editar'])) {
-    $id = $_POST['cod_itensPed'];
+if (isset($_POST['edit'])) {
+    $_SESSION['cod_itensPed'] = [
+        $_POST['cod_itensPed']
+    ];
 
-    $sql = "UPDATE itens_pedido SET codPro, medida, descr, valorUnit, quantidade, valorTotal = :codPro, :medida, :descr, :quantidade, :valorUnit, :valorTotal WHERE cod_itensPed = :id";
-    $stmt = $conexao->prepare($sql);
-    $stmt->bindValue(':codPro', $_POST['codPro']);
-    $stmt->bindValue(':medida', $_POST['medida']);
-    $stmt->bindValue(':quantidade', $_POST['quantid']);
-    $stmt->bindValue(':descr', $_POST['desc']);
-    $stmt->bindValue(':valorUnit', $_POST['valorUnit']);
-    $stmt->bindValue(':valorTotal', $_POST['valorTotal']);
-    $stmt->execute();
-
-    if ($stmt->execute()) {
-        echo "Linha excluída com sucesso!";
-        // Redireciona para evitar reenviar o formulário
-        header("Location: " . $_SERVER['PHP_SELF']);
-        exit;
-    } else {
-        echo "Erro ao excluir linha: ";
-    }
+    $_SESSION['origem'] = ["inserirItens.php"];
+    header("Location: editItensPed.php");
+    exit;
 }
 
-// Consulta todos os registros da tabela produtos
+
+
 $sql_categorias = "SELECT * FROM categoria";
 $stmt = $conexao->prepare($sql_categorias);
 $stmt->execute();
-$listaCat = $stmt->fetchAll(PDO::FETCH_ASSOC); // Recupera todos os registros relacionados
-// Inicializa um array vazio para armazenar os produtos
+$listaCat = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Consulta todos os registros da tabela produtos
 $query = "SELECT * FROM produtos";
@@ -141,7 +127,7 @@ $showNovCat = $novCat === 'Novo';
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inserir Itens</title>
+    <title>Cadastro de Pedidos</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../style.css?v=1.7">
 </head>
@@ -220,7 +206,7 @@ $showNovCat = $novCat === 'Novo';
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
 
-    <h1 class="text-center mb-4">Inserir Itens ao Pedido</h1>
+    <h1 class="text-center mb-4">Cadastro de Pedidos</h1>
     <form method="POST" id="cadPed2Form" onsubmit="resetForm()">
         <div class="container container-custom">
 
@@ -233,29 +219,28 @@ $showNovCat = $novCat === 'Novo';
                         <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
                             <option selected disabled>Selecione um produto</option>
                             <?php foreach ($listaCat as $produto): ?>
-                                <option value="<?php echo htmlspecialchars($produto['nome']); ?>" id="catSelect">
+                                <option value="<?php echo htmlspecialchars($produto['codCat']); ?>" id="catSelect">
                                     <?php echo htmlspecialchars($produto['nome']); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
-
                     </div>
-                    <div class="form-group mb-3">
+
+                    <div class="form-group mb-3" id="medidaDiv" style="display: none;">
                         <label class="form-label">Medida:</label>
                         <select class="form-select" id="medida" name="medida"
                             onchange="toggleMedPers(this.value); atualizarValor()">
                             <option selected disabled>Selecione a medida</option>
+                            <option value="personalizado">Personalizado...</option>
                             <?php foreach ($medidas as $medida): ?>
                                 <option value="<?php echo htmlspecialchars($medida['medida']); ?>">
                                     <?php echo htmlspecialchars($medida['medida']); ?>
                                 </option>
                             <?php endforeach; ?>
-                            <option value="personalizado">Personalizado...</option>
                         </select>
                     </div>
 
-                    <div class="form-group mb-3" id="medidaPersonalizadaDiv"
-                        style="<?= $showNovCat ? 'display: block;' : 'display: none;' ?>">
+                    <div class="form-group mb-3" id="medidaPersonalizadaDiv" style="display: none;">
                         <input type="text" class="form-control" id="novaCategoria">
                     </div>
 
@@ -281,7 +266,7 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Valor Total</label>
                         <input type="text" class="form-control" id="vTot" name="valorTotal">
                     </div>
-                    <div class="row justify-content-end mt-4">
+                    <div class="row justify-content-end mt-4 mb-5">
                         <div class="col-2">
                             <button type="submit" name="reset" class="btn btn-outline-danger">limpar</button>
                         </div>
@@ -321,86 +306,84 @@ $showNovCat = $novCat === 'Novo';
                     </thead>
                     <tbody>
                         <?php foreach ($registros as $registro): ?>
-                            <tr>
-                                <td>
-                                    <div class="row justify-content-center text-center registro">
-                                        <?php echo ($registro['codPro']); ?>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['codPro']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['medida']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['descr']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['valorUnit']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['quantidade']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row justify-content-center text-center registro">
+                                    <?php echo ($registro['valorTotal']); ?>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="row text-center justify-content-center text-center operacoes">
+                                    <div class="col-4 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="cod_itensPed"
+                                                value="<?php echo $registro['cod_itensPed']; ?>">
+                                            <button type="submit" name="delete" class="btn btn-outline-danger">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
-                                </td>
-                                <td>
-                                    <div class="row justify-content-center text-center registro">
-                                        <?php echo ($registro['medida']); ?>
+                                    <div class="col-4 oprBtn">
+                                        <form method="POST">
+                                            <input type="hidden" name="cod_itensPed"
+                                                value="<?php echo $registro['cod_itensPed']; ?>">
+                                            <button type="submit" class="btn btn-outline-primary" name="edit">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                                                    fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
+                                                    <path
+                                                        d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
+                                                    <path fill-rule="evenodd"
+                                                        d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
+                                                </svg>
+                                            </button>
+                                        </form>
                                     </div>
-                                </td>
-                                <td>
-                                    <div class="row justify-content-center text-center registro">
-                                        <?php echo ($registro['descr']); ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="row justify-content-center text-center registro">
-                                        <?php echo ($registro['valorUnit']); ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="row justify-content-center text-center registro">
-                                        <?php echo ($registro['quantidade']); ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="row justify-content-center text-center registro">
-                                        <?php echo ($registro['valorTotal']); ?>
-                                    </div>
-                                </td>
-                                <td>
-                                    <div class="row text-center justify-content-center text-center operacoes">
-                                        <div class="col-4 oprBtn">
-                                            <form method="POST">
-                                                <input type="hidden" name="cod_itensPed"
-                                                    value="<?php echo $registro['cod_itensPed']; ?>">
-                                                <button type="submit" name="delete" class="btn btn-outline-danger">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                        fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
-                                        <div class="col-4 oprBtn">
-                                            <form method="POST">
-                                                <input type="hidden" name="cod_itensPed"
-                                                    value="<?php echo $registro['cod_itensPed']; ?>">
-                                                <button type="submit" name="editar" class="btn btn-outline-primary"
-                                                    onclick="editarRegistro()">
-                                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"
-                                                        fill="currentColor" class="bi bi-pencil-square" viewBox="0 0 16 16">
-                                                        <path
-                                                            d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z" />
-                                                        <path fill-rule="evenodd"
-                                                            d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5z" />
-                                                    </svg>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </div>
-                                </td>
+                                </div>
+                            </td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
+
+
+            <!-- Botões centralizados abaixo das colunas -->
+            <div class="row mt-4 btn-group-custom">
+                <button type="button" class="btn btn-outline-danger btn-personalizado"
+                    onclick="window.location.href='itensPed.php';">Voltar</button>
+                <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Concluir</button>
+            </div>
         </div>
     </form>
 
-    <!-- Botões centralizados abaixo das colunas -->
-    <div class="row mt-4 btn-group-custom">
-        <button type="button" class="btn btn-outline-danger btn-personalizado"
-            onclick="window.location.href='cadPed.php';">Voltar</button>
-        <button type="submit" name="proximo" class="btn btn-success btn-personalizado">Prosseguir</button>
-    </div>
-
-    </div>
 
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -446,50 +429,72 @@ $showNovCat = $novCat === 'Novo';
         }
 
 
+        function listaMedidas() {
+            const categoriaSelecionada = document.getElementById('categoria').value;
+            const medidaDiv = document.getElementById('medidaDiv');
+            const medidaSelect = document.getElementById('medida');
+
+            if (categoriaSelecionada) {
+                // Exibe o select de medidas e limpa as opções anteriores
+                medidaDiv.style.display = 'block';
+                medidaSelect.innerHTML = '<option selected disabled>Selecione a medida</option>';
+
+                // Filtra as medidas com base na categoria
+                const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
+
+                // Adiciona as medidas filtradas
+                medidasFiltradas.forEach(function(medida) {
+                    const option = document.createElement('option');
+                    option.value = medida.medida;
+                    option.textContent = medida.medida;
+                    medidaSelect.appendChild(option);
+                });
+            } else {
+                // Caso não haja categoria selecionada, esconde o select de medidas
+                medidaDiv.style.display = 'none';
+            }
+        }
+
         function toggleMedPers(value) {
             const medidaPersonalizadaDiv = document.getElementById('medidaPersonalizadaDiv');
             if (value === 'personalizado') {
                 medidaPersonalizadaDiv.style.display = 'block';
+
+                const novaCat = document.getElementById('novaCategoria');
+                novaCat.name = 'medida';
             } else {
                 medidaPersonalizadaDiv.style.display = 'none';
             }
         }
 
-        // Inicializar a exibição do campo "Nova Categoria" com base na seleção atual
-        document.addEventListener('DOMContentLoaded', function () {
-            toggleNovCat(document.getElementById('medida').value);
-        });
-
         const produtos = <?php echo json_encode($produtos); ?>;
         const medidas = <?php echo json_encode($medidas); ?>;
 
 
-        document.getElementById('categoria').addEventListener('change', function () {
+        document.getElementById('categoria').addEventListener('change', function() {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
             // Limpar as opções anteriores de medida
             medidaSelect.innerHTML = '<option selected disabled>Selecione a medida</option>';
 
+            // Adicionar a opção "Personalizado..."
+            const optionPersonalizado = document.createElement('option');
+            optionPersonalizado.value = 'personalizado';
+            optionPersonalizado.textContent = 'Personalizado...';
+            medidaSelect.appendChild(optionPersonalizado);
+
             // Filtrar as medidas de acordo com a categoria selecionada
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function (medida) {
+            medidasFiltradas.forEach(function(medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;
                 medidaSelect.appendChild(option);
             });
         });
-
-        function resetForm() {
-            document.getElementById("cadPed2Form").reset;
-        }
-
-        function editarRegistro() {
-            document.getElementById("cadPed2Form").reset;
-        }
     </script>
 </body>
 

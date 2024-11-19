@@ -26,19 +26,21 @@ $vTot = $stmt->fetch(PDO::FETCH_ASSOC)['total'] ?? null; // Obtém o total
 if (isset($_POST['salvar'])) {  // Verifica se o formulário foi enviado
     try {
 
+
         $codCat = $_POST['codPro'];
-        $sql_nomeCat = "SELECT nome FROM categoria WHERE codCat = $codCat";
+        $sql_nomeCat = "SELECT nome FROM categoria WHERE codCat = :codCat";
         $stmt = $conexao->prepare($sql_nomeCat);
+        $stmt->bindValue(':codCat', $codCat, PDO::PARAM_INT);
         $stmt->execute();
         $nomeCat = $stmt->fetch(PDO::FETCH_ASSOC);
 
         // Preparar a SQL
-        $sql = "UPDATE itens_pedido SET codPro = :codPro, medida = :medida, descr = :descr, quantidade = :quantidade, valorUnit = :valorUnit, valorTotal = :valorTotal WHERE cod_itensPed = :cod_itensPed";
-        $stmt = $conexao->prepare($sql);
+        $sql_update = "UPDATE itens_pedido SET codPro = :codPro, medida = :medida, descr = :descr, quantidade = :quantidade, valorUnit = :valorUnit, valorTotal = :valorTotal WHERE cod_itensPed = :cod_itensPed";
+        $stmt = $conexao->prepare($sql_update);
 
         // Associar os valores aos placeholders
         $stmt->bindValue(':cod_itensPed', $cod_itensPed);
-        $stmt->bindValue(':codPro', $nomeCat['nome']);
+        $stmt->bindValue(':codPro', $nomeCat['nome'] ?? $_POST['codPro']);
         $stmt->bindValue(':medida', $_POST['medida']);
         $stmt->bindValue(':quantidade', $_POST['quantid']);
         $stmt->bindValue(':descr', $_POST['desc']);
@@ -177,7 +179,6 @@ $showNovCat = $novCat === 'Novo';
             </a>
         </nav> <!-- FECHA CABECALHO -->
     </div> <!-- FECHA CONTAINER DO CABECALHO -->
-    <?php var_dump($cod_itensPed) ?>
     <h1 class="text-center mb-4">Edição de Item do Pedido</h1>
     <form method="POST" onsubmit="resetForm()">
         <div class="container container-custom">
@@ -190,8 +191,8 @@ $showNovCat = $novCat === 'Novo';
                         <label class="form-label">Produto:</label>
                         <select class="form-select" id="categoria" name="codPro" onchange="listaMedidas()">
 
-                            <option selected value="<?php echo ($registros['codPro']); ?>">
-                                <?php echo ($registros['codPro']); ?>
+                            <option value="<?php echo htmlspecialchars($registros['codPro']); ?>" selected>
+                                Padrão: <?php echo ($registros['codPro']); ?>
                             </option>
 
                             <?php foreach ($listaCat as $produto): ?>
@@ -210,7 +211,7 @@ $showNovCat = $novCat === 'Novo';
                             onchange="toggleMedPers(this.value); atualizarValor()">
 
                             <option selected value="<?php echo ($registros['medida']); ?>">
-                                <?php echo ($registros['medida']); ?>
+                                Padrão: <?php echo ($registros['medida']); ?>
                             </option>
 
                             <option value="personalizado">Personalizado...</option>
@@ -324,7 +325,7 @@ $showNovCat = $novCat === 'Novo';
                 const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
                 // Adiciona as medidas filtradas
-                medidasFiltradas.forEach(function (medida) {
+                medidasFiltradas.forEach(function(medida) {
                     const option = document.createElement('option');
                     option.value = medida.medida;
                     option.textContent = medida.medida;
@@ -352,7 +353,7 @@ $showNovCat = $novCat === 'Novo';
         const medidas = <?php echo json_encode($medidas); ?>;
 
 
-        document.getElementById('categoria').addEventListener('change', function () {
+        document.getElementById('categoria').addEventListener('change', function() {
             const categoriaSelecionada = this.value;
             const medidaSelect = document.getElementById('medida');
 
@@ -369,7 +370,7 @@ $showNovCat = $novCat === 'Novo';
             const medidasFiltradas = medidas.filter(medida => medida.codCat == categoriaSelecionada);
 
             // Adicionar as medidas filtradas ao select
-            medidasFiltradas.forEach(function (medida) {
+            medidasFiltradas.forEach(function(medida) {
                 const option = document.createElement('option');
                 option.value = medida.medida;
                 option.textContent = medida.medida;
